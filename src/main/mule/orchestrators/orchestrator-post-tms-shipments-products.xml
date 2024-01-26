@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="orchestrator-post-tms-products" doc:id="a1f274b8-8173-4381-9680-c3ad654e8f58" >
+		<logger level="INFO" doc:name="Logger" doc:id="5ac23ef9-b6eb-4092-8597-359d561d4233" message="#[payload]"/>
+		<flow-ref doc:name="Call to clients-system-unigis-products-request" doc:id="c0a290e5-be59-42c0-a2e9-648bf7054c63" name="clients-system-unigis-products-request"/>
+		<flow-ref doc:name="Call to clients-system-unigis-post-tms-products" doc:id="0b8b7314-ad16-4606-9340-4643bc31ab0f" name="clients-system-unigis-post-tms-setteld"/>
+		<logger level="INFO" doc:name="Logger" doc:id="e39f241f-9855-4733-998e-e881d99cac4c" message="#[payload]"/>
+	</sub-flow>
+	<sub-flow name="clients-system-unigis-products-request" doc:id="c751a93a-cfc7-4ece-9c09-e4b97e0321b1" >
+		<ee:transform doc:name="Transform Message" doc:id="348b5182-093e-47a0-91c5-eb448e0276f8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    status: payload.modificar_estado_guia.estado.estado,
+    observations: payload.modificar_estado_guia.estado.observaciones,
+    id_guia: payload.modificar_estado_guia.estado.id_guia
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="id_guia" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.modificar_estado_guia.estado.id_guia]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="2d1339eb-df38-4a4f-ac52-4d97551d9763" message="#[payload]"/>
+	</sub-flow>
+</mule>

@@ -3,7 +3,7 @@
     <http:listener-config name="process-pharma-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8082" protocol="HTTPS" tlsContext="TLS_Context" />
     </http:listener-config>
-    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.1:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.3:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="process-pharma-api-main">
         <http:listener config-ref="process-pharma-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -123,8 +123,8 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="get:\tms\settled:application\json:process-pharma-api-config">
-        <ee:transform doc:name="Transform Message">
+    <flow name="post:\tms\bill_lading:application\json:process-pharma-api-config">
+		<ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -141,8 +141,8 @@ output application/json
             </ee:message>
         </ee:transform>
     </flow>
-    <flow name="get:\tms\bill_lading:application\json:process-pharma-api-config">
-        <ee:transform doc:name="Transform Message">
+    <flow name="post:\tms\load\confirmation:application\json:process-pharma-api-config">
+		<ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -159,8 +159,8 @@ output application/json
             </ee:message>
         </ee:transform>
     </flow>
-    <flow name="get:\tms\load\confirmation:application\json:process-pharma-api-config">
-        <ee:transform doc:name="Transform Message">
+    <flow name="post:\tms\products:application\json:process-pharma-api-config">
+		<ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -177,12 +177,13 @@ output application/json
             </ee:message>
         </ee:transform>
     </flow>
-    <flow name="get:\tms\products:application\json:process-pharma-api-config">
-        <ee:transform doc:name="Transform Message">
+    <flow name="post:\tms\settled:application\json:process-pharma-api-config">
+        <flow-ref doc:name="Call to orchestrator-post-tms-settled" doc:id="20f94a6f-eeb3-46a7-ac11-5964127108bc" name="orchestrator-post-tms-settled" />
+		<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
----
+&#45;&#45;-
 {
   traxion_response: {
     completed_succesfully: "true",
@@ -191,8 +192,8 @@ output application/json
       data: {}
     }
   }
-} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+} as Object {encoding: "UTF-8", mediaType: "application/json"}&#93;&#93;></ee:set-payload>
             </ee:message>
-        </ee:transform>
+        </ee:transform> [STUDIO] -->
     </flow>
 </mule>
