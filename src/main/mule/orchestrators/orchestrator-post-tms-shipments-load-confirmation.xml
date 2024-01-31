@@ -38,10 +38,6 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
-				<ee:set-variable variableName="id_guia" ><![CDATA[%dw 2.0
-output application/json
----
-payload.modificar_estado_guia.estado.id_guia]]></ee:set-variable>
 				<ee:set-variable variableName="source_system" ><![CDATA[%dw 2.0
 output application/json
 ---

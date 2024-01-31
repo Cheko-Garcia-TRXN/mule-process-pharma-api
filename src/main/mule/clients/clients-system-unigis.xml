@@ -40,11 +40,6 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	"client_secret" : p('client.system.tep.https.client_secret'),
 	"client_id" : p('client.system.tep.https.client_id')
 }]]]></http:headers>
-			<http:uri-params ><![CDATA[#[output application/java
----
-{
-	"id_guide" : vars.id_guia
-}]]]></http:uri-params>
 			<http:query-params ><![CDATA[#[output application/java
 ---
 {
@@ -60,11 +55,6 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	"client_secret" : p('client.system.tep.https.client_secret'),
 	"client_id" : p('client.system.tep.https.client_id')
 }]]]></http:headers>
-			<http:uri-params ><![CDATA[#[output application/java
----
-{
-	"id_guide" : vars.id_guia
-}]]]></http:uri-params>
 			<http:query-params ><![CDATA[#[output application/java
 ---
 {
