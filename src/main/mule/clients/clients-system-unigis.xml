@@ -33,7 +33,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		</http:request>
 	</sub-flow>
 	<sub-flow name="clients-system-unigis-post-tms-load-confirmation" doc:id="d1ca32eb-ef4d-4408-a440-7133ffb3f473" >
-		<http:request method="PATCH" doc:name="Request" doc:id="8a99e2ed-e007-4ea5-a172-25dd8831eae5" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.post.tms.shipments.loads.confirmation}" >
+		<http:request method="POST" doc:name="Request" doc:id="8a99e2ed-e007-4ea5-a172-25dd8831eae5" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.post.tms.shipments.loads.confirmation}" >
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
@@ -48,7 +48,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		</http:request>
 	</sub-flow>
 	<sub-flow name="clients-system-unigis-post-tms-products" doc:id="ac28aa06-13bd-4a76-b6b7-e56d255c6262" >
-		<http:request method="PATCH" doc:name="Request" doc:id="be1d34e5-b75c-41b8-957b-15f31e269b0d" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.post.tms.shipments.products}" >
+		<http:request method="POST" doc:name="Request" doc:id="be1d34e5-b75c-41b8-957b-15f31e269b0d" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.post.tms.shipments.products}" >
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
