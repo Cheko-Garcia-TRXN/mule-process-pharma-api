@@ -8,7 +8,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	<sub-flow name="orchestrator-post-tms-load-confirmation" doc:id="a1f274b8-8173-4381-9680-c3ad654e8f58" >
 		<logger level="INFO" doc:name="Logger" doc:id="5ac23ef9-b6eb-4092-8597-359d561d4233" message="#[payload]"/>
 		<flow-ref doc:name="Call to clients-system-unigis-load-confirmation-request" doc:id="c0a290e5-be59-42c0-a2e9-648bf7054c63" name="clients-system-unigis-load-confirmation-request"/>
-		<flow-ref doc:name="Call to clients-system-unigis-post-tms-load-confirmation" doc:id="0b8b7314-ad16-4606-9340-4643bc31ab0f" name="clients-system-unigis-post-tms-setteld"/>
+		<flow-ref doc:name="Call to clients-system-unigis-post-tms-load-confirmation" doc:id="0b8b7314-ad16-4606-9340-4643bc31ab0f" name="clients-system-unigis-post-tms-load-confirmation"/>
 		<logger level="INFO" doc:name="Logger" doc:id="e39f241f-9855-4733-998e-e881d99cac4c" message="#[payload]"/>
 	</sub-flow>
 	<sub-flow name="clients-system-unigis-load-confirmation-request" doc:id="c751a93a-cfc7-4ece-9c09-e4b97e0321b1" >
@@ -18,9 +18,23 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 output application/json
 ---
 {
-    status: payload.modificar_estado_guia.estado.estado,
-    observations: payload.modificar_estado_guia.estado.observaciones,
-    id_guia: payload.modificar_estado_guia.estado.id_guia
+    "data": [
+        {
+        "shipmentID": payload.shipmentId,
+        "vehicleType": payload.vehicleType.identifier,
+        "driver": "",
+        "plate": payload.vehicle.plate,
+        "tripType": "",
+        "carrier": payload.carrier.identifier,
+        "temperature": "",
+        "chargeNumber": "",
+        "orders": payload.orders map ((item) -> {
+            "wmsOrderID": item.identifier,
+            "account": item.account.identifier,
+            "destination": ""
+        })
+        }
+    ]
 }]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
@@ -28,6 +42,10 @@ output application/json
 output application/json
 ---
 payload.modificar_estado_guia.estado.id_guia]]></ee:set-variable>
+				<ee:set-variable variableName="source_system" ><![CDATA[%dw 2.0
+output application/json
+---
+upper(attributes.queryParams.source_system)]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="2d1339eb-df38-4a4f-ac52-4d97551d9763" message="#[payload]"/>

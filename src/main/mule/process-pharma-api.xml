@@ -236,40 +236,10 @@ output application/json
         </ee:transform>
     </flow>
     <flow name="post:\tms\load\confirmation:application\json:process-pharma-api-config">
-		<ee:transform doc:name="Transform Message">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  traxion_response: {
-    completed_succesfully: "true",
-    response: {
-      message: "successful",
-      data: {}
-    }
-  }
-} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+		<flow-ref doc:name="Call-orchestrator-post-tms-load-confirmation" doc:id="bc0d65c9-ba92-41d0-ac44-64bbddc185ca" name="orchestrator-post-tms-load-confirmation"/>
     </flow>
     <flow name="post:\tms\products:application\json:process-pharma-api-config">
-		<ee:transform doc:name="Transform Message">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  traxion_response: {
-    completed_succesfully: "true",
-    response: {
-      message: "successful",
-      data: {}
-    }
-  }
-} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+		<flow-ref doc:name="Call-orchestrator-post-tms-products" doc:id="6948ed64-71e1-4954-8fff-9bee7b53e53b" name="orchestrator-post-tms-products"/>
     </flow>
     <flow name="post:\tms\settled:application\json:process-pharma-api-config">
         <flow-ref doc:name="Call to orchestrator-post-tms-settled" doc:id="20f94a6f-eeb3-46a7-ac11-5964127108bc" name="orchestrator-post-tms-settled" />

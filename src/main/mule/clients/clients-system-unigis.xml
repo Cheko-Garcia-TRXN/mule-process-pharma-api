@@ -9,6 +9,9 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<http:request-connection host="${client.system.unigis.https.host}" port="${client.system.unigis.https.port}" maxConnections="${client.system.unigis.https.max.connections}" connectionIdleTimeout="${client.system.unigis.https.connection.idle.timeout}" responseBufferSize="${client.system.unigis.https.response.buffer.size}" protocol="HTTPS"/>
 	</http:request-config>
 	
+	<http:request-config name="HTTP_Request_configuration-system-tms-tep-api" doc:name="HTTP Request configuration" doc:id="52d8f328-ac87-4783-b624-4094083f0447" >
+		<http:request-connection protocol="HTTPS" host="${client.system.tep.https.host}" port="${client.system.tep.https.port}" maxConnections="${client.system.tep.https.max.connections}" connectionIdleTimeout="${client.system.tep.https.connection.idle.timeout}" responseBufferSize="${client.system.tep.https.response.buffer.size}"/>
+	</http:request-config>
 	<sub-flow name="clients-system-unigis-post-tms-setteld" doc:id="bf646ba0-8b91-4d68-9d14-d0bd7eb31f7c" >
 		<http:request method="PATCH" doc:name="Request" doc:id="0f57e6c1-a37f-4522-ae01-170a85ba6790" config-ref="HTTP_Request_system-unigis" path="${client.system.unigis.https.path.post.tms.shipments.settled}">
 			<http:headers ><![CDATA[#[output application/java
@@ -16,6 +19,46 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 {
 	"client_secret" : p('client.system.unigis.https.client_secret'),
 	"client_id" : p('client.system.unigis.https.client_id')
+}]]]></http:headers>
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"id_guide" : vars.id_guia
+}]]]></http:uri-params>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"source_system" : vars.source_system
+}]]]></http:query-params>
+		</http:request>
+	</sub-flow>
+	<sub-flow name="clients-system-unigis-post-tms-load-confirmation" doc:id="d1ca32eb-ef4d-4408-a440-7133ffb3f473" >
+		<http:request method="PATCH" doc:name="Request" doc:id="8a99e2ed-e007-4ea5-a172-25dd8831eae5" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.post.tms.shipments.loads.confirmation}" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : p('client.system.tep.https.client_secret'),
+	"client_id" : p('client.system.tep.https.client_id')
+}]]]></http:headers>
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"id_guide" : vars.id_guia
+}]]]></http:uri-params>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"source_system" : vars.source_system
+}]]]></http:query-params>
+		</http:request>
+	</sub-flow>
+	<sub-flow name="clients-system-unigis-post-tms-products" doc:id="ac28aa06-13bd-4a76-b6b7-e56d255c6262" >
+		<http:request method="PATCH" doc:name="Request" doc:id="be1d34e5-b75c-41b8-957b-15f31e269b0d" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.post.tms.shipments.products}" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : p('client.system.tep.https.client_secret'),
+	"client_id" : p('client.system.tep.https.client_id')
 }]]]></http:headers>
 			<http:uri-params ><![CDATA[#[output application/java
 ---
