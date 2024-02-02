@@ -17,13 +17,11 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-{
-  "data": payload.data map ((item) -> {
-      "identifier": item.identifier,
-      "account": item.account,
-      "products": item.products
-  } )
-}]]></ee:set-payload>
+payload.data map ((item) -> {
+	"identifier": item.identifier,
+	"account": item.account,
+	"products": item.products
+} )]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="source_system" ><![CDATA[%dw 2.0

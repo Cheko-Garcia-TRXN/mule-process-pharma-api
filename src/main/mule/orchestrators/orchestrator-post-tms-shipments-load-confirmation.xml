@@ -20,8 +20,8 @@ output application/json
 {
     "data": [
         {
-        "shipmentID": payload.shipmentId,
-        "vehicleType": payload.vehicleType.identifier,
+        "shipmentID": payload.shipment_id,
+        "vehicleType": payload.vehicle_type.identifier,
         "driver": "",
         "plate": payload.vehicle.plate,
         "tripType": "",
