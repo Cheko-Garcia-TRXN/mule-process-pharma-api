@@ -167,6 +167,9 @@ output application/json
 	}
 }]]></ee:set-payload>
 					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
+					</ee:variables>
 				</ee:transform>
 			</on-error-propagate>
 			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f7be221e-c58b-4804-9040-ab0924c948fd" type="ANY">
@@ -186,6 +189,9 @@ output application/json
 	}
 }]]></ee:set-payload>
 					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
+					</ee:variables>
 				</ee:transform>
 			</on-error-propagate>
         </error-handler>
