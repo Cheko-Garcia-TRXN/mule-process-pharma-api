@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
     <http:listener-config name="process-pharma-api-httpListenerConfig">
-        <http:listener-connection host="${http.listener.host}" port="${http.listener.port}" protocol="HTTPS" tlsContext="TLS_Context" readTimeout="${http.listener.read.timeout}"/>
+        <http:listener-connection host="${http.listener.host}" port="${http.listener.port}" protocol="HTTPS" tlsContext="TLS_Context" readTimeout="${http.listener.read.timeout}" />
     </http:listener-config>
-    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.3:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.5:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="process-pharma-api-main">
         <http:listener config-ref="process-pharma-api-httpListenerConfig" path="${http.listener.path}">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -149,10 +149,10 @@ output application/json
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="81b7b511-0687-4746-bb83-3132741084e1" type="HTTP:BAD_REQUEST">
-				<ee:transform doc:name="Transform Message" doc:id="312352cd-9ea8-4de2-acc8-cdec6314bdff" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="81b7b511-0687-4746-bb83-3132741084e1" type="HTTP:BAD_REQUEST">
+                <ee:transform doc:name="Transform Message" doc:id="312352cd-9ea8-4de2-acc8-cdec6314bdff">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
@@ -166,16 +166,16 @@ output application/json
 		}
 	}
 }]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f7be221e-c58b-4804-9040-ab0924c948fd" type="ANY">
-				<ee:transform doc:name="Transform Message" doc:id="47c74224-daf4-4e95-899f-a4cdd66ae06c" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[output application/json
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f7be221e-c58b-4804-9040-ab0924c948fd" type="ANY">
+                <ee:transform doc:name="Transform Message" doc:id="47c74224-daf4-4e95-899f-a4cdd66ae06c">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[output application/json
 ---
 {
 	"traxion_response": {
@@ -188,12 +188,12 @@ output application/json
 		}
 	}
 }]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[500]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
         </error-handler>
     </flow>
     <flow name="process-pharma-api-console">
@@ -224,7 +224,7 @@ output application/json
         </error-handler>
     </flow>
     <flow name="post:\tms\bill_lading:application\json:process-pharma-api-config">
-		<ee:transform doc:name="Transform Message">
+        <ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -242,14 +242,14 @@ output application/json
         </ee:transform>
     </flow>
     <flow name="post:\tms\load\confirmation:application\json:process-pharma-api-config">
-		<flow-ref doc:name="Call-orchestrator-post-tms-load-confirmation" doc:id="bc0d65c9-ba92-41d0-ac44-64bbddc185ca" name="orchestrator-post-tms-load-confirmation"/>
+        <flow-ref doc:name="Call-orchestrator-post-tms-load-confirmation" doc:id="bc0d65c9-ba92-41d0-ac44-64bbddc185ca" name="orchestrator-post-tms-load-confirmation" />
     </flow>
     <flow name="post:\tms\products:application\json:process-pharma-api-config">
-		<flow-ref doc:name="Call-orchestrator-post-tms-products" doc:id="6948ed64-71e1-4954-8fff-9bee7b53e53b" name="orchestrator-post-tms-products"/>
+        <flow-ref doc:name="Call-orchestrator-post-tms-products" doc:id="6948ed64-71e1-4954-8fff-9bee7b53e53b" name="orchestrator-post-tms-products" />
     </flow>
     <flow name="post:\tms\settled:application\json:process-pharma-api-config">
         <flow-ref doc:name="Call to orchestrator-post-tms-settled" doc:id="20f94a6f-eeb3-46a7-ac11-5964127108bc" name="orchestrator-post-tms-settled" />
-		<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message">
+        <!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
