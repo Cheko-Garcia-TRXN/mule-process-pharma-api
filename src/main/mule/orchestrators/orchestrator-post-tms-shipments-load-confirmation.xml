@@ -17,25 +17,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-{
-    "data": [
-        {
-        "shipmentID": payload.shipment_id,
-        "vehicleType": payload.vehicle_type.identifier,
-        "driver": "",
-        "plate": payload.vehicle.plate,
-        "tripType": "",
-        "carrier": payload.carrier.identifier,
-        "temperature": "",
-        "chargeNumber": "",
-        "orders": payload.orders map ((item) -> {
-            "wmsOrderID": item.identifier,
-            "account": item.account.identifier,
-            "destination": ""
-        })
-        }
-    ]
-}]]></ee:set-payload>
+payload]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="source_system" ><![CDATA[%dw 2.0
