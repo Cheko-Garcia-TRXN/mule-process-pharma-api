@@ -12,12 +12,25 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<logger level="INFO" doc:name="Logger" doc:id="e39f241f-9855-4733-998e-e881d99cac4c" message="#[payload]"/>
 	</sub-flow>
 	<sub-flow name="clients-system-unigis-load-confirmation-request" doc:id="c751a93a-cfc7-4ece-9c09-e4b97e0321b1" >
-		<ee:transform doc:name="Transform Message" doc:id="348b5182-093e-47a0-91c5-eb448e0276f8" >
+		<ee:transform doc:name="Transform payload" doc:id="348b5182-093e-47a0-91c5-eb448e0276f8" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-payload]]></ee:set-payload>
+{
+	"shipmentId": payload.shipment_id,
+	"wmsId": payload.wms_id,
+	"carrier": payload.carrier,
+	"vehicleType": payload.vehicle_type,
+	"vehiclePlate": payload.vehicle_plate,
+	"orders": payload.orders map ((item) -> 
+    {
+		"identifier": item.identifier,
+		"account": {
+			"identifier": item.account.identifier
+		}
+	})
+}]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="source_system" ><![CDATA[%dw 2.0
