@@ -5,11 +5,11 @@
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<http:request-config name="HTTP_Request_system-unigis" doc:name="HTTP Request configuration" doc:id="e6a6c276-4697-4d83-8714-44f93b8a8dc1" >
+	<http:request-config name="HTTP_Request_system-unigis" doc:name="HTTP Request configuration" doc:id="e6a6c276-4697-4d83-8714-44f93b8a8dc1" responseTimeout="${client.system.unigis.https.response.timeout}">
 		<http:request-connection host="${client.system.unigis.https.host}" port="${client.system.unigis.https.port}" maxConnections="${client.system.unigis.https.max.connections}" connectionIdleTimeout="${client.system.unigis.https.connection.idle.timeout}" responseBufferSize="${client.system.unigis.https.response.buffer.size}" protocol="HTTPS"/>
 	</http:request-config>
 	
-	<http:request-config name="HTTP_Request_configuration-system-tms-tep-api" doc:name="HTTP Request configuration" doc:id="52d8f328-ac87-4783-b624-4094083f0447" >
+	<http:request-config name="HTTP_Request_configuration-system-tms-tep-api" doc:name="HTTP Request configuration" doc:id="52d8f328-ac87-4783-b624-4094083f0447" responseTimeout="${client.system.tep.https.response.timeout}">
 		<http:request-connection protocol="HTTPS" host="${client.system.tep.https.host}" port="${client.system.tep.https.port}" maxConnections="${client.system.tep.https.max.connections}" connectionIdleTimeout="${client.system.tep.https.connection.idle.timeout}" responseBufferSize="${client.system.tep.https.response.buffer.size}"/>
 	</http:request-config>
 	<sub-flow name="clients-system-unigis-post-tms-setteld" doc:id="bf646ba0-8b91-4d68-9d14-d0bd7eb31f7c" >
