@@ -17,8 +17,8 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
-	"client_secret" : p('client.system.unigis.https.client_secret'),
-	"client_id" : p('client.system.unigis.https.client_id')
+	"client_secret" : Mule::p('secure::client.system.unigis.https.client_secret'),
+	"client_id" : Mule::p('secure::client.system.unigis.https.client_id')
 }]]]></http:headers>
 			<http:uri-params ><![CDATA[#[output application/java
 ---
@@ -37,8 +37,8 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
-	"client_secret" : p('client.system.tep.https.client_secret'),
-	"client_id" : p('client.system.tep.https.client_id')
+	"client_secret" : Mule::p('secure::client.system.tep.https.client_secret'),
+	"client_id" : Mule::p('secure::client.system.tep.https.client_id')
 }]]]></http:headers>
 			<http:query-params ><![CDATA[#[output application/java
 ---
@@ -52,8 +52,8 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
-	"client_secret" : p('client.system.tep.https.client_secret'),
-	"client_id" : p('client.system.tep.https.client_id')
+	"client_secret" : Mule::p('secure::client.system.tep.https.client_secret'),
+	"client_id" : Mule::p('secure::client.system.tep.https.client_id')
 }]]]></http:headers>
 			<http:query-params ><![CDATA[#[output application/java
 ---
