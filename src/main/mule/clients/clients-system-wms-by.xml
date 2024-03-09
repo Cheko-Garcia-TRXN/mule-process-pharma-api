@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="clients-post-system-wms-availability-api" doc:id="3523e576-2af3-425e-a591-3c29396b3990" >
+		<http:request method="POST" doc:name="Request" doc:id="eba2ca3d-ca2c-43e2-af94-019e70a6222f" config-ref="HTTP_request_system_wms" path="${client.system.wms.api.https.path.availability.post}">
+			<http:body ><![CDATA[#[vars.skuArray]]]></http:body>
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : p('client.system.albatros.api.https.client_id'),
+	"client_id" : p('client.system.albatros.api.https.client_secret')
+}]]]></http:headers>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"customer_name": vars.customerName
+}]]]></http:query-params>
+		</http:request>
+	</sub-flow>
+</mule>

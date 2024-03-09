@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="orchestrator-get-products" doc:id="a1f274b8-8173-4381-9680-c3ad654e8f58" >
+		<logger level="INFO" doc:name="Logger" doc:id="5ac23ef9-b6eb-4092-8597-359d561d4233" message="#[payload]"/>
+		<!-- [STUDIO:"Call to clients-system-crm-products-request"]<flow-ref doc:name="Call to clients-system-crm-products-request" doc:id="c0a290e5-be59-42c0-a2e9-648bf7054c63" name="clients-system-crm-products-request"/> [STUDIO] -->
+		<flow-ref doc:name="Call to clients-system-crm-get-products" doc:id="a2c518ea-71d5-47e4-b925-8f63c97e44fe" name="clients-system-crm-get-products" />
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload.Product_Code_ID__c]" doc:name="skuArray" doc:id="fd7a7fbd-9628-4934-b02a-dc6326222f42" variableName="skuArray"/>
+		<flow-ref doc:name="Call to orchestrator-post-get-productsSub_Flow" doc:id="0b8b7314-ad16-4606-9340-4643bc31ab0f" name="orchestrator-post-get-productsSub_Flow" target="costGroup"/>
+		<flow-ref doc:name="Call to clients-system-crm-products-response" doc:id="45232ad2-da90-4e04-8074-b4d5665a4099" name="clients-system-crm-products-response"/>
+		<logger level="INFO" doc:name="Logger" doc:id="e39f241f-9855-4733-998e-e881d99cac4c" message="#[payload]"/>
+	</sub-flow>
+	<sub-flow name="orchestrator-post-get-productsSub_Flow" doc:id="2b341871-98cf-4221-848c-695e31e48ab5" >
+		<flow-ref doc:name="Call to clients-post-system-wms-availability-api" doc:id="951028e8-66e4-42d1-9b9e-7e023ec26c9e" name="clients-post-system-wms-availability-api" />
+		<ee:transform doc:name="Transform Message" doc:id="2be22808-457b-421d-bb7c-da6bb21125dc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload groupBy $.SKU]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="clients-system-crm-products-response" doc:id="c751a93a-cfc7-4ece-9c09-e4b97e0321b1" >
+		<ee:transform doc:name="Transform Message" doc:id="348b5182-093e-47a0-91c5-eb448e0276f8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ((item) -> {
+    fecha_inventario: now() as String{format:
+"MM/dd/yyyy"
+},
+    clave: item.Product_Code_ID__c,
+    partida_presup: "",
+    descripcion: item.Name,
+    tipo_clave: "DPN",
+    almacen: "CENADI",
+    costo_promedio: vars.costGroup[item.Product_Code_ID__c][0].COSTO_PROM,
+    cantidad_disp: vars.costGroup[item.Product_Code_ID__c][0].DISPONIBLE,
+    dpn: item.expr0,
+    importe_dpn: (vars.costGroup[item.Product_Code_ID__c][0].COSTO_PROM  default 1) * item.expr0,
+    importe_cant_disp:(vars.costGroup[item.Product_Code_ID__c][0].COSTO_PROM  default 1) * (vars.costGroup[item.Product_Code_ID__c][0].DISPONIBLE default 1),
+    cobertura_dias: vars.costGroup[item.Product_Code_ID__c][0].DISPONIBLE default 1/item.expr0 * 30
+})]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="id_guia" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.modificar_estado_guia.estado.id_guia]]></ee:set-variable>
+				<ee:set-variable variableName="source_system" ><![CDATA[%dw 2.0
+output application/json
+---
+upper(attributes.queryParams.source_system)]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="2d1339eb-df38-4a4f-ac52-4d97551d9763" message="#[payload]"/>
+	</sub-flow>
+</mule>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="clients-system-crm-get-products" doc:id="bf646ba0-8b91-4d68-9d14-d0bd7eb31f7c" >
+		<http:request method="GET" doc:name="Request" doc:id="0f57e6c1-a37f-4522-ae01-170a85ba6790" config-ref="HTTP_request_system_crm" path="${client.system.crm.https.path.products.post}">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : Mule::p('secure::client.system.unigis.https.client_secret'),
+	"client_id" : Mule::p('secure::client.system.unigis.https.client_id')
+}]]]></http:headers>
+		</http:request>
+	</sub-flow>
+	<sub-flow name="clients-system-crm-get-orders" doc:id="82523151-d1e3-4cbc-a4bb-391350d1aaed" >
+		<http:request method="GET" doc:name="Request" doc:id="dd47082c-6ac0-4810-967b-a5a1438d9b74" config-ref="HTTP_request_system_crm" path="${client.system.crm.https.path.orders.post}">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : Mule::p('secure::client.system.unigis.https.client_secret'),
+	"client_id" : Mule::p('secure::client.system.unigis.https.client_id')
+}]]]></http:headers>
+		</http:request>
+	</sub-flow>
+</mule>

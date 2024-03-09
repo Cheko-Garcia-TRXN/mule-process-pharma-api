@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="orchestrator-get-orders" doc:id="a1f274b8-8173-4381-9680-c3ad654e8f58" >
+		<logger level="INFO" doc:name="Logger" doc:id="5ac23ef9-b6eb-4092-8597-359d561d4233" message="#[payload]"/>
+		<flow-ref doc:name="Call to clients-system-crm-get-orders" doc:id="0b8b7314-ad16-4606-9340-4643bc31ab0f" name="clients-system-crm-get-orders"/>
+		<flow-ref doc:name="Call to clients-system-crm-orders-response" doc:id="45232ad2-da90-4e04-8074-b4d5665a4099" name="clients-system-crm-orders-response"/>
+		<logger level="INFO" doc:name="Logger" doc:id="e39f241f-9855-4733-998e-e881d99cac4c" message="#[payload]"/>
+	</sub-flow>
+	<sub-flow name="clients-system-crm-orders-response" doc:id="c751a93a-cfc7-4ece-9c09-e4b97e0321b1" >
+		<ee:transform doc:name="Transform Message" doc:id="348b5182-093e-47a0-91c5-eb448e0276f8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map(item)->{
+    "clave_umu": item.UMU__r.UMU__c,
+    "nombre_umu": item.UMU__r.Name,
+    "delega": item.UMU__r.Delegacion__c,
+    "entrega": item.Order__r.Entrega__r.ID_de_Viaje__c,
+    "pedido_sap": item.Pedido__r.Folio_de_Pedido__c,
+    "pedido_insights": "D24-FEB-208/U005/MM/",
+    "categoria": "OR",
+    "clave_ins": 10000311100,
+    "desc_ins": item.Product__r.Description__c,
+    "programa": item.Product__r.Programa__r,
+    "subinventario": "MEDICAMENTO",
+    "cantidad_piezas": item.Cantidad_de_Piezas__c,
+    "cantidad_cajas": item.Order__r.Cantidad_de_Cajas_en_la_Orden__c,
+    "fecha_creación": "02/16/2024",
+    "hora_creación": "02:38:25",
+    "fec_est_ent": "02/19/2024",
+    "fec_sal_cenadi": item.Order__r.Fecha_Salida_CENADI__c,
+    "fecha_certificación": "NULL",
+    "estatus_pedido": item.Estatus_de_Orden__c
+  }]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="id_guia" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.modificar_estado_guia.estado.id_guia]]></ee:set-variable>
+				<ee:set-variable variableName="source_system" ><![CDATA[%dw 2.0
+output application/json
+---
+upper(attributes.queryParams.source_system)]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="2d1339eb-df38-4a4f-ac52-4d97551d9763" message="#[payload]"/>
+	</sub-flow>
+</mule>
