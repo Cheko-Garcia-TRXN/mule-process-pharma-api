@@ -23,7 +23,7 @@ payload map(item)->{
     "delega": item.UMU__r.Delegacion__c,
     "entrega": item.Order__r.Entrega__r.ID_de_Viaje__c,
     "pedido_sap": item.Pedido__r.Folio_de_Pedido__c,
-    "pedido_insights": "D24-FEB-208/U005/MM/",
+    "pedido_insights": item.Pedido__r.ID_de_Pedido__c,
     "categoria": item.Order__r."type",
     "clave_ins": item.Product__r.Code_id,
     "desc_ins": item.Product__r.Description__c,
