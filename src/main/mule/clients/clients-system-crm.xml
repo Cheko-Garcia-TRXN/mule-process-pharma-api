@@ -23,6 +23,12 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	"client_secret" : Mule::p('secure::client.system.unigis.https.client_secret'),
 	"client_id" : Mule::p('secure::client.system.unigis.https.client_id')
 }]]]></http:headers>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"certification_date_from" : vars.certification_date_from,
+	"certification_date_to" : vars.certification_date_to
+}]]]></http:query-params>
 		</http:request>
 	</sub-flow>
 </mule>
