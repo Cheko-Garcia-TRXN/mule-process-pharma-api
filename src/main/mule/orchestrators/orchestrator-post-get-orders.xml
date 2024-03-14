@@ -16,10 +16,21 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
-fun traductor(aString)
+fun traductorSI(aString)
 = aString match {
   case "MEDICINE" -> "MEDICAMENTO"
   case "HEALING MATERIAL" -> "MATERIAL DE CURACIÓN"
+  else -> "UNKNOWN"
+}
+fun traductorCAT(aString)
+= aString match {
+  case "Urgencia Médica" -> "UM"
+  case "Replaneación" -> "RP"
+  case "Soporte de Vida" -> "SV"
+  case "Ordinario" -> "OR" 
+  case "Extraordinario" -> "EX"
+  case "Programa" -> "PR"
+  case "Emergencia Sanitaria" -> "ES"     
   else -> "UNKNOWN"
 }
 fun formatUMU(aString)
@@ -28,6 +39,7 @@ fun formatUMU(aString)
   case 2 -> ("0" ++ aString)
   case 1 -> ("00" ++ aString)
 }
+fun formatLength(aString) = if(sizeOf(aString)> 99)aString[0 to 99] else aString
 ---
 payload map(item)->{
     "clave_umu": formatUMU(item.UMU__r.UMU__c),
@@ -36,11 +48,11 @@ payload map(item)->{
     "entrega": item.Order__r.Entrega__r.ID_de_Viaje__c,
     "pedido_sap": item.Pedido__r.Folio_de_Pedido__c,
     "pedido_insights": item.Pedido__r.ID_de_Pedido__c,
-    "categoria": item.Order__r."type",
-    "clave_ins": item.Order__r.Tipo_de_Pedido__c,
-    "desc_ins": item.Product__r.Description__c,
+    "categoria": traductorCAT(item.Order__r.Tipo_de_Pedido__c),
+    "clave_ins": item.Product__r.Product_Code_ID__c,
+    "desc_ins": formatLength(item.Product__r.Description__c),
     "programa": item.Product__r.Programa__r,
-    "subinventario": traductor(item.Product__r.Simple_Classification__c),
+    "subinventario": traductorSI(item.Product__r.Simple_Classification__c),
     "cantidad_piezas": item.Cantidad_de_Piezas__c,
     "cantidad_cajas": item.Order__r.Cantidad_de_Cajas_en_la_Orden__c,
     "fecha_creación": (item.CreatedDate splitBy(", "))[0],
