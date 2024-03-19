@@ -32,7 +32,7 @@ payload groupBy $.SKU]]></ee:set-payload>
 output application/json
 fun formatLength(aString) = if(sizeOf(aString)> 99)aString[0 to 99] else aString
 ---
-(payload map ((item) -> {
+payload map ((item) -> {
     fecha_inventario: now() as String{format:
 "MM/dd/yyyy"
 },
@@ -42,12 +42,12 @@ fun formatLength(aString) = if(sizeOf(aString)> 99)aString[0 to 99] else aString
     tipo_clave: "DPN",
     almacen: "CENADI",
     costo_promedio: vars.costGroup[item.Product_Code_ID__c][0].COSTO_PROM,
-    cantidad_disp: vars.costGroup[item.Product_Code_ID__c][0].DISPONIBLE,
+    cantidad_disp: if ((vars.costGroup[item.Product_Code_ID__c][0].DISPONIBLE default 0) <= 0) 0 else vars.costGroup[item.Product_Code_ID__c][0].DISPONIBLE,
     dpn: item.expr0,
     importe_dpn: (vars.costGroup[item.Product_Code_ID__c][0].COSTO_PROM  default 1) * item.expr0,
     importe_cant_disp:(vars.costGroup[item.Product_Code_ID__c][0].COSTO_PROM  default 1) * (vars.costGroup[item.Product_Code_ID__c][0].DISPONIBLE default 1),
     cobertura_dias: vars.costGroup[item.Product_Code_ID__c][0].DISPONIBLE default 1/item.expr0 * 30
-}))filter ($.cantidad_disp default 0) > 0]]></ee:set-payload>
+})]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="id_guia" ><![CDATA[%dw 2.0
