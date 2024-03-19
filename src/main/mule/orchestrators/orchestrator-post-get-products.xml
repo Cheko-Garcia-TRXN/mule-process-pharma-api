@@ -41,7 +41,7 @@ payload map ((item) -> {
     descripcion: formatLength(item.Name),
     tipo_clave: "DPN",
     almacen: "CENADI",
-    costo_promedio: vars.costGroup[item.Product_Code_ID__c][0].COSTO_PROM,
+    costo_promedio: vars.costGroup[item.Product_Code_ID__c][0].COSTO_PROM default 0,
     cantidad_disp: if ((vars.costGroup[item.Product_Code_ID__c][0].DISPONIBLE default 0) <= 0) 0 else vars.costGroup[item.Product_Code_ID__c][0].DISPONIBLE,
     dpn: item.expr0,
     importe_dpn: (vars.costGroup[item.Product_Code_ID__c][0].COSTO_PROM  default 1) * item.expr0,
