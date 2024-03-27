@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<flow name="orchestrator-scheduler-siam-issste-stockFlow" doc:id="e91a72b8-6e4d-41a9-88ca-0fd9cfa97109" >
+		<scheduler doc:name="Scheduler" doc:id="31148e41-5b70-4b2b-be7a-d0b3ff43dab4" >
+			<scheduling-strategy >
+				<fixed-frequency frequency="10" timeUnit="MINUTES"/>
+			</scheduling-strategy>
+		</scheduler>
+		<flow-ref doc:name="Call to clients-system-tep-get-siam-stock" doc:id="3bd4f22d-339d-4d9c-9b93-0a77c0b4d77e" name="clients-system-tep-get-siam-stock"/>
+		<ee:transform doc:name="Transform Message" doc:id="fa235dae-623b-4e7c-9136-7307504d854e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map(item)->{
+    existencias_apartadas: item.existencias_apartadas,
+    existencias_disponibles: item.existencias_disponibles,
+    fecha: item.fecha,
+    Existencias_totales: item.existencias_totales,
+    external_id: item.sku ++ "-ISSSTE-" ++ item.clave_presupuestal
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="Call to clients-system-tep-post-siam-stock" doc:id="af5082bd-1384-472a-924f-5d04065ac111" name="clients-system-tep-post-siam-stock"/>
+	</flow>
+</mule>
