@@ -40,6 +40,14 @@ fun formatUMU(aString)
   case 1 -> ("00" ++ aString)
 }
 fun formatLength(aString) = if(sizeOf(aString)> 99)aString[0 to 99] else aString
+fun changeStatus(aString)
+= aString match {
+  case "Llegada de Transporte" -> "Llegada Transporte"
+  case "Enviado" -> "En Transito"
+  case "Procesando" -> "En procesoo"      
+  else -> aString
+}
+
 ---
 payload map(item)->{
     "clave_umu": formatUMU(item.UMU__r.UMU__c),
@@ -55,12 +63,12 @@ payload map(item)->{
     "subinventario": traductorSI(item.Product__r.Simple_Classification__c),
     "cantidad_piezas": item.Cantidad_de_Piezas__c,
     "cantidad_cajas": item.Order__r.Cantidad_de_Cajas_en_la_Orden__c,
-    "fecha_creación": (item.CreatedDate splitBy(", "))[0],
-    "hora_creación": (item.CreatedDate splitBy(", "))[1],
+    "fecha_creación": (item.CreatedDate  as DateTime )as String { format: "yyyy-MM-dd"},
+    "hora_creación": (item.CreatedDate  as DateTime )as String { format: "HH:mm:ss"},
     "fec_est_ent": item.Order__r.FX_dim_Fecha_Maxima_Entrega__c,
     "fec_sal_cenadi": item.Order__r.Fecha_Salida_CENADI__c,
     "fecha_certificación": item.Order__r.Fecha_de_certificacion_de_la_remision__c,
-    "estatus_pedido": item.Estatus_de_Orden__c
+    "estatus_pedido": changeStatus(item.Estatus_de_Orden__c)
   }]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >

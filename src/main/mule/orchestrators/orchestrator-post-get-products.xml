@@ -37,7 +37,7 @@ payload map ((item) -> {
 "MM/dd/yyyy"
 },
     clave: item.Product_Code_ID__c,
-    partida_presup: "",
+    partida_presup: item.Partida_Presupuestal__c,
     descripcion: formatLength(item.Name),
     tipo_clave: "DPN",
     almacen: "CENADI",
