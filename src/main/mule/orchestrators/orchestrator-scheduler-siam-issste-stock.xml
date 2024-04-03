@@ -43,6 +43,8 @@ payload map(item)->{
     existencias_apartadas: item.existencias_apartadas,
     existencias_disponibles: item.existencias_disponibles,
     fecha: item.fecha,
+    clave_presupuestal: item.clave_presupuestal,
+    sku: item.sku,
     Existencias_totales: item.existencias_totales,
     external_id: item.sku ++ "-ISSSTE-" ++ item.clave_presupuestal
 }]]></ee:set-payload>
