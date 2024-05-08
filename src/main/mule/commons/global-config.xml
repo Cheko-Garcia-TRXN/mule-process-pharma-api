@@ -16,7 +16,7 @@ http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/sc
 
 	<configuration-properties doc:name="Configuration properties" doc:id="e266184c-e18b-4e1b-bbb3-5e1fb0215e2e" file="process-pharma-${env}.properties" />
 
-	<global-property doc:name="Global Property" doc:id="79bd727b-d36c-4291-98c0-86616caeeda7" name="env" value="pro" />
+	<global-property doc:name="Global Property" doc:id="79bd727b-d36c-4291-98c0-86616caeeda7" name="env" value="uat" />
 	
 <api-gateway:autodiscovery apiId="${anypoint.platform.autodiscovery}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="441d3a26-eec8-42ec-8999-fc31b39d8ae2" flowRef="process-pharma-api-main" />
 	<tls:context name="TLS_Context" doc:name="TLS Context" doc:id="f54bcc26-e97c-40cc-bb75-cc49eaee9d5d" >

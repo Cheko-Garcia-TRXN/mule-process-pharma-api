@@ -25,5 +25,20 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 }]]]></http:query-params>
 		</http:request>
 	</sub-flow>
+	<sub-flow name="clients-system-unigis-post-tms-bill_lading" doc:id="787fd8a4-b421-412a-a60f-28068f6493db" >
+		<http:request method="POST" doc:name="Request" doc:id="25afeb99-e5f3-414a-91c8-3d055ad63723" config-ref="HTTP_Request_system-unigis" path="${client.system.unigis.https.path.post.tms.bill_lading}" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : Mule::p('secure::client.system.unigis.https.client_secret'),
+	"client_id" : Mule::p('secure::client.system.unigis.https.client_id')
+}]]]></http:headers>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"source_system" : vars.source_system
+}]]]></http:query-params>
+		</http:request>
+	</sub-flow>
 	
 </mule>
