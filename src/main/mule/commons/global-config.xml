@@ -22,4 +22,15 @@ http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/sc
 	<tls:context name="TLS_Context" doc:name="TLS Context" doc:id="f54bcc26-e97c-40cc-bb75-cc49eaee9d5d" >
 		<tls:key-store type="pkcs12" path="Traxion_Logistics.p12" keyPassword="wWpg9LfX6nxh9Ke3u1L0wxSmYr5y3YKTjAWiTMEa9dww" password="wWpg9LfX6nxh9Ke3u1L0wxSmYr5y3YKTjAWiTMEa9dww" />
 	</tls:context>
+	<jms:config name="JMS_Config" doc:name="JMS Config" doc:id="acca42b4-cc54-46ea-8dad-16c60cd57d36" >
+		<jms:active-mq-connection username="${jms.settings.user}" password="${jms.settings.passwd}">
+			<jms:factory-configuration brokerUrl="${jms.settings.url}" initialRedeliveryDelay="${jms.settings.initial.redelivery.delay}" redeliveryDelay="${jms.settings.redelivery.delay}"/>
+		</jms:active-mq-connection>
+	</jms:config>
+	<http:request-config name="HTTP_Request_configuration-System-edifact-connection" doc:name="HTTP Request configuration" doc:id="391286ca-3f15-47ef-ae68-e1579723adbe" responseTimeout="${client.system.pac.https.response.timeout}">
+		<http:request-connection protocol="HTTPS" host="${client.system.pac.http.host}" port="${client.system.pac.http.port}" maxConnections="${client.system.pac.http.max.connections}" connectionIdleTimeout="${client.system.pac.http.connection.idle.timeout}" responseBufferSize="${client.system.pac.http.response.buffer.size}"/>
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration-System-sap-connection" doc:name="HTTP Request configuration" doc:id="3de9d52e-d80a-4cf6-88a0-f3f69f18d19a" responseTimeout="${client.system.sap.https.response.timeout}">
+		<http:request-connection protocol="HTTPS" host="${client.system.sap.http.host}" port="${client.system.sap.http.port}" maxConnections="${client.system.sap.http.max.connections}" connectionIdleTimeout="${client.system.sap.http.connection.idle.timeout}" responseBufferSize="${client.system.sap.http.response.buffer.size}"/>
+	</http:request-config>
 </mule>

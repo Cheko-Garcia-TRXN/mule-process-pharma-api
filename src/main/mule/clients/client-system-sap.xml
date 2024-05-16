@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="client-system-sap" doc:id="1fbc9cf7-9c2b-4be6-af84-5c22c98fd96c" >
+		<http:request method="POST" doc:name="Request" doc:id="65d53f50-6b14-4fef-a190-9728096378cb" config-ref="HTTP_Request_configuration-System-sap-connection" sendCorrelationId="ALWAYS" correlationId="#[correlationId]" path="${client.system.sap.http.path.orderincome}">
+			<http:headers ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"client_id": Mule::p('client.system.sap.https.client_id'),
+	"client_secret": Mule::p('client.system.sap.https.client_secret')
+}]]]></http:headers>
+			<http:query-params ><![CDATA[#[output application/json
+---
+{
+	"action" : if(payload.operation == 'provisioningreso' or payload.operation == 'pedidoventa')payload.operation 
+	else if(vars.operation_type == 'PROVISION_INGRESO')"provisioningreso" 
+	else if(vars.operation_type == 'PEDIDO_VENTA') "pedidoventa" 
+	else "",
+	"srcSystem": vars.source_system
+}]]]></http:query-params>
+		</http:request>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="184138d3-8bff-4574-afb2-e0093e13ab52" type="HTTP:BAD_REQUEST, HTTP:CLIENT_SECURITY, HTTP:FORBIDDEN, HTTP:INTERNAL_SERVER_ERROR, HTTP:METHOD_NOT_ALLOWED, HTTP:NOT_ACCEPTABLE, HTTP:NOT_FOUND, HTTP:PARSING, HTTP:RETRY_EXHAUSTED, HTTP:SECURITY, HTTP:SERVICE_UNAVAILABLE, HTTP:TIMEOUT, HTTP:TOO_MANY_REQUESTS, HTTP:UNAUTHORIZED, HTTP:UNSUPPORTED_MEDIA_TYPE, EXPRESSION, STREAM_MAXIMUM_SIZE_EXCEEDED" >
+				<ee:transform doc:name="Transform Message" doc:id="ba6a2958-f71b-4812-937a-02759dfb326a" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	error: error.description
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="fe532457-b9a3-4369-b0e3-f94971af1f2b" type="HTTP:CONNECTIVITY" >
+				<ee:transform doc:name="Transform Message" doc:id="d0603a17-add2-48b0-9bf7-fc38f13427f5" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	error: error.description
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

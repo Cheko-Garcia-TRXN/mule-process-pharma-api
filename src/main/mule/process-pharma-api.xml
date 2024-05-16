@@ -224,7 +224,7 @@ output application/json
         </error-handler>
     </flow>
     <flow name="post:\tms\bill_lading:application\json:process-pharma-api-config">
-        <ee:transform doc:name="Transform Message">
+        <ee:transform doc:name="Set query param and declare payload back up">
             <ee:message>
             </ee:message>
 			<ee:variables >
@@ -232,9 +232,56 @@ output application/json
 output application/json
 ---
 attributes.queryParams.source_system]]></ee:set-variable>
+				<ee:set-variable variableName="originalPayload" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+				<ee:set-variable variableName="traslado" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+      "serie": payload.carta_porte.ubicaciones.serie,
+      "folio": payload.carta_porte.ubicaciones.folio,
+      "lugar_expedicion": payload.carta_porte.ubicaciones.lugar_expedicion,
+      "sociedad_sap": payload.sap_info.sociedad_sap,
+      "exportacion": payload.carta_porte.ubicaciones.exportacion,
+      "emisor": {
+        "rfc": payload.carta_porte.ubicaciones.emisor.rfc,
+        "nombre": payload.carta_porte.ubicaciones.emisor.nombre,
+        "regimen_fiscal": payload.carta_porte.ubicaciones.emisor.regimen_fiscal,
+        "domicilio": {
+          "calle": payload.carta_porte.ubicaciones.emisor.domicilio.calle,
+          "calle2": "",
+          "ciudad": payload.carta_porte.ubicaciones.emisor.domicilio.ciudad,
+          "estado": payload.carta_porte.ubicaciones.emisor.domicilio.estado,
+          "pais": payload.carta_porte.ubicaciones.emisor.domicilio.pais,
+          "postal": payload.carta_porte.ubicaciones.emisor.domicilio.postal
+        }
+      },
+      "receptor": {
+        "rfc": payload.carta_porte.ubicaciones.receptor.rfc,
+        "nombre": payload.carta_porte.ubicaciones.receptor.nombre,
+        "regimen_fiscal": payload.carta_porte.ubicaciones.receptor.regimen_fiscal,
+        "domicilio": {
+          "calle": payload.carta_porte.ubicaciones.receptor.domicilio.calle,
+          "calle2": "",
+          "ciudad": payload.carta_porte.ubicaciones.receptor.domicilio.ciudad,
+          "estado": payload.carta_porte.ubicaciones.receptor.domicilio.estado,
+          "pais": payload.carta_porte.ubicaciones.receptor.domicilio.pais,
+          "postal": payload.carta_porte.ubicaciones.receptor.domicilio.postal
+        }
+      }
+    }]]></ee:set-variable>
 			</ee:variables>
         </ee:transform>
-		<flow-ref doc:name="Call-orchestrator-post-tms-bill_lading" doc:id="52b3621b-ec25-49f5-a622-e594dcfc60c9" name="orchestrator-post-tms-bill_lading" />
+		<choice doc:name="Choice" doc:id="c3cc39bb-6c7c-4c9f-8665-3920c7a1b922" >
+			<when expression='#[upper(payload.traxion.tipo_documento) == "TRASLADO"]'>
+				<flow-ref doc:name="Call-orchestrator-post-tms-bill_lading" doc:id="52b3621b-ec25-49f5-a622-e594dcfc60c9" name="orchestrator-post-tms-bill_lading" />
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="d3bf04d6-1fad-4cc1-8526-e5f8dc6691c3" message="#[payload]"/>
+			</otherwise>
+		</choice>
     </flow>
     <flow name="post:\tms\load\confirmation:application\json:process-pharma-api-config">
         <flow-ref doc:name="Call-orchestrator-post-tms-load-confirmation" doc:id="bc0d65c9-ba92-41d0-ac44-64bbddc185ca" name="orchestrator-post-tms-load-confirmation" />

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+	<sub-flow name="client-jms" doc:id="938348f8-bbea-4b46-a1b8-b52eae152131" >
+		<jms:publish doc:name="Publish" doc:id="82d13465-0704-4458-8164-bb82228ec685" config-ref="JMS_Config" destination="${jms.queue.logger}">
+			<reconnect-forever frequency="3000"/>
+		</jms:publish>
+	</sub-flow>
+</mule>

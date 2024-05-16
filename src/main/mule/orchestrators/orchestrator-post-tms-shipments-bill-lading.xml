@@ -7,29 +7,487 @@
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 	<sub-flow name="orchestrator-post-tms-bill_lading" doc:id="a1f274b8-8173-4381-9680-c3ad654e8f58" >
 		<logger level="INFO" doc:name="Logger" doc:id="5ac23ef9-b6eb-4092-8597-359d561d4233" message="#[payload]"/>
-		<!-- [STUDIO:"Call to clients-system-unigis-bill_lading-request"]<flow-ref doc:name="Call to clients-system-unigis-bill_lading-request" doc:id="c0a290e5-be59-42c0-a2e9-648bf7054c63" name="clients-system-unigis-bill_lading-request"/> [STUDIO] -->
-		<flow-ref doc:name="Call to clients-system-unigis-post-tms-bill_lading" doc:id="0b8b7314-ad16-4606-9340-4643bc31ab0f" name="clients-system-unigis-post-tms-bill_lading"/>
+		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-traslado" doc:id="c0a290e5-be59-42c0-a2e9-648bf7054c63" name="orchestrator-post-tms-shipments-bill-lading-traslado"/>
+		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-provision-sap-process-001" doc:id="0b8b7314-ad16-4606-9340-4643bc31ab0f" name="orchestrator-post-tms-shipments-provision-sap-process-001"/>
+		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-sales-order-process-003" doc:id="6ce8cca8-905f-4ed9-ac63-68622d8e21c5" name="orchestrator-post-tms-shipments-sales-order-process-003"/>
+		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-final-response" doc:id="04e5d29a-4d0c-4178-82ef-90a4bf7db1e1" name="orchestrator-post-tms-shipments-bill-lading-final-response"/>
 		<logger level="INFO" doc:name="Logger" doc:id="e39f241f-9855-4733-998e-e881d99cac4c" message="#[payload]"/>
 	</sub-flow>
-	<!-- [STUDIO:"clients-system-unigis-bill_lading-request"]<sub-flow name="clients-system-unigis-bill_lading-request" doc:id="c751a93a-cfc7-4ece-9c09-e4b97e0321b1" >
+	<sub-flow name="clients-system-unigis-bill_lading-request" doc:id="c751a93a-cfc7-4ece-9c09-e4b97e0321b1" >
 		<ee:transform doc:name="Transform Message" doc:id="348b5182-093e-47a0-91c5-eb448e0276f8" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
-&#45;&#45;-
+---
 {
     status: payload.modificar_estado_guia.estado.estado,
     observations: payload.modificar_estado_guia.estado.observaciones,
     id_guia: payload.modificar_estado_guia.estado.id_guia
-}&#93;&#93;></ee:set-payload>
+}]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="id_guia" ><![CDATA[%dw 2.0
 output application/json
-&#45;&#45;-
-payload.modificar_estado_guia.estado.id_guia&#93;&#93;></ee:set-variable>
+---
+payload.modificar_estado_guia.estado.id_guia]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="2d1339eb-df38-4a4f-ac52-4d97551d9763" message="#[payload&#93;"/>
-	</sub-flow> [STUDIO] -->
+		<logger level="INFO" doc:name="Logger" doc:id="2d1339eb-df38-4a4f-ac52-4d97551d9763" message="#[payload]"/>
+	</sub-flow>
+	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-traslado" doc:id="7034adce-6810-4ee6-b910-d57ffade1e52">
+		<ee:transform doc:name="Transform Message" doc:id="ddea9e09-7ae5-4f19-aeb4-71683c87b481">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="originalPayloadCp"><![CDATA[%dw 2.0
+output application/json
+import * from dw::core::Strings
+import * from dw::core::Dates
+fun date(dte) = (substring(dte,7,11) as String) ++ "-" ++ (if((substring(dte,0,3) as String == "Jan")) "01"  else if((substring(dte,0,3) as String == "Feb")) "02" else if((substring(dte,0,3) as String == "Mar")) "03" else if((substring(dte,0,3) as String == "Apr")) "04" else if((substring(dte,0,3) as String == "May")) "05" else if((substring(dte,0,3) as String == "Jun")) "06" else if((substring(dte,0,3) as String == "Jul")) "07" else if((substring(dte,0,3) as String == "Aug")) "08" else if((substring(dte,0,3) as String == "Sep")) "09" else if((substring(dte,0,3) as String == "Oct")) "10" else if((substring(dte,0,3) as String == "Nov")) "11" else if((substring(dte,0,3) as String == "Dec")) "12" else "") ++ "-" ++ (substring(dte,4,5) as String) ++ "T" ++ (substring(dte,13,21) as String)
+
+//Funciones para sumar campo cantidad en mercancias
+fun sumTot(canTot) = canTot reduce ((item, accumulator=0)->accumulator + item.cantidad as Number)
+fun suma(cantidad) = sum(cantidad map ((item, index) -> item.cantidad as Number))
+---
+{
+	"traxion": {
+		"empresa": payload.traxion.empresa,
+		"fecha_hora": now() as String {
+				format: "uuuu-MM-dd'T'KK:mm:ss"
+			},
+		"tipo_documento": payload.traxion.tipo_documento,
+		"tipo_operacion": payload.traxion.tipo_operacion,
+		"identificador_pedido": payload.traxion.identificador_pedido
+	},
+	"carta_porte": {
+		"version": payload.carta_porte.version,
+		"IdCCP": "",
+		"pais_origen_destino": payload.carta_porte.pais_origen_destino,
+		"tipo": {
+			"via_entrada_salida": "01",
+			"transporte_internacional": "No",
+			"entrada_salida": ""
+		},
+		"informacion_aduanera": {
+			"concepto": ""
+		},
+		"ubicaciones": [{
+			"id_estacion": payload.carta_porte.ubicaciones.emisor.id_estacion,
+			"tipo_estacion": payload.carta_porte.ubicaciones.emisor.tipo_estacion,
+			"remitente": payload.carta_porte.ubicaciones.emisor.rfc,
+			"distancia_recorrida": "0",
+			"num_reg_id_trib": "",
+			"pais_residencia": "",
+			"fecha": payload.carta_porte.ubicaciones.emisor.fecha,
+			"domicilio": {
+				"calle": payload.carta_porte.ubicaciones.emisor.domicilio.calle,
+				"estado": payload.carta_porte.ubicaciones.emisor.domicilio.estado,
+				"pais": payload.carta_porte.ubicaciones.emisor.domicilio.pais,
+				"postal": payload.carta_porte.ubicaciones.emisor.domicilio.postal
+			}
+		},
+      {
+			"id_estacion": payload.carta_porte.ubicaciones.receptor.id_estacion,
+			"tipo_estacion": payload.carta_porte.ubicaciones.receptor.tipo_estacion,
+			"remitente": payload.carta_porte.ubicaciones.receptor.rfc,
+			"distancia_recorrida": payload.carta_porte.ubicaciones.receptor.distancia_recorrida,
+			"num_reg_id_trib": "",
+			"pais_residencia": "",
+			"fecha": payload.carta_porte.ubicaciones.receptor.fecha,
+			"domicilio": {
+				"calle": payload.carta_porte.ubicaciones.receptor.domicilio.calle,
+				"estado": payload.carta_porte.ubicaciones.receptor.domicilio.estado,
+				"pais": payload.carta_porte.ubicaciones.receptor.domicilio.pais,
+				"postal": payload.carta_porte.ubicaciones.receptor.domicilio.postal
+			}
+		}],
+		"mercancias": {
+			"total_mercancias": sumTot(payload.carta_porte.mercancias.detalles), //Otra forma de hacerlo directo en el campo: sumTot(payload.carta_porte.mercancias.detalles) 
+			//| payload.carta_porte.mercancias.detalles reduce ((item, accumulator=0) ->accumulator + item.cantidad )  
+			//|  sum(payload.carta_porte.mercancias.detalles map ((item, index) ->item.cantidad as Number ))
+			//|  sum(payload.carta_porte.mercancias.detalles map ($.cantidad as Number))
+			//|  suma(payload.carta_porte.mercancias.detalles)
+			"unidad_peso": "KGM",
+			"detalles": payload.carta_porte.mercancias.detalles map {
+				($)
+			}
+		},
+		"figura_transporte": payload.carta_porte.figura_transporte,
+		"traslado": vars.traslado
+	}
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<choice doc:name="Choice" doc:id="a85d09a3-3012-4ea9-a120-4b236e6a46b2">
+			<when expression='#[upper(payload.traxion.tipo_documento) == "TRASLADO"]'>
+				<parse-template doc:name="Idoc traslado" doc:id="267749b4-f6f0-468e-a0f2-9cee278ab9c5" location="template_cfdi/template_idoc_traslado.xml" outputMimeType="application/xml" outputEncoding="UTF-8" />
+			</when>
+			<otherwise>
+				<parse-template doc:name="Idoc sustitucion" doc:id="07cd2cd3-2c7e-4e31-a9d1-b9c43f31adf4" location="template_cfdi/template_idoc_sustitucion.xml" outputMimeType="application/xml" outputEncoding="UTF-8" />
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Transform template to xml" doc:id="b516a25c-49f7-4e49-b86e-3e4cfd1a4542">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml writeDeclaration = false
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Mapping mercancías, set variable mercancias" doc:id="3b03ba03-fa26-4223-b74b-f80e9608d754">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="mercancias"><![CDATA[%dw 2.0
+output application/xml writeDeclaration=false
+
+import * from dw::core::Strings
+---
+root:{
+    E1EDMXCFDIK08_LINE @(SEGMENT:1): vars.originalPayload.carta_porte.mercancias.detalles map ((item, index) -> {
+        QUANTITY: item.cantidad,
+      ID_NUMBER: leftPad(index +1,6,0),
+      DESCRIPT: item.descripcion,
+      UNIT_PRICE: 0,
+      AMOUNT_NET: 0,
+      ITEMNUM_INT: rightPad(leftPad(index +1,5,0),6,0),
+      CLAVE_UNIDAD: item.clave,
+      OBJETO_IMP: "01",
+      E1EDMXCFDIK33_08_LINE @(SEGMENT:1):{
+          PRODUCT_CODE: item.clave_producto,
+          UOM_CODE: "E48",
+          DISCOUNT: null
+      },
+      E1EDPT1 @(SEGMENT:1):{
+      	TDID: "CGD",
+      	TSSPRAS: "S",
+      	TSSPRAS_ISO: "ES",
+      	E1EDPT2 @(SEGMENT:1):{
+      		TDLINE: item.descripcion,
+      		TDFORMAT: "*"
+      	}
+      }
+    })
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Add mercancias into template xml" doc:id="4eb3dfe6-3115-49c1-81d5-752c05dd36a7">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml writeDeclaration = false
+---
+payload update{
+	case merc at.MXCFDIREQ002.IDOC -> {
+		(merc ++ vars.mercancias.root)
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Set variable arg0, tansform payload to base64" doc:id="a06ec61e-6edc-42ae-8832-6d38191574db">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="arg0"><![CDATA[%dw 2.0
+output text/plain
+import * from dw::core::Binaries
+fun base64() = do{
+	var xml = write(payload, 'text/xml', {writeDeclaration: "false"})
+	---
+	toBase64(xml as Binary)
+}
+---
+base64()]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Add generarComprobante node to original payload and set request variable" doc:id="1b2b2ffd-2c28-4cfd-a070-42ced4803647">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://ws.edifactwstraxion/
+---
+vars.originalPayloadCp ++ 	"generaComprobante": {
+		arg0: vars.arg0,
+		arg1: vars.originalPayloadCp.carta_porte.traslado.emisor.rfc,
+		arg2: "FA",
+		arg3: now() >> "America/Mexico_City" as String {format: "yyyy-MM-dd'T'HH:mm:ss"},
+		arg4: "TRAXIONEDIFACT",
+		arg5: "3D1FACTMX2020\$"
+	}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="request"><![CDATA[%dw 2.0
+output application/java
+---
+{
+	path: Mule::p('client.system.pac.http.path.comprobante'),
+	method: "POST",
+	queryParams:{
+		cartaPorte: 'true'
+	}
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<async doc:name="Async" doc:id="ee6fb9de-d426-4fa2-87da-df16ac3a981b">
+			<ee:transform doc:name="Transform original payload carta porte" doc:id="6ba866f1-307f-461b-8b45-e26f548104f0">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	correlationId: correlationId,
+	empresa: vars.originalPayloadCp.traxion.empresa,
+	tipoDocumento:  vars.originalPayloadCp.traxion.tipo_documento,
+	tipoOperacion:  vars.originalPayloadCp.traxion.tipo_operacion,
+	idPedido:  vars.originalPayloadCp.traxion.identificador_pedido,
+	trackingLogger: "salesorder_request",
+	message: write(payload),
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<flow-ref doc:name="Call-client-jms" doc:id="be0c6bff-e126-4a3e-a342-fecba627fcbe" name="client-jms" />
+		</async>
+		<flow-ref doc:name="Call-client-system-edifact" doc:id="ffb756d7-2f09-4d30-acb9-abbc5f5a6dc1" name="client-system-edifact" />
+		<async doc:name="Async" doc:id="8f6a70ec-dd83-4939-b7de-7fb919113603">
+			<ee:transform doc:name="Transform original payload carta porte" doc:id="02b0de36-36f6-4268-96f8-d54f7574dfcc">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	correlationId: correlationId,
+	empresa: vars.originalPayloadCp.traxion.empresa,
+	tipoDocumento:  vars.originalPayloadCp.traxion.tipo_documento,
+	tipoOperacion:  vars.originalPayloadCp.traxion.tipo_operacion,
+	idPedido:  vars.originalPayloadCp.traxion.identificador_pedido,
+	trackingLogger: "salesorder_response",
+	message: write(payload),
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<flow-ref doc:name="Call-client-jms" doc:id="0cde8ac9-36d5-41fe-8b87-08bfd9359bf6" name="client-jms" />
+		</async>
+	</sub-flow>
+	<sub-flow name="orchestrator-post-tms-shipments-provision-sap-process-001" doc:id="aec606f4-a705-4f8b-aff5-2b3a661cf08f" >
+		<ee:transform doc:name="Set request income provision" doc:id="170094e0-5012-49df-b3c4-92f401dcc433" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+import modules::myGlobalFunctions as globalFunctions
+import * from dw::util::Coercions
+fun formatdate(d: DateTime) = d as String {
+	format: "yyyyMMdd"
+}
+---
+{
+	"operation": "provisioningreso",
+	"order": "1",
+	"originalRequst": true,
+	"sap_request": {
+		"IM_SYSTEM": "0000000015",
+		"PROCESS": "001", //001 provision ingreso y 003 para peido de venta (orden de venta), 002 actualización de provisión, 004 carta porte(pedido venta con factura), 06A sustitución
+		"SERIE": "",
+		"VBAK_VKORG": "MD00",
+		"VBAK_VTWEG": "10",
+		"VBAK_SPART": "10",
+		"VBAK_VKBUR": "MD00",
+		"VBAK_VKGRP": "MD0",
+		"VBAK_XBLNR": "",
+		"KUAGV_KUNNR": vars.originalPayload.sap_info.id_cliente,
+		"VBKD_BSTKD": vars.originalPayload.sap_info.numero_pedido,
+		"VBKD_BSTDK": formatdate(now() >> toTimeZone("America/Mexico_City")),
+		"VBKD_ZTERM": "N015",
+		"VBAK_AUGRU": "C10",
+		"VBAK_WAERK": vars.originalPayload.sap_info.codigo_moneda,
+		"VBAK_ABRVW": "N",
+		"VBKD_BZIRK": "Z01001",
+		"VBKD_KDKG1": "01",
+		"VBKD_SDABW": "0001",
+		"VBPA_PARVW1": "",
+		"VBPA_KUNNR1": "",
+		"VBPA_PARVW2": "",
+		"VBPA_KUNNR2": "",
+		"VBPA_PARVW3": "",
+		"VBPA_KUNNR3": "",
+		"VBKD_BSARK": "CMX",
+		"VBAK_BNAME": "",
+		"VBAK_TELF1": "",
+		"VBAK_SUBMI": "",
+		"VBKD_IHREZ_E": "",
+		"VBKD_BSTKD_E": "",
+		"VBKD_BSTDK_E": "",
+		"VBAK_KVGR1": "999",
+		"VBAK_KVGR2": "",
+		"KONV_KBETR": vars.originalPayload.sap_info.monto,
+		"TEXT_LINE_C001": vars.originalPayload.sap_info.numero_pedido,
+		"TEXT_LINE_C002": "",
+		"TEXT_LINE_C003": "AjusteDIC1.5",
+		"TEXT_LINE_C004": "",
+		"TEXT_LINE_C005": "",
+		"TEXT_LINE_C006": "",
+		"TEXT_LINE_C007": "r.baez",
+		"IM_T_SD_P_": [{
+			"VBAP_POSNR": "000010",
+			"VBAP_MATNR": "000000000003000727",
+			"VBAP_ARKTX": "Servicios Logisticos",
+			"VBAP_KDMAT": "",
+			"VBAP_KWMENG": "1",
+			"VBAP_VRKME": "",
+			"TEXT_LINE_P001": "",
+			"VBAP_WERKS": "6001",
+			"VBKD_IHREZ": "",
+			"VBAP_VOLUM": "",
+			"VBKD_KDKG1": "01",
+			"VBKD_SDABW": "0001",
+			"VBAP_NTGEW": "",
+			"KONP_KBETR": vars.originalPayload.sap_info.monto,
+			"COBL_PRCTR": vars.originalPayload.sap_info.centro_beneficio,
+			"VBEP_TDDAT": formatdate(now() >> toTimeZone("America/Mexico_City")),
+			"VBEP_TDUHR": "000000",
+			"VBEP_EDATU": formatdate(now() >> toTimeZone("America/Mexico_City")),
+			"VBEP_EZEIT": "000000"
+		}],
+		"EX_RETURN": {
+			"IM_SYSTEM": "",
+			"PROCESS": "",
+			"VBRK_VBELN": "",
+			"VBAK_VBELN": "",
+			"VBKD_BSTKD": "",
+			"EXT_T_MENSAJE": [""]
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="Call-client-system-sap" doc:id="c31826b0-288a-440f-9b51-8baa6de9ce4f" name="client-system-sap" target="provIngrResp"/>
+	</sub-flow>
+	<sub-flow name="orchestrator-post-tms-shipments-sales-order-process-003" doc:id="d2cedf08-cba3-4d34-ab6d-aeda8aeb82d8" >
+		<ee:transform doc:name="Set request sales order" doc:id="80372159-f58f-4260-9ea8-5cc4edd4ec65" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+import modules::myGlobalFunctions as globalFunctions
+import * from dw::util::Coercions
+fun formatdate(d: DateTime) = d as String {
+	format: "yyyyMMdd"
+}
+---
+{
+	"operation": "pedidoventa",
+	"order": "1",
+	"originalRequst": true,
+	"sap_request": {
+		"IM_SYSTEM": "0000000015",
+		"PROCESS": "003", //001 provision ingreso y 003 para peido de venta (orden de venta), 002 actualización de provisión, 004 carta porte(pedido venta con factura), 06A sustitución
+		"SERIE": "",
+		"VBAK_VKORG": "MD00",
+		"VBAK_VTWEG": "10",
+		"VBAK_SPART": "10",
+		"VBAK_VKBUR": "MD00",
+		"VBAK_VKGRP": "MD0",
+		"VBAK_XBLNR": "",
+		"KUAGV_KUNNR": vars.originalPayload.sap_info.id_cliente,
+		"VBKD_BSTKD": vars.originalPayload.sap_info.numero_pedido,
+		"VBKD_BSTDK": formatdate(now() >> toTimeZone("America/Mexico_City")),
+		"VBKD_ZTERM": "N015",
+		"VBAK_AUGRU": "C10",
+		"VBAK_WAERK": vars.originalPayload.sap_info.codigo_moneda,
+		"VBAK_ABRVW": "N",
+		"VBKD_BZIRK": "Z01001",
+		"VBKD_KDKG1": "01",
+		"VBKD_SDABW": "0001",
+		"VBPA_PARVW1": "",
+		"VBPA_KUNNR1": "",
+		"VBPA_PARVW2": "",
+		"VBPA_KUNNR2": "",
+		"VBPA_PARVW3": "",
+		"VBPA_KUNNR3": "",
+		"VBKD_BSARK": "CMX",
+		"VBAK_BNAME": "",
+		"VBAK_TELF1": "",
+		"VBAK_SUBMI": "",
+		"VBKD_IHREZ_E": "",
+		"VBKD_BSTKD_E": "",
+		"VBKD_BSTDK_E": "",
+		"VBAK_KVGR1": "999",
+		"VBAK_KVGR2": "",
+		"KONV_KBETR": vars.originalPayload.sap_info.monto,
+		"TEXT_LINE_C001": vars.originalPayload.sap_info.numero_pedido,
+		"TEXT_LINE_C002": "",
+		"TEXT_LINE_C003": "AjusteDIC1.5",
+		"TEXT_LINE_C004": "",
+		"TEXT_LINE_C005": "",
+		"TEXT_LINE_C006": "",
+		"TEXT_LINE_C007": "r.baez",
+		"IM_T_SD_P_": [{
+			"VBAP_POSNR": "000010",
+			"VBAP_MATNR": "000000000003000727",
+			"VBAP_ARKTX": "Servicios Logisticos",
+			"VBAP_KDMAT": "",
+			"VBAP_KWMENG": "1",
+			"VBAP_VRKME": "",
+			"TEXT_LINE_P001": "",
+			"VBAP_WERKS": "6001",
+			"VBKD_IHREZ": "",
+			"VBAP_VOLUM": "",
+			"VBKD_KDKG1": "01",
+			"VBKD_SDABW": "0001",
+			"VBAP_NTGEW": "",
+			"KONP_KBETR": vars.originalPayload.sap_info.monto,
+			"COBL_PRCTR": vars.originalPayload.sap_info.centro_beneficio,
+			"VBEP_TDDAT": formatdate(now() >> toTimeZone("America/Mexico_City")),
+			"VBEP_TDUHR": "000000",
+			"VBEP_EDATU": formatdate(now() >> toTimeZone("America/Mexico_City")),
+			"VBEP_EZEIT": "000000"
+		}],
+		"EX_RETURN": {
+			"IM_SYSTEM": "",
+			"PROCESS": "",
+			"VBRK_VBELN": "",
+			"VBAK_VBELN": "",
+			"VBKD_BSTKD": "",
+			"EXT_T_MENSAJE": [""]
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="Call-client-system-sap" doc:id="15024487-9a73-436b-814b-685ed0fe5ab4" name="client-system-sap" target="salOrdResp"/>
+	</sub-flow>
+	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-final-response" doc:id="5a6da724-b2c0-4717-9531-935fbe5d1f19" >
+		<ee:transform doc:name="Set final response" doc:id="92d3d3c6-ecff-466e-b626-db468ced7e58" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+ns ns2 http://ws.edifactwstraxion/
+---
+{
+  "traxion_response": {
+    "completed_succesfully": true,
+    "response": {
+      "operation": "generar_pedido_venta_con_carta_porte",
+      "identificador_pedido": vars.provIngrResp.d.EX_RETURN.VBKD_BSTKD,
+      "numero_factura_provision": vars.provIngrResp.d.EX_RETURN.VBRK_VBELN,
+      "numero_pedido_provision": vars.provIngrResp.d.EX_RETURN.VBAK_VBELN,
+      "numero_factura_venta": vars.salOrdResp.d.EX_RETURN.VBRK_VBELN,
+      "numero_pedido_venta": vars.salOrdResp.d.EX_RETURN.VBAK_VBELN,
+      "correlation_id": correlationId
+    },
+    "response_pac": {
+      "return": {
+        "codigo": vars.cpResponse.body.ns2#generaComprobanteResponse.return.codigo,
+        "descripcion": vars.cpResponse.body.ns2#generaComprobanteResponse.return.descripcion,
+        "documentopdf": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.documentopdf),
+        "documentoxml": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.documentoxml),
+        "fechaTimbrado": vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado,
+        "noCertificado": vars.cpResponse.body.ns2#generaComprobanteResponse.return.noCertificado,
+        "selloCFDI": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.selloCFDI),
+        "selloSAT": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.selloSAT),
+        "UUID": vars.cpResponse.body.ns2#generaComprobanteResponse.return.UUID
+      }
+    }
+  }
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
 </mule>
