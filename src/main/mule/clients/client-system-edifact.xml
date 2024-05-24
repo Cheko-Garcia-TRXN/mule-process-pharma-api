@@ -6,12 +6,30 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<flow name="client-system-edifact" doc:id="9d53c7d2-0739-43cf-b167-24baebafb6af" >
-		<http:request method="#[vars.request.method]" doc:name="Request" doc:id="809ad3f8-f3ff-48d0-8ea3-85d7b0e7f1c6" config-ref="HTTP_Request_configuration-System-edifact-connection" path="#[vars.request.path]" outputMimeType="application/xml" sendCorrelationId="ALWAYS" correlationId="#[correlationId]" target="cpResponse">
+		<try doc:name="Try" doc:id="0f650f65-5a9d-49a8-a960-9c0685df722b" >
+			<http:request method="#[vars.request.method]" doc:name="Request" doc:id="809ad3f8-f3ff-48d0-8ea3-85d7b0e7f1c6" config-ref="HTTP_Request_configuration-System-edifact-connection" path="#[vars.request.path]" outputMimeType="application/xml" sendCorrelationId="ALWAYS" correlationId="#[correlationId]" target="cpResponse">
 			<http:query-params><![CDATA[#[%dw 2.0
 output application/json
 ---
 vars.request.queryParams]]]></http:query-params>
 		</http:request>
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7da575d5-498d-42d5-ac10-2de194d9fc32" >
+					<raise-error doc:name="Raise error" doc:id="3c3ea09b-f537-429a-ab6b-917c8bbd2f86" type="ERROR:CARTAPORTECAMPORFC" description="Error al crear carta porte. Falta ingresar el RFC en alguno de los campos correspondientes dentro del array ubicaciones."/>
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<choice doc:name="Choice" doc:id="8cf3eaa0-a692-40ec-bfd2-3841b99d6f5e">
+			<when expression="#[%dw 2.0&#10;output application/json&#10;ns ns2 http://ws.edifactwstraxion/&#10;---&#10;vars.cpResponse.body.ns2#generaComprobanteResponse.return.codigo != '100' and vars.cpResponse.body.ns2#generaComprobanteResponse.return.codigo != 'JE100']" >
+				<raise-error doc:name="Raise error" doc:id="25a17975-35ac-4bd9-ba47-75b8ca58c8ae" type="ERROR:CARTAPORTE" description="ERROR AL GENERAR LA CARTA PORTE." />
+			</when>
+			<when expression="#[%dw 2.0&#10;output application/json&#10;ns ns2 http://ws.edifactwstraxion/&#10;---&#10;vars.cpResponse.body.ns2#generaComprobanteResponse.return.codigo == 'JE100']" >
+				<raise-error doc:name="Raise error" doc:id="0350d100-4073-4212-acb0-131d4f713e71" type="ERROR:BADRFCCARTAPORTE" description="Algun RFC ingresado dentro del array ubicaciones, es incorrecto, no cumple con la condición de un RFC válido, no está dado de alta en SAT."/>
+			</when>
+			<otherwise>
+					<logger level="INFO" doc:name="Logger" doc:id="75bb210c-57c0-47ee-add7-7fa1598d5051" message="#[vars.cpResponse]" />
+				</otherwise>
+		</choice>
 		<error-handler>
 			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e457393b-5810-4262-8d3a-f50ff46e05c8" type="HTTP:BAD_REQUEST, HTTP:CLIENT_SECURITY, HTTP:FORBIDDEN, HTTP:INTERNAL_SERVER_ERROR, HTTP:METHOD_NOT_ALLOWED, HTTP:NOT_ACCEPTABLE, HTTP:NOT_FOUND, HTTP:PARSING, HTTP:RETRY_EXHAUSTED, HTTP:SECURITY, HTTP:SERVICE_UNAVAILABLE, HTTP:TIMEOUT, HTTP:TOO_MANY_REQUESTS, HTTP:UNAUTHORIZED, HTTP:UNSUPPORTED_MEDIA_TYPE, EXPRESSION, STREAM_MAXIMUM_SIZE_EXCEEDED">
 				<ee:transform doc:name="Transform Message" doc:id="2f209ba3-5dea-4ad2-bf9f-d9a491b45386" >

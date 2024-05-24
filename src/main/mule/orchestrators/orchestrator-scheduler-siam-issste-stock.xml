@@ -7,7 +7,7 @@
 	xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd 
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
-	<flow name="orchestrator-scheduler-siam-issste-stockFlow" doc:id="e91a72b8-6e4d-41a9-88ca-0fd9cfa97109" >
+	<flow name="orchestrator-scheduler-siam-issste-stockFlow" doc:id="e91a72b8-6e4d-41a9-88ca-0fd9cfa97109" initialState="stopped">
 		<scheduler doc:name="Scheduler" doc:id="31148e41-5b70-4b2b-be7a-d0b3ff43dab4" >
 			<scheduling-strategy >
 				<fixed-frequency frequency="10" timeUnit="MINUTES"/>

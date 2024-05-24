@@ -13,14 +13,14 @@
 			<DISCOUNT/>
 			<TOTAL>0</TOTAL><!--Cero sin decimales -->
 			<!--<PAYM_MEANS>99</PAYM_MEANS>No mandar este nodo para CFDI 4.0-->
-			<INST_ORI_FOLIO>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.folio]</INST_ORI_FOLIO><!--Folio -->
-			<INST_ORI_PREFIX>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.serie]</INST_ORI_PREFIX><!--Seria -->
+			<INST_ORI_FOLIO>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.folio]</INST_ORI_FOLIO><!--Folio -->
+			<INST_ORI_PREFIX>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.serie]</INST_ORI_PREFIX><!--Seria -->
 			<ISSUING_PLACE>76120</ISSUING_PLACE>
 			<DOCNUM/><!--0090243201 -->
 			<REFTYPE>B</REFTYPE><!--Folio -->
 			<FISCAL_YEAR>#[now() as String {format: "yyyy"}]</FISCAL_YEAR>
 			<CMPNY_CODE>TE00</CMPNY_CODE>
-			<EXPORTACION>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.exportacion]</EXPORTACION><!--Campo nuevo CFDI 4.0 -->
+			<EXPORTACION>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.exportacion]</EXPORTACION><!--Campo nuevo CFDI 4.0 -->
 			<E1EDMXCFDIK33_01 SEGMENT="1"/>
 		</E1EDMXCFDIK01>
 		<E1EDKT1 SEGMENT="1">
@@ -28,10 +28,10 @@
             <TSSPRAS>S</TSSPRAS>
             <TSSPRAS_ISO>ES</TSSPRAS_ISO>
         </E1EDKT1>
-		<E1EDKT2 SEGMENT="1">
+        <E1EDKT2 SEGMENT="1">
             <TDLINE>
             	<cfdi:Addenda xmlns:cfdi="http://www.sat.gob.mx/cfd/3">
-                    <redpack referenciaPago="03005498268082979"/>
+                    <medistik referenciaPago=""/>
                 </cfdi:Addenda>
                 <cfdi:Addenda2 xmlns:cfdi="http://www.sat.gob.mx/cfd/3">
                     <Nombrecliente/>
@@ -46,43 +46,26 @@
             <TDFORMAT>=</TDFORMAT>
         </E1EDKT2>
 		<E1EDMXCFDIK02 SEGMENT="1">
-			<CMPNY_TAX_N>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.emisor.rfc]</CMPNY_TAX_N>
-			<CMPNY_NAME>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.emisor.nombre]</CMPNY_NAME>
+			<CMPNY_TAX_N>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.ubicaciones[0].remitente]</CMPNY_TAX_N>
+			<CMPNY_NAME>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.ubicaciones[0].nombre]</CMPNY_NAME>
 		</E1EDMXCFDIK02>
 		<E1EDMXCFDIK03 SEGMENT="1">
-			<CMPNY_DISTRICT>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.emisor.domicilio.calle]</CMPNY_DISTRICT>
-			<CMPNY_CITY>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.emisor.domicilio.estado]</CMPNY_CITY>
-			<CMPNY_2ND_DISTRICT>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.emisor.domicilio.calle2]</CMPNY_2ND_DISTRICT>
-			<CMPNY_STATE>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.emisor.domicilio.estado]</CMPNY_STATE>
-			<CMPNY_COUNTRY>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.emisor.domicilio.pais]</CMPNY_COUNTRY>
-			<CMPNY_POST_CODE>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.emisor.domicilio.postal]</CMPNY_POST_CODE>
+			<CMPNY_DISTRICT>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.ubicaciones[0].domicilio.calle]</CMPNY_DISTRICT>
+			<CMPNY_CITY>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.ubicaciones[0].domicilio.ciudad]</CMPNY_CITY>
+			<CMPNY_2ND_DISTRICT>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.ubicaciones[0].domicilio.calle2]</CMPNY_2ND_DISTRICT>
+			<CMPNY_STATE>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.ubicaciones[0].domicilio.estado]</CMPNY_STATE>
+			<CMPNY_COUNTRY>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.ubicaciones[0].domicilio.pais]</CMPNY_COUNTRY>
+			<CMPNY_POST_CODE>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.ubicaciones[0].domicilio.postal]</CMPNY_POST_CODE>
 		</E1EDMXCFDIK03>
 		<E1EDMXCFDIK04 SEGMENT="1">
-			<SO_DISTRICT>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.emisor.domicilio.calle]</SO_DISTRICT>
-			<SO_CITY>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.emisor.domicilio.estado]</SO_CITY>
-			<SO_STATE>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.emisor.domicilio.estado]</SO_STATE>
-			<SO_COUNTRY>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.emisor.domicilio.pais]</SO_COUNTRY>
-			<SO_POST_CODE>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.emisor.domicilio.postal]</SO_POST_CODE>
+			<SO_DISTRICT>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.ubicaciones[0].domicilio.calle]</SO_DISTRICT>
+			<SO_CITY>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.ubicaciones[0].domicilio.ciudad]</SO_CITY>
+			<SO_STATE>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.ubicaciones[0].domicilio.estado]</SO_STATE>
+			<SO_COUNTRY>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.ubicaciones[0].domicilio.pais]</SO_COUNTRY>
+			<SO_POST_CODE>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.ubicaciones[0].domicilio.postal]</SO_POST_CODE>
 		</E1EDMXCFDIK04>
 		<E1EDMXCFDIK05 SEGMENT="1">
-			<TAX_REGIME>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.emisor.regimen_fiscal]</TAX_REGIME>
+			<TAX_REGIME>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.ubicaciones[0].regimen_fiscal]</TAX_REGIME>
 		</E1EDMXCFDIK05>
-		<E1EDMXCFDIK06 SEGMENT="1">
-			<CUST_TAX_NUM>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.receptor.rfc]</CUST_TAX_NUM>
-			<CUST_NAME>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.receptor.nombre]</CUST_NAME>
-			<E1EDMXCFDIK33_06 SEGMENT="1">				
-				<CFDI_USAGE>S01</CFDI_USAGE>
-				<DOMICILIO_FISCAL_RECEPTOR>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.receptor.domicilio.postal]</DOMICILIO_FISCAL_RECEPTOR><!--Campo nuevo CFDI 4.0 -->
-				<REGIMEN_FISCAL_RECEPTOR>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.receptor.regimen_fiscal]</REGIMEN_FISCAL_RECEPTOR><!--Campo nuevo CFDI 4.0 -->
-			</E1EDMXCFDIK33_06>
-		</E1EDMXCFDIK06>
-		<E1EDMXCFDIK07 SEGMENT="1">
-			<CMPNY_DISTRICT>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.receptor.domicilio.calle]</CMPNY_DISTRICT>
-			<CMPNY_CITY>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.receptor.domicilio.estado]</CMPNY_CITY>
-			<CMPNY_2ND_DISTRICT>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.receptor.domicilio.calle2]</CMPNY_2ND_DISTRICT>
-			<CMPNY_STATE>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.receptor.domicilio.estado]</CMPNY_STATE>
-			<CMPNY_COUNTRY>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.receptor.domicilio.pais]</CMPNY_COUNTRY>
-			<CMPNY_POST_CODE>#[%dw 2.0 output text/plain --- vars.originalPayloadCp.carta_porte.traslado.receptor.domicilio.postal]</CMPNY_POST_CODE>
-		</E1EDMXCFDIK07>
 	</IDOC>
 </MXCFDIREQ002>

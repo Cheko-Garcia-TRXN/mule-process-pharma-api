@@ -10,7 +10,11 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-traslado" doc:id="c0a290e5-be59-42c0-a2e9-648bf7054c63" name="orchestrator-post-tms-shipments-bill-lading-traslado"/>
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-provision-sap-process-001" doc:id="0b8b7314-ad16-4606-9340-4643bc31ab0f" name="orchestrator-post-tms-shipments-provision-sap-process-001"/>
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-sales-order-process-003" doc:id="6ce8cca8-905f-4ed9-ac63-68622d8e21c5" name="orchestrator-post-tms-shipments-sales-order-process-003"/>
-		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-final-response" doc:id="04e5d29a-4d0c-4178-82ef-90a4bf7db1e1" name="orchestrator-post-tms-shipments-bill-lading-final-response"/>
+		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-join-responses-provs-sales" doc:id="d3b6c4fc-c252-4ad3-94cd-39f2d269da13" name="orchestrator-post-tms-shipments-bill-join-responses-provs-sales"/>
+		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-set-response-sap-info" doc:id="4eeb1c67-779c-40ad-a3b6-847ae827ca83" name="orchestrator-post-tms-shipments-bill-lading-set-response-sap-info"/>
+		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-bill-lading-iterates-sap-info-prov"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-iterates-sap-info-prov" doc:id="04e5d29a-4d0c-4178-82ef-90a4bf7db1e1" name="orchestrator-post-tms-shipments-bill-lading-iterates-sap-info-prov"/> [STUDIO] -->
+		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-bill-lading-iterates-sap-info-sales"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-iterates-sap-info-sales" doc:id="bce080ce-3ec1-4ea1-a163-62d92efcb34c" name="orchestrator-post-tms-shipments-bill-lading-iterates-sap-info-sales"/> [STUDIO] -->
+		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-update-response-sap-info" doc:id="3cf00b6a-8301-4b48-a012-d9f8def86952" name="orchestrator-post-tms-shipments-bill-lading-update-response-sap-info"/>
 		<logger level="INFO" doc:name="Logger" doc:id="e39f241f-9855-4733-998e-e881d99cac4c" message="#[payload]"/>
 	</sub-flow>
 	<sub-flow name="clients-system-unigis-bill_lading-request" doc:id="c751a93a-cfc7-4ece-9c09-e4b97e0321b1" >
@@ -35,7 +39,7 @@ payload.modificar_estado_guia.estado.id_guia]]></ee:set-variable>
 		<logger level="INFO" doc:name="Logger" doc:id="2d1339eb-df38-4a4f-ac52-4d97551d9763" message="#[payload]"/>
 	</sub-flow>
 	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-traslado" doc:id="7034adce-6810-4ee6-b910-d57ffade1e52">
-		<ee:transform doc:name="Transform Message" doc:id="ddea9e09-7ae5-4f19-aeb4-71683c87b481">
+		<ee:transform doc:name="Create mapping carta carta porte original structure" doc:id="ddea9e09-7ae5-4f19-aeb4-71683c87b481">
 			<ee:message>
 			</ee:message>
 			<ee:variables>
@@ -43,8 +47,7 @@ payload.modificar_estado_guia.estado.id_guia]]></ee:set-variable>
 output application/json
 import * from dw::core::Strings
 import * from dw::core::Dates
-fun date(dte) = (substring(dte,7,11) as String) ++ "-" ++ (if((substring(dte,0,3) as String == "Jan")) "01"  else if((substring(dte,0,3) as String == "Feb")) "02" else if((substring(dte,0,3) as String == "Mar")) "03" else if((substring(dte,0,3) as String == "Apr")) "04" else if((substring(dte,0,3) as String == "May")) "05" else if((substring(dte,0,3) as String == "Jun")) "06" else if((substring(dte,0,3) as String == "Jul")) "07" else if((substring(dte,0,3) as String == "Aug")) "08" else if((substring(dte,0,3) as String == "Sep")) "09" else if((substring(dte,0,3) as String == "Oct")) "10" else if((substring(dte,0,3) as String == "Nov")) "11" else if((substring(dte,0,3) as String == "Dec")) "12" else "") ++ "-" ++ (substring(dte,4,5) as String) ++ "T" ++ (substring(dte,13,21) as String)
-
+fun date(dte) = (substring(dte,7,11) as String) ++ "-" ++ (if ( (substring(dte,0,3) as String == "Jan") ) "01"  else if ( (substring(dte,0,3) as String == "Feb") ) "02" else if ( (substring(dte,0,3) as String == "Mar") ) "03" else if ( (substring(dte,0,3) as String == "Apr") ) "04" else if ( (substring(dte,0,3) as String == "May") ) "05" else if ( (substring(dte,0,3) as String == "Jun") ) "06" else if ( (substring(dte,0,3) as String == "Jul") ) "07" else if ( (substring(dte,0,3) as String == "Aug") ) "08" else if ( (substring(dte,0,3) as String == "Sep") ) "09" else if ( (substring(dte,0,3) as String == "Oct") ) "10" else if ( (substring(dte,0,3) as String == "Nov") ) "11" else if ( (substring(dte,0,3) as String == "Dec") ) "12" else "") ++ "-" ++ (substring(dte,4,5) as String) ++ "T" ++ (substring(dte,13,21) as String)
 //Funciones para sumar campo cantidad en mercancias
 fun sumTot(canTot) = canTot reduce ((item, accumulator=0)->accumulator + item.cantidad as Number)
 fun suma(cantidad) = sum(cantidad map ((item, index) -> item.cantidad as Number))
@@ -53,68 +56,81 @@ fun suma(cantidad) = sum(cantidad map ((item, index) -> item.cantidad as Number)
 	"traxion": {
 		"empresa": payload.traxion.empresa,
 		"fecha_hora": now() as String {
-				format: "uuuu-MM-dd'T'KK:mm:ss"
-			},
+			format: "uuuu-MM-dd'T'KK:mm:ss"
+		},
 		"tipo_documento": payload.traxion.tipo_documento,
 		"tipo_operacion": payload.traxion.tipo_operacion,
 		"identificador_pedido": payload.traxion.identificador_pedido
 	},
 	"carta_porte": {
 		"version": payload.carta_porte.version,
-		"IdCCP": "",
 		"pais_origen_destino": payload.carta_porte.pais_origen_destino,
+		"serie": payload.carta_porte.serie,
+		"exportacion": "01",
+		"folio": "",
 		"tipo": {
 			"via_entrada_salida": "01",
 			"transporte_internacional": "No",
 			"entrada_salida": ""
 		},
-		"informacion_aduanera": {
-			"concepto": ""
-		},
-		"ubicaciones": [{
-			"id_estacion": payload.carta_porte.ubicaciones.emisor.id_estacion,
-			"tipo_estacion": payload.carta_porte.ubicaciones.emisor.tipo_estacion,
-			"remitente": payload.carta_porte.ubicaciones.emisor.rfc,
-			"distancia_recorrida": "0",
+		"ubicaciones": payload.carta_porte.ubicaciones map ({
+			"id_estacion": $.id_estacion,
+			"tipo_estacion": $.tipo_estacion,
+			"remitente": $.rfc,
+			"distancia_recorrida": $.distancia_recorrida,
 			"num_reg_id_trib": "",
 			"pais_residencia": "",
-			"fecha": payload.carta_porte.ubicaciones.emisor.fecha,
+			"fecha": $.fecha,
+			"regimen_fiscal": $.regimen_fiscal,
+			"nombre": $.nombre,
 			"domicilio": {
-				"calle": payload.carta_porte.ubicaciones.emisor.domicilio.calle,
-				"estado": payload.carta_porte.ubicaciones.emisor.domicilio.estado,
-				"pais": payload.carta_porte.ubicaciones.emisor.domicilio.pais,
-				"postal": payload.carta_porte.ubicaciones.emisor.domicilio.postal
+				"calle": $.domicilio.calle,
+				"ciudad": $.domicilio.ciudad,
+				"estado": $.domicilio.estado,
+				"pais": $.domicilio.pais,
+				"postal": $.domicilio.postal
 			}
-		},
-      {
-			"id_estacion": payload.carta_porte.ubicaciones.receptor.id_estacion,
-			"tipo_estacion": payload.carta_porte.ubicaciones.receptor.tipo_estacion,
-			"remitente": payload.carta_porte.ubicaciones.receptor.rfc,
-			"distancia_recorrida": payload.carta_porte.ubicaciones.receptor.distancia_recorrida,
-			"num_reg_id_trib": "",
-			"pais_residencia": "",
-			"fecha": payload.carta_porte.ubicaciones.receptor.fecha,
-			"domicilio": {
-				"calle": payload.carta_porte.ubicaciones.receptor.domicilio.calle,
-				"estado": payload.carta_porte.ubicaciones.receptor.domicilio.estado,
-				"pais": payload.carta_porte.ubicaciones.receptor.domicilio.pais,
-				"postal": payload.carta_porte.ubicaciones.receptor.domicilio.postal
-			}
-		}],
+		}),
 		"mercancias": {
-			"total_mercancias": sumTot(payload.carta_porte.mercancias.detalles), //Otra forma de hacerlo directo en el campo: sumTot(payload.carta_porte.mercancias.detalles) 
-			//| payload.carta_porte.mercancias.detalles reduce ((item, accumulator=0) ->accumulator + item.cantidad )  
-			//|  sum(payload.carta_porte.mercancias.detalles map ((item, index) ->item.cantidad as Number ))
-			//|  sum(payload.carta_porte.mercancias.detalles map ($.cantidad as Number))
-			//|  suma(payload.carta_porte.mercancias.detalles)
-			"unidad_peso": "KGM",
-			"detalles": payload.carta_porte.mercancias.detalles map {
-				($)
-			}
+			"total_mercancias": sumTot(payload.carta_porte.mercancias.detalles), // Otra forma de hacerlo directo en el campo: sumTot(payload.carta_porte.mercancias.detalles) 
+			// | payload.carta_porte.mercancias.detalles reduce ((item, accumulator=0) ->accumulator + item.cantidad )  
+			// |  sum(payload.carta_porte.mercancias.detalles map ((item, index) ->item.cantidad as Number ))
+			// |  sum(payload.carta_porte.mercancias.detalles map ($.cantidad as Number))
+			// |  suma(payload.carta_porte.mercancias.detalles)
+			"unidad_peso": payload.carta_porte.mercancias.unidad_peso,
+			"detalles": payload.carta_porte.mercancias.detalles
 		},
 		"figura_transporte": payload.carta_porte.figura_transporte,
-		"traslado": vars.traslado
 	}
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Create mapping for nodes E1EDMXCFDIK06 and E1EDMXCFDIK07 to add to idoc structure" doc:id="d4beaf15-37aa-48de-b03a-84b8a2ce891f" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="nodesIdoc" ><![CDATA[%dw 2.0
+output application/xml writeDeclaration=false
+import * from dw::core::Arrays
+---
+root:{
+    E1EDMXCFDIK06 @(SEGMENT:1): drop(payload.carta_porte.ubicaciones,1) map ((item, index) -> {
+        CUST_TAX_NUM: item.rfc,
+        CUST_NAME: item.nombre,
+        E1EDMXCFDIK33_06 @(SEGMENT:1):{
+            CFDI_USAGE: "S01",
+            DOMICILIO_FISCAL_RECEPTOR: item.domicilio.postal,
+            REGIMEN_FISCAL_RECEPTOR: item.regimen_fiscal
+        }
+      }),
+      E1EDMXCFDIK07 @(SEGMENT:1): drop(payload.carta_porte.ubicaciones,1) map ((item, index) -> {
+            CMPNY_DISTRICT: item.domicilio.calle,
+            CMPNY_CITY: item.domicilio.ciudad,
+            CMPNY_2ND_DISTRICT: item.domicilio.calle2,
+            CMPNY_STATE: item.domicilio.estado,
+            CMPNY_COUNTRY: item.domicilio.pais,
+            CMPNY_POST_CODE: item.domicilio.postal
+        })
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
@@ -131,7 +147,11 @@ fun suma(cantidad) = sum(cantidad map ((item, index) -> item.cantidad as Number)
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/xml writeDeclaration = false
 ---
-payload]]></ee:set-payload>
+payload  update {
+    case nodes at.MXCFDIREQ002.IDOC -> {
+        (nodes ++ vars.nodesIdoc.root)
+    }
+}]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<ee:transform doc:name="Mapping mercancías, set variable mercancias" doc:id="3b03ba03-fa26-4223-b74b-f80e9608d754">
@@ -207,7 +227,7 @@ ns ns0 http://ws.edifactwstraxion/
 ---
 vars.originalPayloadCp ++ 	"generaComprobante": {
 		arg0: vars.arg0,
-		arg1: vars.originalPayloadCp.carta_porte.traslado.emisor.rfc,
+		arg1: vars.originalPayloadCp.carta_porte.ubicaciones[0].remitente,
 		arg2: "FA",
 		arg3: now() >> "America/Mexico_City" as String {format: "yyyy-MM-dd'T'HH:mm:ss"},
 		arg4: "TRAXIONEDIFACT",
@@ -268,11 +288,113 @@ output application/json
 		</async>
 	</sub-flow>
 	<sub-flow name="orchestrator-post-tms-shipments-provision-sap-process-001" doc:id="aec606f4-a705-4f8b-aff5-2b3a661cf08f" >
-		<ee:transform doc:name="Set request income provision" doc:id="170094e0-5012-49df-b3c4-92f401dcc433" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+		<!-- [STUDIO:"For Each"]<foreach doc:name="For Each" doc:id="4d777a31-dd54-416e-8748-df8597b121ba" collection="#[vars.originalPayload.sap_info&#93;">
+			<ee:transform doc:name="Set request income provision" doc:id="170094e0-5012-49df-b3c4-92f401dcc433">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
-import modules::myGlobalFunctions as globalFunctions
+import * from dw::util::Coercions
+fun formatdate(d: DateTime) = d as String {
+	format: "yyyyMMdd"
+}
+&#45;&#45;-
+{
+	"operation": "provisioningreso",
+	"order": "1",
+	"originalRequst": true,
+	"sap_request": {
+		"IM_SYSTEM": "0000000015",
+		"PROCESS": "001", //001 provision ingreso y 003 para peido de venta (orden de venta), 002 actualización de provisión, 004 carta porte(pedido venta con factura), 06A sustitución
+		"SERIE": "",
+		"VBAK_VKORG": "MD00",
+		"VBAK_VTWEG": "10",
+		"VBAK_SPART": "10",
+		"VBAK_VKBUR": "MD00",
+		"VBAK_VKGRP": "MD0",
+		"VBAK_XBLNR": "",
+		"KUAGV_KUNNR": payload.id_cliente,
+		"VBKD_BSTKD": payload.numero_pedido,
+		"VBKD_BSTDK": formatdate(now() >> toTimeZone("America/Mexico_City")),
+		"VBKD_ZTERM": "N015",
+		"VBAK_AUGRU": "C10",
+		"VBAK_WAERK": payload.codigo_moneda,
+		"VBAK_ABRVW": "N",
+		"VBKD_BZIRK": "Z01001",
+		"VBKD_KDKG1": "01",
+		"VBKD_SDABW": "0001",
+		"VBPA_PARVW1": "",
+		"VBPA_KUNNR1": "",
+		"VBPA_PARVW2": "",
+		"VBPA_KUNNR2": "",
+		"VBPA_PARVW3": "",
+		"VBPA_KUNNR3": "",
+		"VBKD_BSARK": "CMX",
+		"VBAK_BNAME": "",
+		"VBAK_TELF1": "",
+		"VBAK_SUBMI": "",
+		"VBKD_IHREZ_E": "",
+		"VBKD_BSTKD_E": "",
+		"VBKD_BSTDK_E": "",
+		"VBAK_KVGR1": "999",
+		"VBAK_KVGR2": "",
+		"KONV_KBETR": payload.monto,
+		"TEXT_LINE_C001": payload.numero_pedido,
+		"TEXT_LINE_C002": "",
+		"TEXT_LINE_C003": "AjusteDIC1.5",
+		"TEXT_LINE_C004": "",
+		"TEXT_LINE_C005": "",
+		"TEXT_LINE_C006": "",
+		"TEXT_LINE_C007": "r.baez",
+		"IM_T_SD_P_": [{
+			"VBAP_POSNR": "000010",
+			"VBAP_MATNR": "000000000003000727",
+			"VBAP_ARKTX": "Servicios Logisticos",
+			"VBAP_KDMAT": "",
+			"VBAP_KWMENG": "1",
+			"VBAP_VRKME": "",
+			"TEXT_LINE_P001": "",
+			"VBAP_WERKS": "6001",
+			"VBKD_IHREZ": "",
+			"VBAP_VOLUM": "",
+			"VBKD_KDKG1": "01",
+			"VBKD_SDABW": "0001",
+			"VBAP_NTGEW": "",
+			"KONP_KBETR": payload.monto,
+			"COBL_PRCTR": payload.centro_beneficio,
+			"VBEP_TDDAT": formatdate(now() >> toTimeZone("America/Mexico_City")),
+			"VBEP_TDUHR": "000000",
+			"VBEP_EDATU": formatdate(now() >> toTimeZone("America/Mexico_City")),
+			"VBEP_EZEIT": "000000"
+		}&#93;,
+		"EX_RETURN": {
+			"IM_SYSTEM": "",
+			"PROCESS": "",
+			"VBRK_VBELN": "",
+			"VBAK_VBELN": "",
+			"VBKD_BSTKD": "",
+			"EXT_T_MENSAJE": [""&#93;
+		}
+	}
+}&#93;&#93;></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			<flow-ref doc:name="Call-client-system-sap" doc:id="c31826b0-288a-440f-9b51-8baa6de9ce4f" name="client-system-sap" target="provIngrResp" />
+			<ee:transform doc:name="Set auxiliar array variable" doc:id="05d776ea-0b32-4a95-ae8e-7de3ba018665" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="provIngrAuxArray" ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+(vars.provIngrAuxArray default [&#93;) + vars.provIngrResp&#93;&#93;></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</foreach> [STUDIO] -->
+		<parallel-foreach doc:name="Parallel For Each" doc:id="0188de4f-42ff-4132-9cab-45ddf1a2d0a2" collection="#[vars.originalPayload.sap_info]" target="provIngrAuxArray">
+			<ee:transform doc:name="Set request income provision" doc:id="b2c04064-f377-4d66-9333-8d9f23b7eaa1" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
 import * from dw::util::Coercions
 fun formatdate(d: DateTime) = d as String {
 	format: "yyyyMMdd"
@@ -292,12 +414,12 @@ fun formatdate(d: DateTime) = d as String {
 		"VBAK_VKBUR": "MD00",
 		"VBAK_VKGRP": "MD0",
 		"VBAK_XBLNR": "",
-		"KUAGV_KUNNR": vars.originalPayload.sap_info.id_cliente,
-		"VBKD_BSTKD": vars.originalPayload.sap_info.numero_pedido,
+		"KUAGV_KUNNR": payload.id_cliente,
+		"VBKD_BSTKD": payload.numero_pedido,
 		"VBKD_BSTDK": formatdate(now() >> toTimeZone("America/Mexico_City")),
 		"VBKD_ZTERM": "N015",
 		"VBAK_AUGRU": "C10",
-		"VBAK_WAERK": vars.originalPayload.sap_info.codigo_moneda,
+		"VBAK_WAERK": payload.codigo_moneda,
 		"VBAK_ABRVW": "N",
 		"VBKD_BZIRK": "Z01001",
 		"VBKD_KDKG1": "01",
@@ -317,8 +439,8 @@ fun formatdate(d: DateTime) = d as String {
 		"VBKD_BSTDK_E": "",
 		"VBAK_KVGR1": "999",
 		"VBAK_KVGR2": "",
-		"KONV_KBETR": vars.originalPayload.sap_info.monto,
-		"TEXT_LINE_C001": vars.originalPayload.sap_info.numero_pedido,
+		"KONV_KBETR": payload.monto,
+		"TEXT_LINE_C001": payload.numero_pedido,
 		"TEXT_LINE_C002": "",
 		"TEXT_LINE_C003": "AjusteDIC1.5",
 		"TEXT_LINE_C004": "",
@@ -339,8 +461,8 @@ fun formatdate(d: DateTime) = d as String {
 			"VBKD_KDKG1": "01",
 			"VBKD_SDABW": "0001",
 			"VBAP_NTGEW": "",
-			"KONP_KBETR": vars.originalPayload.sap_info.monto,
-			"COBL_PRCTR": vars.originalPayload.sap_info.centro_beneficio,
+			"KONP_KBETR": payload.monto,
+			"COBL_PRCTR": payload.centro_beneficio,
 			"VBEP_TDDAT": formatdate(now() >> toTimeZone("America/Mexico_City")),
 			"VBEP_TDUHR": "000000",
 			"VBEP_EDATU": formatdate(now() >> toTimeZone("America/Mexico_City")),
@@ -356,16 +478,129 @@ fun formatdate(d: DateTime) = d as String {
 		}
 	}
 }]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<flow-ref doc:name="Call-client-system-sap" doc:id="395de966-497f-4075-9b7a-7cb547b3ff15" name="client-system-sap"/>
+		</parallel-foreach>
+		<ee:transform doc:name="Extract array" doc:id="91f18b6e-1249-4071-904f-e345ffaef0b7" >
+			<ee:message >
 			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="provIngrAuxArrayExtract" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.provIngrAuxArray map((item)-> item.typedValue)]]></ee:set-variable>
+			</ee:variables>
 		</ee:transform>
-		<flow-ref doc:name="Call-client-system-sap" doc:id="c31826b0-288a-440f-9b51-8baa6de9ce4f" name="client-system-sap" target="provIngrResp"/>
 	</sub-flow>
 	<sub-flow name="orchestrator-post-tms-shipments-sales-order-process-003" doc:id="d2cedf08-cba3-4d34-ab6d-aeda8aeb82d8" >
-		<ee:transform doc:name="Set request sales order" doc:id="80372159-f58f-4260-9ea8-5cc4edd4ec65" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+		<!-- [STUDIO:"For Each"]<foreach doc:name="For Each" doc:id="dced2f48-325e-40b7-8319-69f00360a86a" collection="#[vars.originalPayload.sap_info&#93;">
+			<ee:transform doc:name="Set request sales order" doc:id="80372159-f58f-4260-9ea8-5cc4edd4ec65">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
-import modules::myGlobalFunctions as globalFunctions
+import * from dw::util::Coercions
+fun formatdate(d: DateTime) = d as String {
+	format: "yyyyMMdd"
+}
+&#45;&#45;-
+{
+	"operation": "pedidoventa",
+	"order": "1",
+	"originalRequst": true,
+	"sap_request": {
+		"IM_SYSTEM": "0000000015",
+		"PROCESS": "003", //001 provision ingreso y 003 para peido de venta (orden de venta), 002 actualización de provisión, 004 carta porte(pedido venta con factura), 06A sustitución
+		"SERIE": "",
+		"VBAK_VKORG": "MD00",
+		"VBAK_VTWEG": "10",
+		"VBAK_SPART": "10",
+		"VBAK_VKBUR": "MD00",
+		"VBAK_VKGRP": "MD0",
+		"VBAK_XBLNR": "",
+		"KUAGV_KUNNR": payload.id_cliente,
+		"VBKD_BSTKD": payload.numero_pedido,
+		"VBKD_BSTDK": formatdate(now() >> toTimeZone("America/Mexico_City")),
+		"VBKD_ZTERM": "N015",
+		"VBAK_AUGRU": "C10",
+		"VBAK_WAERK": payload.codigo_moneda,
+		"VBAK_ABRVW": "N",
+		"VBKD_BZIRK": "Z01001",
+		"VBKD_KDKG1": "01",
+		"VBKD_SDABW": "0001",
+		"VBPA_PARVW1": "",
+		"VBPA_KUNNR1": "",
+		"VBPA_PARVW2": "",
+		"VBPA_KUNNR2": "",
+		"VBPA_PARVW3": "",
+		"VBPA_KUNNR3": "",
+		"VBKD_BSARK": "CMX",
+		"VBAK_BNAME": "",
+		"VBAK_TELF1": "",
+		"VBAK_SUBMI": "",
+		"VBKD_IHREZ_E": "",
+		"VBKD_BSTKD_E": "",
+		"VBKD_BSTDK_E": "",
+		"VBAK_KVGR1": "999",
+		"VBAK_KVGR2": "",
+		"KONV_KBETR": payload.monto,
+		"TEXT_LINE_C001": payload.numero_pedido,
+		"TEXT_LINE_C002": "",
+		"TEXT_LINE_C003": "AjusteDIC1.5",
+		"TEXT_LINE_C004": "",
+		"TEXT_LINE_C005": "",
+		"TEXT_LINE_C006": "",
+		"TEXT_LINE_C007": "r.baez",
+		"IM_T_SD_P_": [{
+			"VBAP_POSNR": "000010",
+			"VBAP_MATNR": "000000000003000727",
+			"VBAP_ARKTX": "Servicios Logisticos",
+			"VBAP_KDMAT": "",
+			"VBAP_KWMENG": "1",
+			"VBAP_VRKME": "",
+			"TEXT_LINE_P001": "",
+			"VBAP_WERKS": "6001",
+			"VBKD_IHREZ": "",
+			"VBAP_VOLUM": "",
+			"VBKD_KDKG1": "01",
+			"VBKD_SDABW": "0001",
+			"VBAP_NTGEW": "",
+			"KONP_KBETR": payload.monto,
+			"COBL_PRCTR": payload.centro_beneficio,
+			"VBEP_TDDAT": formatdate(now() >> toTimeZone("America/Mexico_City")),
+			"VBEP_TDUHR": "000000",
+			"VBEP_EDATU": formatdate(now() >> toTimeZone("America/Mexico_City")),
+			"VBEP_EZEIT": "000000"
+		}&#93;,
+		"EX_RETURN": {
+			"IM_SYSTEM": "",
+			"PROCESS": "",
+			"VBRK_VBELN": "",
+			"VBAK_VBELN": "",
+			"VBKD_BSTKD": "",
+			"EXT_T_MENSAJE": [""&#93;
+		}
+	}
+}&#93;&#93;></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			<flow-ref doc:name="Call-client-system-sap" doc:id="15024487-9a73-436b-814b-685ed0fe5ab4" name="client-system-sap" target="salOrdResp" />
+			<ee:transform doc:name="Set auxiliar array variable" doc:id="15c3aaa6-36e7-4f12-8b9b-c88457815626" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="saleOrdrAuxArray" ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+(vars.saleOrdrAuxArray default [&#93;) + vars.salOrdResp&#93;&#93;></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</foreach> [STUDIO] -->
+		<parallel-foreach doc:name="Parallel For Each" doc:id="4ae33415-b380-4c62-b845-c0300ffa63f3" collection="#[vars.originalPayload.sap_info]" target="saleOrdrAuxArray">
+			<ee:transform doc:name="Set request sales order" doc:id="11cf2a44-bf35-4219-934a-f43b360af2bc" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
 import * from dw::util::Coercions
 fun formatdate(d: DateTime) = d as String {
 	format: "yyyyMMdd"
@@ -385,12 +620,12 @@ fun formatdate(d: DateTime) = d as String {
 		"VBAK_VKBUR": "MD00",
 		"VBAK_VKGRP": "MD0",
 		"VBAK_XBLNR": "",
-		"KUAGV_KUNNR": vars.originalPayload.sap_info.id_cliente,
-		"VBKD_BSTKD": vars.originalPayload.sap_info.numero_pedido,
+		"KUAGV_KUNNR": payload.id_cliente,
+		"VBKD_BSTKD": payload.numero_pedido,
 		"VBKD_BSTDK": formatdate(now() >> toTimeZone("America/Mexico_City")),
 		"VBKD_ZTERM": "N015",
 		"VBAK_AUGRU": "C10",
-		"VBAK_WAERK": vars.originalPayload.sap_info.codigo_moneda,
+		"VBAK_WAERK": payload.codigo_moneda,
 		"VBAK_ABRVW": "N",
 		"VBKD_BZIRK": "Z01001",
 		"VBKD_KDKG1": "01",
@@ -410,8 +645,8 @@ fun formatdate(d: DateTime) = d as String {
 		"VBKD_BSTDK_E": "",
 		"VBAK_KVGR1": "999",
 		"VBAK_KVGR2": "",
-		"KONV_KBETR": vars.originalPayload.sap_info.monto,
-		"TEXT_LINE_C001": vars.originalPayload.sap_info.numero_pedido,
+		"KONV_KBETR": payload.monto,
+		"TEXT_LINE_C001": payload.numero_pedido,
 		"TEXT_LINE_C002": "",
 		"TEXT_LINE_C003": "AjusteDIC1.5",
 		"TEXT_LINE_C004": "",
@@ -432,8 +667,8 @@ fun formatdate(d: DateTime) = d as String {
 			"VBKD_KDKG1": "01",
 			"VBKD_SDABW": "0001",
 			"VBAP_NTGEW": "",
-			"KONP_KBETR": vars.originalPayload.sap_info.monto,
-			"COBL_PRCTR": vars.originalPayload.sap_info.centro_beneficio,
+			"KONP_KBETR": payload.monto,
+			"COBL_PRCTR": payload.centro_beneficio,
 			"VBEP_TDDAT": formatdate(now() >> toTimeZone("America/Mexico_City")),
 			"VBEP_TDUHR": "000000",
 			"VBEP_EDATU": formatdate(now() >> toTimeZone("America/Mexico_City")),
@@ -449,12 +684,180 @@ fun formatdate(d: DateTime) = d as String {
 		}
 	}
 }]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<flow-ref doc:name="Call-client-system-sap" doc:id="7b271895-f1c8-44f7-a0cb-dfa627c86e71" name="client-system-sap"/>
+		</parallel-foreach>
+		<ee:transform doc:name="Extract array" doc:id="bdb71bd6-52fd-4177-a0de-0952b20a6c90" >
+			<ee:message >
 			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="saleOrdrAuxArrayExtract" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.saleOrdrAuxArray map((item)-> item.typedValue)]]></ee:set-variable>
+			</ee:variables>
 		</ee:transform>
-		<flow-ref doc:name="Call-client-system-sap" doc:id="15024487-9a73-436b-814b-685ed0fe5ab4" name="client-system-sap" target="salOrdResp"/>
 	</sub-flow>
-	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-final-response" doc:id="5a6da724-b2c0-4717-9531-935fbe5d1f19" >
-		<ee:transform doc:name="Set final response" doc:id="92d3d3c6-ecff-466e-b626-db468ced7e58" >
+	<sub-flow name="orchestrator-post-tms-shipments-bill-join-responses-provs-sales" doc:id="41de809b-6b01-4e4f-b0f7-678012290dee" >
+		<ee:transform doc:name="Join arrays responses" doc:id="d940a616-7d7e-41d8-a3bb-181abd9c6ebf" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="joinArrays" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.provIngrAuxArrayExtract ++ vars.saleOrdrAuxArrayExtract]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-set-response-sap-info" doc:id="53febab7-2c96-445d-ae26-7b110e46d15d" >
+		<parallel-foreach doc:name="Parallel For Each" doc:id="b888bcd1-f704-4c2b-97cf-9ff554625670" collection="#[vars.joinArrays]" target="responseSapInfo">
+			<ee:transform doc:name="Transform Message" doc:id="5cef3555-1c94-401e-a193-2bcd1f30279a" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"identificador_pedido": payload.d.EX_RETURN.VBKD_BSTKD,
+	"numero_factura_provision": if ( payload.d.EX_RETURN.PROCESS == "001" ) 
+	payload.d.EX_RETURN.VBRK_VBELN
+	else "",
+	"numero_pedido_provision": if ( payload.d.EX_RETURN.PROCESS == "001" )
+	payload.d.EX_RETURN.VBAK_VBELN
+	else "",
+	"numero_factura_venta": if ( payload.d.EX_RETURN.PROCESS == "003" )
+	payload.d.EX_RETURN.VBRK_VBELN
+	else "",
+	"numero_pedido_venta": if ( payload.d.EX_RETURN.PROCESS == "003" )
+	payload.d.EX_RETURN.VBAK_VBELN
+	else "",
+	"correlation_id": correlationId
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</parallel-foreach>
+		<ee:transform doc:name="Transform Message" doc:id="df40ee20-66a1-4854-b296-48750b140aae" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="responseSapInfoExtract" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.responseSapInfo map($.typedValue)]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+	<!-- [STUDIO:"orchestrator-post-tms-shipments-bill-lading-iterates-sap-info-prov"]<sub-flow name="orchestrator-post-tms-shipments-bill-lading-iterates-sap-info-prov" doc:id="5a6da724-b2c0-4717-9531-935fbe5d1f19" >
+		<foreach doc:name="For Each" doc:id="0bed95fe-d48b-4df2-abfe-83a8b56c070c" collection="#[vars.provIngrAuxArray&#93;">
+			<ee:transform doc:name="Set final response" doc:id="7a781361-f2ff-4728-9df8-0fd6bd0e3dbc" >
+				<ee:message />
+				<ee:variables >
+					<ee:set-variable variableName="structureSapInfoProvs" ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+{
+	"identificador_pedido": payload.d.EX_RETURN.VBKD_BSTKD,
+	"numero_factura_provision": payload.d.EX_RETURN.VBRK_VBELN,
+	"numero_pedido_provision": payload.d.EX_RETURN.VBAK_VBELN,
+	"correlation_id": correlationId
+}&#93;&#93;></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<ee:transform doc:name="Transform Message" doc:id="4684b4a7-ebce-4e14-a63e-91f355cab191" >
+				<ee:message />
+				<ee:variables >
+					<ee:set-variable variableName="responseAuxArrayProvs" ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+(vars.responseAuxArrayProvs default [&#93;) + vars.structureSapInfoProvs&#93;&#93;></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</foreach>
+		<parallel-foreach doc:name="Parallel For Each" doc:id="d7ccc1fd-1808-4d39-a152-6dd9b28e99b2" collection="#[vars.provIngrAuxArrayExtract&#93;" target="responseAuxArrayProvs">
+			<ee:transform doc:name="Set final response" doc:id="92d3d3c6-ecff-466e-b626-db468ced7e58">
+			<ee:message>
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+{
+	"identificador_pedido": payload.d.EX_RETURN.VBKD_BSTKD,
+	"numero_factura_provision": payload.d.EX_RETURN.VBRK_VBELN,
+	"numero_pedido_provision": payload.d.EX_RETURN.VBAK_VBELN,
+	"correlation_id": correlationId
+}&#93;&#93;></ee:set-payload>
+			</ee:message>
+				<ee:variables>
+				</ee:variables>
+		</ee:transform>
+		</parallel-foreach>
+		<ee:transform doc:name="Extract array" doc:id="0b447025-4f77-43e1-97d5-14539b396b20" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="responseAuxArrayProvsExtract" ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+vars.responseAuxArrayProvs map ($.typedValue)&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow> [STUDIO] -->
+	<!-- [STUDIO:"orchestrator-post-tms-shipments-bill-lading-iterates-sap-info-sales"]<sub-flow name="orchestrator-post-tms-shipments-bill-lading-iterates-sap-info-sales" doc:id="4e840178-767c-4ff6-8ef0-24d40630cd66" >
+		<foreach doc:name="For Each" doc:id="d494504a-fd83-4f69-b47a-ca8adce76446" collection="#[vars.saleOrdrAuxArray&#93;">
+			<ee:transform doc:name="Set final response" doc:id="1d5c0c78-2e04-42c2-9afd-8db5887e1d42">
+				<ee:message />
+				<ee:variables>
+					<ee:set-variable variableName="structureSapInfoSales"><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+{
+	"identificador_pedido": payload.d.EX_RETURN.VBKD_BSTKD,
+	"numero_factura_venta": payload.d.EX_RETURN.VBRK_VBELN,
+	"numero_pedido_venta": payload.d.EX_RETURN.VBAK_VBELN,
+	"correlation_id": correlationId
+}&#93;&#93;></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<ee:transform doc:name="Transform Message" doc:id="a1c12623-8a18-4bdc-8613-d886caab38d2">
+				<ee:message />
+				<ee:variables>
+					<ee:set-variable variableName="responseAuxArraySales"><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+(vars.responseAuxArraySales default [&#93;) + vars.structureSapInfoSales&#93;&#93;></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</foreach>
+		<parallel-foreach doc:name="Parallel For Each" doc:id="52ce6bf2-c656-4235-86e5-b23d8fffd88f" target="responseAuxArraySales" collection="#[vars.saleOrdrAuxArrayExtract&#93;">
+			<ee:transform doc:name="Set final response" doc:id="fba193a6-d1f6-437a-91c9-292793a1926b" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+{
+	"identificador_pedido": payload.d.EX_RETURN.VBKD_BSTKD,
+	"numero_factura_venta": payload.d.EX_RETURN.VBRK_VBELN,
+	"numero_pedido_venta": payload.d.EX_RETURN.VBAK_VBELN,
+	"correlation_id": correlationId
+}&#93;&#93;></ee:set-payload>
+				</ee:message>
+				<ee:variables >
+				</ee:variables>
+			</ee:transform>
+		</parallel-foreach>
+		<ee:transform doc:name="Extract array" doc:id="875b9622-cf79-4b5b-934e-dfcb431534f5" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="responseAuxArraySalesExtract" ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+vars.responseAuxArraySales map ($.typedValue)&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow> [STUDIO] -->
+	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-update-response-sap-info" doc:id="aefb0455-fdf8-447e-bf0b-4f68277cf0bc" >
+		<ee:transform doc:name="Transform Message" doc:id="b1a03dab-a2d7-4520-b671-11c7a245548f" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -463,16 +866,8 @@ ns ns2 http://ws.edifactwstraxion/
 {
   "traxion_response": {
     "completed_succesfully": true,
-    "response": {
-      "operation": "generar_pedido_venta_con_carta_porte",
-      "identificador_pedido": vars.provIngrResp.d.EX_RETURN.VBKD_BSTKD,
-      "numero_factura_provision": vars.provIngrResp.d.EX_RETURN.VBRK_VBELN,
-      "numero_pedido_provision": vars.provIngrResp.d.EX_RETURN.VBAK_VBELN,
-      "numero_factura_venta": vars.salOrdResp.d.EX_RETURN.VBRK_VBELN,
-      "numero_pedido_venta": vars.salOrdResp.d.EX_RETURN.VBAK_VBELN,
-      "correlation_id": correlationId
-    },
-    "response_pac": {
+    "response": vars.responseSapInfoExtract,
+"response_pac": {
       "return": {
         "codigo": vars.cpResponse.body.ns2#generaComprobanteResponse.return.codigo,
         "descripcion": vars.cpResponse.body.ns2#generaComprobanteResponse.return.descripcion,
@@ -488,6 +883,18 @@ ns ns2 http://ws.edifactwstraxion/
   }
 }]]></ee:set-payload>
 			</ee:message>
+			<ee:variables >
+			</ee:variables>
 		</ee:transform>
+		<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message" doc:id="ee36be66-bc84-48cc-9e32-635693e19485" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+vars.structureFinalResponse update{
+	case .traxion_response.response -> vars.responseSapInfoExtract
+}&#93;&#93;></ee:set-payload>
+			</ee:message>
+		</ee:transform> [STUDIO] -->
 	</sub-flow>
 </mule>

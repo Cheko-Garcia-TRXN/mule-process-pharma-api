@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns:traxion-s-logger="http://www.mulesoft.org/schema/mule/traxion-s-logger"
-	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
-	xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs"
-	xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:slack="http://www.mulesoft.org/schema/mule/slack"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:traxion-s-logger="http://www.mulesoft.org/schema/mule/traxion-s-logger"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
 http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd 
 http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
 http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/current/mule-sqs.xsd
 http://www.mulesoft.org/schema/mule/traxion-s-logger http://www.mulesoft.org/schema/mule/traxion-s-logger/current/mule-traxion-s-logger.xsd
-http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/slack http://www.mulesoft.org/schema/mule/slack/current/mule-slack.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
 
 	<configuration-properties doc:name="Configuration properties" doc:id="e266184c-e18b-4e1b-bbb3-5e1fb0215e2e" file="process-pharma-${env}.properties" />
 
@@ -33,4 +35,19 @@ http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/sc
 	<http:request-config name="HTTP_Request_configuration-System-sap-connection" doc:name="HTTP Request configuration" doc:id="3de9d52e-d80a-4cf6-88a0-f3f69f18d19a" responseTimeout="${client.system.sap.https.response.timeout}">
 		<http:request-connection protocol="HTTPS" host="${client.system.sap.http.host}" port="${client.system.sap.http.port}" maxConnections="${client.system.sap.http.max.connections}" connectionIdleTimeout="${client.system.sap.http.connection.idle.timeout}" responseBufferSize="${client.system.sap.http.response.buffer.size}"/>
 	</http:request-config>
+	<slack:config name="Slack_Connector_Config" doc:name="Slack Connector Config" doc:id="a8dc209a-c238-4dc9-b8a3-b6c02e29173b" responseTimeout="${slack.response.timeout}">
+		<slack:slack-auth-connection baseUri="${slack.connection.base.uri}" connectionTimeout="${slack.connection.timeout}" maxConnections="${slack.max.connections}" connectionIdleTimeout="${slack.connection.idle.timeout}" responseBufferSize="${slack.response.buffer.size}">
+			<slack:oauth-authorization-code consumerKey="${slack.connection.client_id}" consumerSecret="${slack.connection.client_secret}" authorizationUrl="${slack.connection.authorization.url}" accessTokenUrl="${slack.connection.token.url}" scopes="${slack.connection.scopes}"/>
+			<slack:oauth-callback-config listenerConfig="process-pharma-api-httpListenerConfig" callbackPath="${slack.connection.callback.path}" authorizePath="${slack.connection.authorize.path}" externalCallbackUrl="${slack.connection.external.callback.url.test}"/>
+			<slack:oauth-store-config objectStore="Object_store_slack_connection" />
+		</slack:slack-auth-connection>
+	</slack:config>
+	<os:config name="ObjectStore_ConfigReference_SlackConnection" doc:name="ObjectStore Config" doc:id="dd14de49-cb2c-4ba5-81ac-59ebf85aa51e" >
+		<os:connection >
+			<reconnection >
+				<reconnect-forever />
+			</reconnection>
+		</os:connection>
+	</os:config>
+	<os:object-store name="Object_store_slack_connection" doc:name="Object store" doc:id="69550af9-647c-47cd-bad9-d9e10955a110" maxEntries="10" entryTtlUnit="DAYS" expirationInterval="0" expirationIntervalUnit="DAYS" config-ref="ObjectStore_ConfigReference_SlackConnection" />
 </mule>
