@@ -8,8 +8,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	<sub-flow name="orchestrator-post-tms-bill_lading" doc:id="a1f274b8-8173-4381-9680-c3ad654e8f58" >
 		<logger level="INFO" doc:name="Logger" doc:id="5ac23ef9-b6eb-4092-8597-359d561d4233" message="#[payload]"/>
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-traslado" doc:id="c0a290e5-be59-42c0-a2e9-648bf7054c63" name="orchestrator-post-tms-shipments-bill-lading-traslado"/>
-		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-send-document-pdf-carta-porte" doc:id="04e5d29a-4d0c-4178-82ef-90a4bf7db1e1" name="orchestrator-post-tms-shipments-bill-lading-send-document-pdf-carta-porte" />
-		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-send-document-xml-carta-porte" doc:id="6f723a1c-b33c-423d-baf2-58661314b4c4" name="orchestrator-post-tms-shipments-bill-lading-send-document-xml-carta-porte"/>
+		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-send-document-pdf-and-xml-carta-porte" doc:id="04e5d29a-4d0c-4178-82ef-90a4bf7db1e1" name="orchestrator-post-tms-shipments-bill-lading-send-document-pdf-and-xml-carta-porte" />
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-provision-sap-process-001" doc:id="0b8b7314-ad16-4606-9340-4643bc31ab0f" name="orchestrator-post-tms-shipments-provision-sap-process-001"/>
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-sales-order-process-003" doc:id="6ce8cca8-905f-4ed9-ac63-68622d8e21c5" name="orchestrator-post-tms-shipments-sales-order-process-003"/>
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-join-responses-provs-sales" doc:id="d3b6c4fc-c252-4ad3-94cd-39f2d269da13" name="orchestrator-post-tms-shipments-bill-join-responses-provs-sales"/>
@@ -17,27 +16,6 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-update-response-sap-info" doc:id="3cf00b6a-8301-4b48-a012-d9f8def86952" name="orchestrator-post-tms-shipments-bill-lading-update-response-sap-info"/>
 		<logger level="INFO" doc:name="Logger" doc:id="e39f241f-9855-4733-998e-e881d99cac4c" message="#[payload]"/>
 	</sub-flow>
-	<!-- [STUDIO:"clients-system-unigis-bill_lading-request"]<sub-flow name="clients-system-unigis-bill_lading-request" doc:id="c751a93a-cfc7-4ece-9c09-e4b97e0321b1" >
-		<ee:transform doc:name="Transform Message" doc:id="348b5182-093e-47a0-91c5-eb448e0276f8" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
-&#45;&#45;-
-{
-    status: payload.modificar_estado_guia.estado.estado,
-    observations: payload.modificar_estado_guia.estado.observaciones,
-    id_guia: payload.modificar_estado_guia.estado.id_guia
-}&#93;&#93;></ee:set-payload>
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="id_guia" ><![CDATA[%dw 2.0
-output application/json
-&#45;&#45;-
-payload.modificar_estado_guia.estado.id_guia&#93;&#93;></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="2d1339eb-df38-4a4f-ac52-4d97551d9763" message="#[payload&#93;"/>
-	</sub-flow> [STUDIO] -->
 	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-traslado" doc:id="7034adce-6810-4ee6-b910-d57ffade1e52">
 		<ee:transform doc:name="Create mapping bill lading original structure" doc:id="ddea9e09-7ae5-4f19-aeb4-71683c87b481">
 			<ee:message>
@@ -287,69 +265,17 @@ output application/json
 			<flow-ref doc:name="Call-client-jms" doc:id="0cde8ac9-36d5-41fe-8b87-08bfd9359bf6" name="client-jms" />
 		</async>
 	</sub-flow>
-	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-send-document-pdf-carta-porte" doc:id="f1206452-6ecd-45d6-9286-7895cd337bc8" >
-		<ee:transform doc:name="Prepare data from bill lading response to send PDF to unigis" doc:id="194bff46-30b7-4017-b8c1-af358dcf4039" >
-			<ee:message >
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="pdfToSendRequest" ><![CDATA[%dw 2.0
-output application/json
-ns ns2 http://ws.edifactwstraxion/
-var refFecha = do {
-	var fecha = payload.body.ns2#generaComprobanteResponse.return.fechaTimbrado
-	var fechaPartes = fecha splitBy "T"
-	var fechaParte = fechaPartes[0] splitBy "-" joinBy ""
-	var horaParte = fechaPartes[1] splitBy ":" joinBy ""
-	---
-	fechaParte ++ horaParte ++ "145"
-}
----
-{
-	"crearDocumentos": {
-		"apiKey": "Definir cuál es el apiKey",
-		"Documentos": {
-			"pDocumento": {
-				"tipoDocumento": "CP",
-				"referencia": refFecha,
-				"fechaEmision": vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado,
-				"fechaExpiracion": "",
-				"categoria": "Carta Porte",
-				"clase": "Propio",
-				"observaciones": "Carta porte inicial",
-				"referenciaEstadoDocumento": "Inicial",
-				"forzarActualizacion": "1",
-				"asociaciones": {
-					"referenciaViaje": vars.originalPayload.sap_info.numero_pedido
-				},
-				"archivosAsociados": {
-					"pArchivoDoc": {
-						"descripcion": vars.cpResponse.body.ns2#generaComprobanteResponse.return.noCertificado,
-						"tipoArchivo": ".PDF",
-						"contenido": vars.cpResponse.body.ns2#generaComprobanteResponse.return.documentopdf,
-						"clasificacionArchivo": "CP"
-					}
-				},
-				"crearDocumentoRequeridoViaje": "false",
-				"idViaje": "¿Es un valor que desde unigis lo ponen en automático?",
-				"esDocumentoRequerido": "false"
-			}
-		}
-	}
-}]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents-pdf" doc:id="7869a1c4-6062-44c1-8d07-4b9907e2542f" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents-pdf"/>
-	</sub-flow>
-	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-send-document-xml-carta-porte" doc:id="9e780844-3386-4269-97ff-0c9fdd1ea3e0" >
-		<ee:transform doc:name="Prepare data from bill lading response to send XML to unigis" doc:id="d1ed7d39-7e7d-4974-8a9c-8c3a4b7a5bec">
+	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-send-document-pdf-and-xml-carta-porte" doc:id="f1206452-6ecd-45d6-9286-7895cd337bc8" >
+		<scatter-gather doc:name="Scatter-Gather" doc:id="97ffcadf-25d0-4c37-9571-bc83d9dcc72a" target="array">
+			<route >
+				<parallel-foreach doc:name="Parallel For Each" doc:id="3a55c298-e6b6-4c6e-8b4b-009759eb367b" collection="#[vars.originalPayload.sap_info]" target="auxArrayXmlReqPrepare">
+					<ee:transform doc:name="Prepare data from bill lading response to send XML to unigis" doc:id="d1ed7d39-7e7d-4974-8a9c-8c3a4b7a5bec">
 			<ee:message>
-			</ee:message>
-			<ee:variables>
-				<ee:set-variable variableName="xmlToSendRequest" ><![CDATA[%dw 2.0
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ns ns2 http://ws.edifactwstraxion/
 var refFecha = do {
-	var fecha = payload.body.ns2#generaComprobanteResponse.return.fechaTimbrado
+	var fecha = vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado
 	var fechaPartes = fecha splitBy "T"
 	var fechaParte = fechaPartes[0] splitBy "-" joinBy ""
 	var horaParte = fechaPartes[1] splitBy ":" joinBy ""
@@ -363,7 +289,7 @@ var refFecha = do {
 		"Documentos": {
 			"pDocumento": {
 				"tipoDocumento": "CP",
-				"referencia": refFecha,
+				"referencia": "CP" ++ refFecha,
 				"fechaEmision": vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado,
 				"fechaExpiracion": "",
 				"categoria": "Carta Porte",
@@ -372,7 +298,7 @@ var refFecha = do {
 				"referenciaEstadoDocumento": "Inicial",
 				"forzarActualizacion": "1",
 				"asociaciones": {
-					"referenciaViaje": vars.originalPayload.sap_info.numero_pedido
+					"referenciaViaje": payload.numero_pedido
 				},
 				"archivosAsociados": {
 					"pArchivoDoc": {
@@ -388,10 +314,70 @@ var refFecha = do {
 			}
 		}
 	}
-}]]></ee:set-variable>
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
 			</ee:variables>
 		</ee:transform>
-		<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents-xml" doc:id="8aba7511-5111-41a4-a59b-bcf01fb9f30b" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents-xml" />
+					<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="7869a1c4-6062-44c1-8d07-4b9907e2542f" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
+				</parallel-foreach>
+			</route>
+			<route >
+				<parallel-foreach doc:name="Parallel For Each" doc:id="c4830801-64f5-4424-ba22-fdf647bbbaae" target="auxArrayPdfReqPrepare" collection="#[vars.originalPayload.sap_info]">
+					<ee:transform doc:name="Prepare data from bill lading response to send PDF to unigis" doc:id="194bff46-30b7-4017-b8c1-af358dcf4039">
+			<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+ns ns2 http://ws.edifactwstraxion/
+var refFecha = do {
+	var fecha = vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado
+	var fechaPartes = fecha splitBy "T"
+	var fechaParte = fechaPartes[0] splitBy "-" joinBy ""
+	var horaParte = fechaPartes[1] splitBy ":" joinBy ""
+	---
+	fechaParte ++ horaParte ++ "145"
+}
+---
+{
+	"crearDocumentos": {
+		"apiKey": "Definir cuál es el apiKey",
+		"Documentos": {
+			"pDocumento": {
+				"tipoDocumento": "CP",
+				"referencia": "CP" ++ refFecha,
+				"fechaEmision": vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado,
+				"fechaExpiracion": "",
+				"categoria": "Carta Porte",
+				"clase": "Propio",
+				"observaciones": "Carta porte inicial",
+				"referenciaEstadoDocumento": "Inicial",
+				"forzarActualizacion": "1",
+				"asociaciones": {
+					"referenciaViaje": payload.numero_pedido
+				},
+				"archivosAsociados": {
+					"pArchivoDoc": {
+						"descripcion": vars.cpResponse.body.ns2#generaComprobanteResponse.return.noCertificado,
+						"tipoArchivo": ".PDF",
+						"contenido": vars.cpResponse.body.ns2#generaComprobanteResponse.return.documentopdf,
+						"clasificacionArchivo": "CP"
+					}
+				},
+				"crearDocumentoRequeridoViaje": "false",
+				"idViaje": "¿Es un valor que desde unigis lo ponen en automático?",
+				"esDocumentoRequerido": "false"
+			}
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+			</ee:variables>
+		</ee:transform>
+					<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="252ef544-da84-4a97-9354-28cc6e76035a" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
+				</parallel-foreach>
+			</route>
+		</scatter-gather>
 	</sub-flow>
 	<sub-flow name="orchestrator-post-tms-shipments-provision-sap-process-001" doc:id="aec606f4-a705-4f8b-aff5-2b3a661cf08f" >
 		<!-- [STUDIO:"For Each"]<foreach doc:name="For Each" doc:id="4d777a31-dd54-416e-8748-df8597b121ba" collection="#[vars.originalPayload.sap_info&#93;">
