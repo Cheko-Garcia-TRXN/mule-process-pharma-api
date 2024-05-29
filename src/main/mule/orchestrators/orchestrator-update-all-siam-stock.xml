@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="orchestrator-update-all-siam-stock-update-all" doc:id="14cc1b60-82f6-470f-b0a0-6cccc4d9e54c" >
+		<ee:transform doc:name="Transform Message" doc:id="e4df0304-fb09-444e-82ae-4ce7b65b53a4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[
+	"BLOQ_1",
+	"BLOQ_2",
+	"BLOQ_3"
+]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<foreach doc:name="For Each" doc:id="c1895d4d-3e3f-48f3-9c58-150dca6d99c7" collection="#[payload]">
+			<set-variable value="payload" doc:name="Set Variable query_type" doc:id="1e816d89-11e7-4bdb-9703-77cdc3bf8ba4" variableName="query_type"/>
+			<flow-ref doc:name="orchestrator-update-siam-stockFlow" doc:id="a4e78390-6966-4eb4-aee3-ab315c3206b9" name="orchestrator-update-siam-stockFlow"/>
+			<ee:transform doc:name="Transform Message" doc:id="b66a3017-b1c5-4e5d-b9ed-ad6af3d8ab6f" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+import * from dw::Runtime
+output application/json
+---
+{ "user" : 1 } wait 10000]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</foreach>
+	</sub-flow>
+</mule>
