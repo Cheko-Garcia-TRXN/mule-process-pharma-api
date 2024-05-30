@@ -16,7 +16,8 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<http:query-params ><![CDATA[#[output application/java
 ---
 {
-	"source_system" : vars.source_system
+	"source_system" : vars.source_system,
+	"query_type" : vars.query_type
 }]]]></http:query-params>
 		</http:request>
 	</sub-flow>

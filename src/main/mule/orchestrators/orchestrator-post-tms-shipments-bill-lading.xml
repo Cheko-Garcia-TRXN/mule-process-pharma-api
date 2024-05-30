@@ -272,6 +272,7 @@ output application/json
 				<ee:message >
 					<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
+import * from dw::core::Periods
 ns ns2 http://ws.edifactwstraxion/
 var refFecha = do {
 	var fecha = vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado
@@ -281,6 +282,11 @@ var refFecha = do {
 	---
 	fechaParte ++ horaParte ++ "145"
 }
+var fechForm = do{
+	var form = vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado + days(15)
+	---
+	form
+}
 ---
 {
 	"crearDocumentos": {
@@ -289,7 +295,7 @@ var refFecha = do {
 				"tipoDocumento": "CP",
 				"referencia": "CP" ++ refFecha,
 				"fechaEmision": vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado,
-				"fechaExpiracion": "",
+				"fechaExpiracion": (fechForm as DateTime + |P2D|) as String {format: "yyyy-MM-dd'T'HH:mm:ss"},
 				"categoria": "Carta Porte",
 				"clase": "Propio",
 				"observaciones": "Carta porte inicial",
@@ -336,6 +342,11 @@ var refFecha = do {
 	&#45;&#45;-
 	fechaParte ++ horaParte ++ "145"
 }
+var fechForm = do{
+	var form = vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado + days(15)
+	&#45;&#45;-
+	form
+}
 &#45;&#45;-
 {
 	"crearDocumentos": {
@@ -344,7 +355,7 @@ var refFecha = do {
 				"tipoDocumento": "CP",
 				"referencia": "CP" ++ refFecha,
 				"fechaEmision": vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado,
-				"fechaExpiracion": "",
+				"fechaExpiracion": (fechForm as DateTime + |P2D|) as String {format: "yyyy-MM-dd'T'HH:mm:ss"},
 				"categoria": "Carta Porte",
 				"clase": "Propio",
 				"observaciones": "Carta porte inicial",
@@ -390,6 +401,11 @@ var refFecha = do {
 	&#45;&#45;-
 	fechaParte ++ horaParte ++ "145"
 }
+var fechForm = do{
+	var form = vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado + days(15)
+	&#45;&#45;-
+	form
+}
 &#45;&#45;-
 {
 	"crearDocumentos": {
@@ -398,7 +414,7 @@ var refFecha = do {
 				"tipoDocumento": "CP",
 				"referencia": "CP" ++ refFecha,
 				"fechaEmision": vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado,
-				"fechaExpiracion": "",
+				"fechaExpiracion": (fechForm as DateTime + |P2D|) as String {format: "yyyy-MM-dd'T'HH:mm:ss"},
 				"categoria": "Carta Porte",
 				"clase": "Propio",
 				"observaciones": "Carta porte inicial",

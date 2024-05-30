@@ -2447,4 +2447,5 @@ type auto_da8a09d3_707c_45e7_ab4e_b38ca6a6f8a6_Output_Variables_cartaPorteRespon
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:catalog/>
 </types:mule>
