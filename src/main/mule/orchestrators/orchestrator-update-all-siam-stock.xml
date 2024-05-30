@@ -18,7 +18,7 @@ output application/json
 			</ee:message>
 		</ee:transform>
 		<foreach doc:name="For Each" doc:id="c1895d4d-3e3f-48f3-9c58-150dca6d99c7" collection="#[payload]">
-			<set-variable value="payload" doc:name="Set Variable query_type" doc:id="1e816d89-11e7-4bdb-9703-77cdc3bf8ba4" variableName="query_type"/>
+			<set-variable value="#[payload]" doc:name="Set Variable query_type" doc:id="1e816d89-11e7-4bdb-9703-77cdc3bf8ba4" variableName="query_type"/>
 			<flow-ref doc:name="orchestrator-update-siam-stockFlow" doc:id="a4e78390-6966-4eb4-aee3-ab315c3206b9" name="orchestrator-update-siam-stockFlow"/>
 			<ee:transform doc:name="Transform Message" doc:id="b66a3017-b1c5-4e5d-b9ed-ad6af3d8ab6f" >
 				<ee:message >
