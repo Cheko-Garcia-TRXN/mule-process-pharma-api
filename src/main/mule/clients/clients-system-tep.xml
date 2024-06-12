@@ -22,14 +22,14 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		</http:request>
 	</sub-flow>
 	<sub-flow name="clients-system-tep-post-siam-stock" doc:id="7b0715fb-318c-407c-88e1-69569eda8dd6" >
-		<http:request method="POST" doc:name="Request" doc:id="cb349267-a96a-4fe3-a042-e4ed0e83b06a" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.post.siam.stock}" >
-			<http:headers ><![CDATA[#[output application/java
+		<http:request method="POST" doc:name="Request" doc:id="cb349267-a96a-4fe3-a042-e4ed0e83b06a" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.post.siam.stock}">
+			<http:headers><![CDATA[#[output application/java
 ---
 {
 	"client_secret" : Mule::p('secure::client.system.tep.https.client_secret'),
 	"client_id" : Mule::p('secure::client.system.tep.https.client_id')
 }]]]></http:headers>
-			<http:query-params ><![CDATA[#[output application/java
+			<http:query-params><![CDATA[#[output application/java
 ---
 {
 	"source_system" : vars.source_system
