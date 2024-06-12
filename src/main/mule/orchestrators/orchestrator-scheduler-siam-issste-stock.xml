@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
-	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
+<mule xmlns:slack="http://www.mulesoft.org/schema/mule/slack"
+	xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd 
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/slack http://www.mulesoft.org/schema/mule/slack/current/mule-slack.xsd">
 	<flow name="orchestrator-update-siam-stockFlow" doc:id="6464424b-4597-454c-ade5-877bb2923a27" >
 		<logger level="INFO" doc:name="Logger" doc:id="46ef52e2-5c42-4bcc-805e-d02d82dd8ebf" message="CONSULTANDO TEP" />
 		<flow-ref doc:name="Call to clients-system-tep-get-siam-stock" doc:id="3bd4f22d-339d-4d9c-9b93-0a77c0b4d77e" name="clients-system-tep-get-siam-stock" />
@@ -48,9 +49,34 @@ payload map(item)->{
 				</batch:step>
 			</batch:process-records>
 			<batch:on-complete >
-				<ee:transform doc:name="Transform Message" doc:id="5363c2ed-ed4f-46ad-bfd2-4e251ef5b02d" >
+				<ee:transform doc:name="Prepare message for slack" doc:id="5363c2ed-ed4f-46ad-bfd2-4e251ef5b02d" >
 					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="sendToSlack" ><![CDATA[%dw 2.0
+
+output application/json
+---
+write(payload)]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<slack:create-chatpost-message doc:name="Send Message to slack" doc:id="7ca31101-523b-4bdf-88f8-33d4dd99fe75" config-ref="Slack_Connector_Config">
+					<slack:chatpost-message-content><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"channel": Mule::p('slack.connection.channel.siam'),
+	"text": "`Attention!` <!channel> There was an error in a mule app-> :warning: "
+	++ "\n ---------------------------------------------------"
+	++ "\n `SUCCESSFUL SIAM STOCK RESPONSE`"
+	++ "\n ---------------------------------------------------"
+	++ "\n Fecha y hora ->" ++ now() as String
+	++ "\n" ++ (vars.sendToSlack)
+}]]]></slack:chatpost-message-content>
+				</slack:create-chatpost-message>
+				<ee:transform doc:name="Transform Message" doc:id="d413654d-46f0-4436-9d32-4fac00d2bd11">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 
 output application/json
 ---

@@ -301,7 +301,7 @@ output application/json
                 </ee:transform>
                 <logger level="INFO" doc:name="Logger" doc:id="a3d9e687-293c-4e08-9617-ae2dad5ba8ff" message="#[payload]" />
             </on-error-propagate>
-            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f7be221e-c58b-4804-9040-ab0924c948fd" type="ANY">
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f7be221e-c58b-4804-9040-ab0924c948fd" type="ANY">
                 <ee:transform doc:name="Transform Message" doc:id="47c74224-daf4-4e95-899f-a4cdd66ae06c">
                     <ee:message>
                         <ee:set-payload><![CDATA[output application/json

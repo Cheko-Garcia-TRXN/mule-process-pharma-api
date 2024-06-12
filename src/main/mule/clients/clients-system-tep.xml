@@ -1,28 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:slack="http://www.mulesoft.org/schema/mule/slack" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/slack http://www.mulesoft.org/schema/mule/slack/current/mule-slack.xsd">
 	<sub-flow name="clients-system-tep-get-siam-stock" doc:id="ac28aa06-13bd-4a76-b6b7-e56d255c6262" >
-		<http:request method="GET" doc:name="Request" doc:id="be1d34e5-b75c-41b8-957b-15f31e269b0d" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.get.siam.stock}" >
-			<http:headers ><![CDATA[#[output application/java
+		<try doc:name="Try" doc:id="1c4dfbc5-38de-46ae-8ceb-adeab353302d" >
+			<http:request method="GET" doc:name="Request" doc:id="be1d34e5-b75c-41b8-957b-15f31e269b0d" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.get.siam.stock}">
+			<error-mapping sourceType="HTTP:BAD_GATEWAY" targetType="ERROR:SIAMSTOCK" />
+				<error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="ERROR:SIAMSTOCK" />
+				<error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="ERROR:SIAMSTOCK" />
+				<error-mapping sourceType="HTTP:TIMEOUT" targetType="ERROR:SIAMSTOCK" />
+				<http:headers><![CDATA[#[output application/java
 ---
 {
 	"client_secret" : Mule::p('secure::client.system.tep.https.client_secret'),
 	"client_id" : Mule::p('secure::client.system.tep.https.client_id')
 }]]]></http:headers>
-			<http:query-params ><![CDATA[#[output application/java
+			<http:query-params><![CDATA[#[output application/java
 ---
 {
 	"source_system" : vars.source_system,
 	"query_type" : vars.query_type
 }]]]></http:query-params>
 		</http:request>
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f8aa35a5-a119-42e6-ac50-27f8f2615265" type="ERROR:SIAMSTOCK">
+					<ee:transform doc:name="Prepare message for slack" doc:id="8b0f5b1c-ba0c-41de-9dc7-e6b65b605a6a">
+			<ee:message>
+			</ee:message>
+						<ee:variables >
+							<ee:set-variable variableName="sendToSlack" ><![CDATA[%dw 2.0
+output application/json
+---
+write(
+	{
+	"traxion_response": {
+		"completed_succesfully": "error": {
+			"error_type": error.errorType.asString as String,
+			"user_error_description": error.detailedDescription as String,
+			"system_error_description": error.detailedDescription as String
+		}
+	}
+}
+)]]></ee:set-variable>
+						</ee:variables>
+		</ee:transform>
+					<slack:create-chatpost-message doc:name="Send Message to slack" doc:id="d0a2d6c9-186b-4ef2-90aa-29505481b474" config-ref="Slack_Connector_Config">
+			<slack:chatpost-message-content><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"channel": Mule::p('slack.connection.channel.siam'),
+	"text": "`Attention!` <!channel> There was an error in a mule app-> :warning: "
+	++ "\n ---------------------------------------------------"
+	++ "\n `ERROR SIAM STOCK`"
+	++ "\n ---------------------------------------------------"
+	++ "\n Fecha y hora ->" ++ now() as String
+	++ "\n" ++ (vars.sendToSlack)
+}]]]></slack:chatpost-message-content>
+		</slack:create-chatpost-message>
+					<ee:transform doc:name="Transform Message" doc:id="39a1301d-03ac-4eb0-9eeb-9ef1d0531f2b" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"traxion_response": {
+		"completed_succesfully": "error": {
+			"error_type": error.errorType.asString as String,
+			"user_error_description": error.detailedDescription as String,
+			"system_error_description": error.detailedDescription as String
+		}
+	}
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<logger level="INFO" doc:name="Logger" doc:id="79015ce8-3241-43b9-ae2f-d99586e538df" message="#[payload]"/>
+				</on-error-propagate>
+			</error-handler>
+		</try>
 	</sub-flow>
 	<sub-flow name="clients-system-tep-post-siam-stock" doc:id="7b0715fb-318c-407c-88e1-69569eda8dd6" >
-		<http:request method="POST" doc:name="Request" doc:id="cb349267-a96a-4fe3-a042-e4ed0e83b06a" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.post.siam.stock}">
+		<try doc:name="Try" doc:id="68c5d30b-d357-4f5d-80b1-c070480541bd" >
+			<http:request method="POST" doc:name="Request" doc:id="cb349267-a96a-4fe3-a042-e4ed0e83b06a" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.post.siam.stock}">
+			<error-mapping sourceType="HTTP:BAD_GATEWAY" targetType="ERROR:SIAMSTOCK" />
+			<error-mapping sourceType="HTTP:INTERNAL_SERVER_ERROR" targetType="ERROR:SIAMSTOCK" />
+			<error-mapping sourceType="HTTP:SERVICE_UNAVAILABLE" targetType="ERROR:SIAMSTOCK" />
+			<error-mapping sourceType="HTTP:TIMEOUT" targetType="ERROR:SIAMSTOCK" />
 			<http:headers><![CDATA[#[output application/java
 ---
 {
@@ -35,6 +102,62 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	"source_system" : vars.source_system
 }]]]></http:query-params>
 		</http:request>
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="1fa548c3-7a4b-46c4-bfad-01587fc22bae" type="ERROR:SIAMSTOCK" >
+					<ee:transform doc:name="Prepare message for slack" doc:id="f4d02c7c-26e4-4753-8887-f189b1d037cd" >
+						<ee:message >
+						</ee:message>
+						<ee:variables >
+							<ee:set-variable variableName="sendToSlack" ><![CDATA[%dw 2.0
+output application/json
+---
+write(
+	{
+	"traxion_response": {
+		"completed_succesfully": "error": {
+			"error_type": error.errorType.asString as String,
+			"user_error_description": error.detailedDescription as String,
+			"system_error_description": error.detailedDescription as String
+		}
+	}
+}
+)]]></ee:set-variable>
+						</ee:variables>
+					</ee:transform>
+					<slack:create-chatpost-message doc:name="Send Message to slack" doc:id="902723a1-ba4b-4811-b9e6-7f55f370414d" config-ref="Slack_Connector_Config" >
+						<slack:chatpost-message-content ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"channel": Mule::p('slack.connection.channel.siam'),
+	"text": "`Attention!` <!channel> There was an error in a mule app-> :warning: "
+	++ "\n ---------------------------------------------------"
+	++ "\n `ERROR SIAM STOCK`"
+	++ "\n ---------------------------------------------------"
+	++ "\n Fecha y hora ->" ++ now() as String
+	++ "\n" ++ (vars.sendToSlack)
+}]]]></slack:chatpost-message-content>
+					</slack:create-chatpost-message>
+					<ee:transform doc:name="Transform Message" doc:id="80ed8763-581f-4547-be9f-ffbad41162bd" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"traxion_response": {
+		"completed_succesfully": "error": {
+			"error_type": error.errorType.asString as String,
+			"user_error_description": error.detailedDescription as String,
+			"system_error_description": error.detailedDescription as String
+		}
+	}
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<logger level="INFO" doc:name="Logger" doc:id="5b128620-07c1-4d7e-bee7-aaa8402a1217" message="#[payload]" />
+				</on-error-propagate>
+			</error-handler>
+		</try>
 	</sub-flow>
 	<sub-flow name="clients-system-unigis-post-tms-load-confirmation" doc:id="7ccec42a-1d0d-42e6-9767-b102af63afc6" >
 		<http:request method="POST" doc:name="Request" doc:id="49b7b2cb-26b5-49e2-bbf0-a8ff8599b6f8" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.post.tms.shipments.loads.confirmation}" >

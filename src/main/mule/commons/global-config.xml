@@ -38,7 +38,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 	<slack:config name="Slack_Connector_Config" doc:name="Slack Connector Config" doc:id="a8dc209a-c238-4dc9-b8a3-b6c02e29173b" responseTimeout="${slack.response.timeout}">
 		<slack:slack-auth-connection baseUri="${slack.connection.base.uri}" connectionTimeout="${slack.connection.timeout}" maxConnections="${slack.max.connections}" connectionIdleTimeout="${slack.connection.idle.timeout}" responseBufferSize="${slack.response.buffer.size}">
 			<slack:oauth-authorization-code consumerKey="${slack.connection.client_id}" consumerSecret="${slack.connection.client_secret}" authorizationUrl="${slack.connection.authorization.url}" accessTokenUrl="${slack.connection.token.url}" scopes="${slack.connection.scopes}"/>
-			<slack:oauth-callback-config listenerConfig="process-pharma-api-httpListenerConfig" callbackPath="${slack.connection.callback.path}" authorizePath="${slack.connection.authorize.path}" externalCallbackUrl="${slack.connection.external.callback.url.test}"/>
+			<slack:oauth-callback-config listenerConfig="process-pharma-api-httpListenerConfig" callbackPath="${slack.connection.callback.path}" authorizePath="${slack.connection.authorize.path}" externalCallbackUrl="${slack.connection.external.callback.url}"/>
 			<slack:oauth-store-config objectStore="Object_store_slack_connection" />
 		</slack:slack-auth-connection>
 	</slack:config>
