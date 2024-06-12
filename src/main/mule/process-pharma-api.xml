@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:slack="http://www.mulesoft.org/schema/mule/slack" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
-http://www.mulesoft.org/schema/mule/slack http://www.mulesoft.org/schema/mule/slack/current/mule-slack.xsd
-http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:slack="http://www.mulesoft.org/schema/mule/slack" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd  http://www.mulesoft.org/schema/mule/slack http://www.mulesoft.org/schema/mule/slack/current/mule-slack.xsd http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
     <http:listener-config name="process-pharma-api-httpListenerConfig">
         <http:listener-connection host="${http.listener.host}" port="${http.listener.port}" protocol="HTTPS" tlsContext="TLS_Context" readTimeout="${http.listener.read.timeout}" />
     </http:listener-config>
-    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.10:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.11:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="process-pharma-api-main">
         <http:listener config-ref="process-pharma-api-httpListenerConfig" path="${http.listener.path}">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -174,22 +172,21 @@ output application/json
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f307ae51-e879-4b60-a5f6-948d39c4680a" type="ERROR:CARTAPORTE">
-				<ee:transform doc:name="Transform Message" doc:id="795bf9b2-8234-4a4f-ac2e-4667ab5f1645" >
-					<ee:message >
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="sendToSlack" ><![CDATA[%dw 2.0
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f307ae51-e879-4b60-a5f6-948d39c4680a" type="ERROR:CARTAPORTE">
+                <ee:transform doc:name="Transform Message" doc:id="795bf9b2-8234-4a4f-ac2e-4667ab5f1645">
+                    <ee:message />
+                    <ee:variables>
+                        <ee:set-variable variableName="sendToSlack"><![CDATA[%dw 2.0
 output application/json
 ns ns2 http://ws.edifactwstraxion/
 ---
 write({
 	"ERROR CARTA PORTE": vars.cpResponse.body.ns2#generaComprobanteResponse.return
 })]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-				<slack:create-chatpost-message doc:name="Send Message" doc:id="0ab58cc6-db23-4969-98ca-8546b7557ace" config-ref="Slack_Connector_Config">
-					<slack:chatpost-message-content ><![CDATA[#[%dw 2.0
+                    </ee:variables>
+                </ee:transform>
+                <slack:create-chatpost-message doc:name="Send Message" doc:id="0ab58cc6-db23-4969-98ca-8546b7557ace" config-ref="Slack_Connector_Config">
+                    <slack:chatpost-message-content><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
@@ -201,38 +198,37 @@ output application/json
 	++ "\n Fecha y hora ->" ++ now() as String
 	++ "\n" ++ (vars.sendToSlack)
 }]]]></slack:chatpost-message-content>
-				</slack:create-chatpost-message>
-				<ee:transform doc:name="Transform Message" doc:id="5b532ab3-825e-447f-a804-35427e3b05ed" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+                </slack:create-chatpost-message>
+                <ee:transform doc:name="Transform Message" doc:id="5b532ab3-825e-447f-a804-35427e3b05ed">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ns ns2 http://ws.edifactwstraxion/
 ---
 {
 	"ERROR CARTA PORTE": vars.cpResponse.body.ns2#generaComprobanteResponse.return
 }]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-				<logger level="INFO" doc:name="Logger" doc:id="7fc67520-6a0b-485b-9ed8-bd371f4ec2a3" message="#[payload]" />
-			</on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="a4eda8ea-f815-4e81-a113-de218810db6f" type="ERROR:CARTAPORTECAMPORFC">
-				<ee:transform doc:name="Transform Message" doc:id="65d16329-714b-4869-804f-cd017ca2ccfc" >
-					<ee:message >
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="sendToSlack" ><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+                <logger level="INFO" doc:name="Logger" doc:id="7fc67520-6a0b-485b-9ed8-bd371f4ec2a3" message="#[payload]" />
+            </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="a4eda8ea-f815-4e81-a113-de218810db6f" type="ERROR:CARTAPORTECAMPORFC">
+                <ee:transform doc:name="Transform Message" doc:id="65d16329-714b-4869-804f-cd017ca2ccfc">
+                    <ee:message />
+                    <ee:variables>
+                        <ee:set-variable variableName="sendToSlack"><![CDATA[%dw 2.0
 output application/json
 ---
 write({
 	"ERROR CARTA PORTE": error.description as String
 })]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-				<slack:create-chatpost-message doc:name="Send Message" doc:id="e237af81-39d7-4b94-b266-9759f2ecbe9d" config-ref="Slack_Connector_Config">
-					<slack:chatpost-message-content ><![CDATA[#[%dw 2.0
+                    </ee:variables>
+                </ee:transform>
+                <slack:create-chatpost-message doc:name="Send Message" doc:id="e237af81-39d7-4b94-b266-9759f2ecbe9d" config-ref="Slack_Connector_Config">
+                    <slack:chatpost-message-content><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
@@ -244,27 +240,27 @@ output application/json
 	++ "\n Fecha y hora ->" ++ now() as String
 	++ "\n" ++ (vars.sendToSlack)
 }]]]></slack:chatpost-message-content>
-				</slack:create-chatpost-message>
-				<ee:transform doc:name="Transform Message" doc:id="32e2c0a7-e27f-442f-a38c-1bddb4e8efc4" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+                </slack:create-chatpost-message>
+                <ee:transform doc:name="Transform Message" doc:id="32e2c0a7-e27f-442f-a38c-1bddb4e8efc4">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	"ERROR CARTA PORTE": error.description
 }]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-				<logger level="INFO" doc:name="Logger" doc:id="359315c5-4178-446d-a75e-1156da5ee7e4" message="#[payload]"/>
-			</on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="320c267e-a1e6-4997-bd9d-02c71ae77eab" type="ERROR:BADRFCCARTAPORTE">
-				<ee:transform doc:name="Transform Message" doc:id="bf3f7ac8-3517-499f-bcfb-2660cb5c724a" >
-					<ee:message />
-					<ee:variables >
-						<ee:set-variable variableName="sendToSlack" ><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+                <logger level="INFO" doc:name="Logger" doc:id="359315c5-4178-446d-a75e-1156da5ee7e4" message="#[payload]" />
+            </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="320c267e-a1e6-4997-bd9d-02c71ae77eab" type="ERROR:BADRFCCARTAPORTE">
+                <ee:transform doc:name="Transform Message" doc:id="bf3f7ac8-3517-499f-bcfb-2660cb5c724a">
+                    <ee:message />
+                    <ee:variables>
+                        <ee:set-variable variableName="sendToSlack"><![CDATA[%dw 2.0
 output application/json
 ns ns2 http://ws.edifactwstraxion/
 ---
@@ -274,10 +270,10 @@ write({
 		"responsePack": vars.cpResponse.body.ns2#generaComprobanteResponse.return
 }
 })]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-				<slack:create-chatpost-message doc:name="Send Message" doc:id="5684d72f-149f-4072-b39d-917a18d7f6b0" config-ref="Slack_Connector_Config" >
-					<slack:chatpost-message-content ><![CDATA[#[%dw 2.0
+                    </ee:variables>
+                </ee:transform>
+                <slack:create-chatpost-message doc:name="Send Message" doc:id="5684d72f-149f-4072-b39d-917a18d7f6b0" config-ref="Slack_Connector_Config">
+                    <slack:chatpost-message-content><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
@@ -289,23 +285,23 @@ output application/json
 	++ "\n Fecha y hora ->" ++ now() as String
 	++ "\n" ++ (vars.sendToSlack)
 }]]]></slack:chatpost-message-content>
-				</slack:create-chatpost-message>
-				<ee:transform doc:name="Transform Message" doc:id="a998489a-d277-4a1b-b473-9749137757f1" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+                </slack:create-chatpost-message>
+                <ee:transform doc:name="Transform Message" doc:id="a998489a-d277-4a1b-b473-9749137757f1">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	"ERROR CARTA PORTE": error.description
 }]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-				<logger level="INFO" doc:name="Logger" doc:id="a3d9e687-293c-4e08-9617-ae2dad5ba8ff" message="#[payload]" />
-			</on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f7be221e-c58b-4804-9040-ab0924c948fd" type="ANY">
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+                <logger level="INFO" doc:name="Logger" doc:id="a3d9e687-293c-4e08-9617-ae2dad5ba8ff" message="#[payload]" />
+            </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f7be221e-c58b-4804-9040-ab0924c948fd" type="ANY">
                 <ee:transform doc:name="Transform Message" doc:id="47c74224-daf4-4e95-899f-a4cdd66ae06c">
                     <ee:message>
                         <ee:set-payload><![CDATA[output application/json
@@ -358,18 +354,17 @@ output application/json
     </flow>
     <flow name="post:\tms\bill_lading:application\json:process-pharma-api-config">
         <ee:transform doc:name="Set query param and declare payload back up">
-            <ee:message>
-            </ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="source_system" ><![CDATA[%dw 2.0
+            <ee:message />
+            <ee:variables>
+                <ee:set-variable variableName="source_system"><![CDATA[%dw 2.0
 output application/json
 ---
 attributes.queryParams.source_system]]></ee:set-variable>
-				<ee:set-variable variableName="originalPayload" ><![CDATA[%dw 2.0
+                <ee:set-variable variableName="originalPayload"><![CDATA[%dw 2.0
 output application/json
 ---
 payload]]></ee:set-variable>
-				<ee:set-variable variableName="traslado" ><![CDATA[%dw 2.0
+                <ee:set-variable variableName="traslado"><![CDATA[%dw 2.0
 output application/json
 ---
 {
@@ -405,16 +400,16 @@ output application/json
         }
       }
     }]]></ee:set-variable>
-			</ee:variables>
+            </ee:variables>
         </ee:transform>
-		<choice doc:name="Choice" doc:id="c3cc39bb-6c7c-4c9f-8665-3920c7a1b922" >
-			<when expression='#[upper(payload.traxion.tipo_documento) == "TRASLADO"]'>
-				<flow-ref doc:name="Call-orchestrator-post-tms-bill_lading" doc:id="52b3621b-ec25-49f5-a622-e594dcfc60c9" name="orchestrator-post-tms-bill_lading" />
-			</when>
-			<otherwise >
-				<logger level="INFO" doc:name="Logger" doc:id="d3bf04d6-1fad-4cc1-8526-e5f8dc6691c3" message="#[payload]"/>
-			</otherwise>
-		</choice>
+        <choice doc:name="Choice" doc:id="c3cc39bb-6c7c-4c9f-8665-3920c7a1b922">
+            <when expression="#[upper(payload.traxion.tipo_operacion) == &quot;NUEVO&quot;]">
+                <flow-ref doc:name="Call-orchestrator-post-tms-bill_lading" doc:id="52b3621b-ec25-49f5-a622-e594dcfc60c9" name="orchestrator-post-tms-bill_lading" />
+            </when>
+            <otherwise>
+                <logger level="INFO" doc:name="Logger" doc:id="d3bf04d6-1fad-4cc1-8526-e5f8dc6691c3" message="#[payload]" />
+            </otherwise>
+        </choice>
     </flow>
     <flow name="post:\tms\load\confirmation:application\json:process-pharma-api-config">
         <flow-ref doc:name="Call-orchestrator-post-tms-load-confirmation" doc:id="bc0d65c9-ba92-41d0-ac44-64bbddc185ca" name="orchestrator-post-tms-load-confirmation" />
