@@ -54,10 +54,20 @@ payload map(item)->{
 					</ee:message>
 					<ee:variables >
 						<ee:set-variable variableName="sendToSlack" ><![CDATA[%dw 2.0
-
 output application/json
 ---
-write(payload)]]></ee:set-variable>
+write(
+	{
+		totalRecords: payload.totalRecords as String,
+		elapsedTimeInMillis: payload.elapsedTimeInMillis as String,
+		failedRecords: payload.failedRecords as String,
+		loadedRecords: payload.loadedRecords as String,
+		successfulRecords: payload.successfulRecords as String,
+		processedRecords: payload.processedRecords as String,
+		batchJobInstanceId: payload.batchJobInstanceId as String,
+		jobName: if(vars.query_type == "DIF") "Update Siam Stock" else "Create Siam Stock"
+	}
+)]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
 				<slack:create-chatpost-message doc:name="Send Message to slack" doc:id="7ca31101-523b-4bdf-88f8-33d4dd99fe75" config-ref="Slack_Connector_Config">
@@ -77,10 +87,20 @@ output application/json
 				<ee:transform doc:name="Transform Message" doc:id="d413654d-46f0-4436-9d32-4fac00d2bd11">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
-
 output application/json
 ---
-payload]]></ee:set-payload>
+write(
+	{
+		totalRecords: payload.totalRecords,
+		elapsedTimeInMillis: payload.elapsedTimeInMillis,
+		failedRecords: payload.failedRecords,
+		loadedRecords: payload.loadedRecords,
+		successfulRecords: payload.successfulRecords,
+		processedRecords: payload.processedRecords,
+		batchJobInstanceId: payload.batchJobInstanceId,
+		jobName: if(vars.query_type == "DIF") "Update Siam Stock" else "Create Siam Stock"
+	}
+)]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
 				<logger level="INFO" doc:name="Logger" doc:id="4aeb5909-f795-49f6-8647-cec7335e1f9a" message="#[payload]"/>
