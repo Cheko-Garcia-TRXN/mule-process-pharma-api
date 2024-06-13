@@ -76,7 +76,7 @@ output application/json
 ---
 {
 	"channel": Mule::p('slack.connection.channel.siam'),
-	"text": "`Attention!` <!channel> There was an error in a mule app-> :warning: "
+	"text": "`Attention!` <!channel> There is a successful message in a mule app-> :ok: "
 	++ "\n ---------------------------------------------------"
 	++ "\n `SUCCESSFUL SIAM STOCK RESPONSE`"
 	++ "\n ---------------------------------------------------"
