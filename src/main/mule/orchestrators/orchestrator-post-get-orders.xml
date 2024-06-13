@@ -69,7 +69,9 @@ payload map(item)->{
     "fec_est_ent": item.Order__r.FX_dim_Fecha_Maxima_Entrega__c,
     "fec_sal_cenadi": item.Order__r.Fecha_Salida_CENADI__c,
     "fecha_certificacion": item.Order__r.Fecha_de_certificacion_de_la_remision__c,
-    "estatus_pedido": changeStatus(item.Estatus_de_Orden__c)
+    "estatus_pedido": changeStatus(item.Estatus_de_Orden__c),
+    "cantidad_piezas_solicitadas": item.Cantidad_Solicitada__c,
+    "clave_preupuestal":item.UMU__r.Clave_Presupuestal__c
   }]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
