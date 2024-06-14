@@ -68,6 +68,19 @@ write(
 		jobName: if(vars.query_type == "DIF") "Update Siam Stock" else "Create Siam Stock"
 	}
 )]]></ee:set-variable>
+						<ee:set-variable variableName="reportRequest" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	totalRecords: payload.totalRecords as String,
+	elapsedTimeInMillis: payload.elapsedTimeInMillis as String,
+	failedRecords: payload.failedRecords as String,
+	loadedRecords: payload.loadedRecords as String,
+	successfulRecords: payload.successfulRecords as String,
+	processedRecords: payload.processedRecords as String,
+	batchJobInstanceId: payload.batchJobInstanceId as String,
+	jobName: if(vars.query_type == "DIF") "Update Siam Stock" else "Create Siam Stock"
+}]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
 				<slack:create-chatpost-message doc:name="Send Message to slack" doc:id="7ca31101-523b-4bdf-88f8-33d4dd99fe75" config-ref="Slack_Connector_Config">
@@ -84,9 +97,9 @@ output application/json
 	++ "\n" ++ (vars.sendToSlack)
 }]]]></slack:chatpost-message-content>
 				</slack:create-chatpost-message>
-				<ee:transform doc:name="Transform Message" doc:id="d413654d-46f0-4436-9d32-4fac00d2bd11">
+				<ee:transform doc:name="Set" doc:id="d413654d-46f0-4436-9d32-4fac00d2bd11">
 					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 write(
@@ -102,13 +115,23 @@ write(
 	}
 )]]></ee:set-payload>
 					</ee:message>
+					<ee:variables >
+					</ee:variables>
 				</ee:transform>
 				<logger level="INFO" doc:name="Logger" doc:id="4aeb5909-f795-49f6-8647-cec7335e1f9a" message="#[payload]"/>
 				<async doc:name="Async" doc:id="e5538402-d55e-4d8b-b012-e8d4105c90b9">
 					<choice doc:name="Choice" doc:id="e7671894-4aa2-4c7f-b0f3-350ce53932fd">
 					<when expression='#[vars.query_type == "DIF"]'>
 							<try doc:name="Try" doc:id="da359ed8-5f14-459d-bc8c-5751e8fa41f3">
-						<flow-ref doc:name="Call to orchestrator-scheduler-send-report-siam-issste" doc:id="f362fd08-3cbf-4312-a4fb-d5d837417996" name="orchestrator-scheduler-send-report-siam-issste" />
+						<ee:transform doc:name="Transform Message" doc:id="86517fef-e4d2-49f9-a511-c1b4e010d465" >
+									<ee:message >
+										<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.reportRequest]]></ee:set-payload>
+									</ee:message>
+								</ee:transform>
+								<flow-ref doc:name="Call to orchestrator-scheduler-send-report-siam-issste" doc:id="f362fd08-3cbf-4312-a4fb-d5d837417996" name="orchestrator-scheduler-send-report-siam-issste" />
 						<error-handler>
 							<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="cde86c25-8dbf-4651-99aa-227f5b0e6e3e">
 								<logger level="INFO" doc:name="Logger" doc:id="3eb694f2-391f-481a-be85-231de48e80b6" message="FALLO LA GENERACION DEL REPORTE DE ACTUALIZACION" />

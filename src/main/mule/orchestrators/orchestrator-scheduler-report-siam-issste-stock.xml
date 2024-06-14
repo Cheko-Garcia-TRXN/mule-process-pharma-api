@@ -9,7 +9,7 @@
 http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd 
 http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd 
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
-	<flow name="orchestrator-scheduler-report-siam-issste-stockFlow" doc:id="e91a72b8-6e4d-41a9-88ca-0fd9cfa97109" initialState="stopped">
+	<!-- [STUDIO:"orchestrator-scheduler-report-siam-issste-stockFlow"]<flow name="orchestrator-scheduler-report-siam-issste-stockFlow" doc:id="e91a72b8-6e4d-41a9-88ca-0fd9cfa97109" initialState="stopped">
 		<scheduler doc:name="Scheduler" doc:id="31148e41-5b70-4b2b-be7a-d0b3ff43dab4" >
 			<scheduling-strategy >
 				<fixed-frequency frequency="10" timeUnit="MINUTES"/>
@@ -17,7 +17,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		</scheduler>
 		<set-variable value="DIF" doc:name="Set query_type" doc:id="58174078-a540-4546-a112-b8771f944f0c" variableName="query_type" />
 		<flow-ref doc:name="Call to orchestrator-scheduler-send-report-siam-issste" doc:id="b3649969-e20c-4160-9026-0526be5c29a7" name="orchestrator-scheduler-send-report-siam-issste"/>
-	</flow>
+	</flow> [STUDIO] -->
 		<sub-flow name="orchestrator-scheduler-send-report-siam-issste" doc:id="1b140084-d2a3-473e-9a71-0b6c868226b7" >
 		<logger level="INFO" doc:name="Logger" doc:id="46ef52e2-5c42-4bcc-805e-d02d82dd8ebf" message="CONSULTANDO TEP" />
 		<ee:transform doc:name="Save Payload" doc:id="4dd7c816-ff7b-45c4-a8c8-ccca0789ed78">

@@ -13,7 +13,7 @@
 		<set-variable value="DIF" doc:name="Set query_type" doc:id="3d20c206-51fd-4d51-8f31-47cdac4c3087" variableName="query_type"/>
 		<flow-ref doc:name="orchestrator-update-siam-stockFlow" doc:id="b92dbd7a-14c2-4637-9ae1-cc249b2608e3" name="orchestrator-update-siam-stockFlow"/>
 	</flow>
-		<flow name="orchestrator-scheduler-siam-issste-stock-update-all" doc:id="dae7fe92-5d4b-4912-bbc2-bf3f0dd13721" >
+		<flow name="orchestrator-scheduler-siam-issste-stock-update-all" doc:id="dae7fe92-5d4b-4912-bbc2-bf3f0dd13721" initialState="started">
 		<scheduler doc:name="DIF" doc:id="f0492bf6-4c7f-4e8d-bc0e-352774c3c045" >
 			<scheduling-strategy >
 				<fixed-frequency frequency="10" timeUnit="MINUTES"/>
