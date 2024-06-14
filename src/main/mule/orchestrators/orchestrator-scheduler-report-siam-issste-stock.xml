@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd 
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<flow name="orchestrator-scheduler-report-siam-issste-stockFlow" doc:id="e91a72b8-6e4d-41a9-88ca-0fd9cfa97109" initialState="stopped">
+		<scheduler doc:name="Scheduler" doc:id="31148e41-5b70-4b2b-be7a-d0b3ff43dab4" >
+			<scheduling-strategy >
+				<fixed-frequency frequency="10" timeUnit="MINUTES"/>
+			</scheduling-strategy>
+		</scheduler>
+		<set-variable value="DIF" doc:name="Set query_type" doc:id="58174078-a540-4546-a112-b8771f944f0c" variableName="query_type" />
+		<flow-ref doc:name="Call to orchestrator-scheduler-send-report-siam-issste" doc:id="b3649969-e20c-4160-9026-0526be5c29a7" name="orchestrator-scheduler-send-report-siam-issste"/>
+	</flow>
+		<sub-flow name="orchestrator-scheduler-send-report-siam-issste" doc:id="1b140084-d2a3-473e-9a71-0b6c868226b7" >
+		<logger level="INFO" doc:name="Logger" doc:id="46ef52e2-5c42-4bcc-805e-d02d82dd8ebf" message="CONSULTANDO TEP" />
+		<ee:transform doc:name="Save Payload" doc:id="4dd7c816-ff7b-45c4-a8c8-ccca0789ed78">
+			<ee:message>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="batchResponse" ><![CDATA[%dw 2.0
+output application/json
+---
+payload default
+{
+  totalRecords: "77743",
+  elapsedTimeInMillis: "40422",
+  failedRecords: "0",
+  loadedRecords: "77743",
+  successfulRecords: "77743",
+  processedRecords: "77743",
+  batchJobInstanceId: "ce387920-29bd-11ef-80ee-08920424d50a",
+  jobName: "Update Siam Stock Test"
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="Call to clients-system-tep-get-siam-stock" doc:id="3bd4f22d-339d-4d9c-9b93-0a77c0b4d77e" name="clients-system-tep-get-siam-stock" />
+		<set-variable value="${report.siam.stock.confirmation.emails}" doc:name="Set emails in var" doc:id="d6a02bae-db69-489f-9b41-1e5f63bc4b41" variableName="emails" />
+		<ee:transform doc:name="To CSV" doc:id="68c6a123-7d6a-4f44-b123-3022254cd6c0">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="file"><![CDATA[%dw 2.0
+output application/csv
+---
+payload map ( item ) -> {
+	SKU: item.sku as String,
+	EXISTENCIAS_DISPONIBLES: (item.existencias_disponibles default 0) as String,
+	EXISTENCIAS_TOTALES: (item.existencias_totales default 0) as String,
+	EXISTENCIAS_APARTADAS: (item.existencias_apartadas default 0) as String,
+	CLAVE_PRESUPUESTAL: item.clave_presupuestal,
+	FECHA: item.fecha,
+	EXTERNAL_ID_B: item.ExternalID__b,
+	EXTERNAL_ID_c: item.ExternalID__c
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="00d17d6f-b856-420e-8aea-96b33e81ac77" message="#[payload]" />
+		<ee:transform doc:name="Set Body" doc:id="f6bf6856-95fc-4ade-bc7f-08485021dfa4">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/xml writeDeclaration=false
+---
+{
+    table @(style: "width: 75%; border: 1px solid grey; font-family: Monospace" ): {
+        tr @(): {
+            td @(align:'center', bgcolor: "#ABFF3D",style: "color: black !important; font-size:14px; ") : "Total Registros",
+            td @(align:'center', style: "color: #ffffff; font-size: 14px; font-weight: 500; width: 60%") : vars.batchResponse.totalRecords
+        },
+        tr @(): {
+            td @(align:'center', bgcolor: "#ABFF3D",style: "color: black !important; font-size:14px; ") : "Registros Exitosos",
+            td @(align:'center', style: "color: #ffffff; font-size: 14px; font-weight: 500; width: 60%") : vars.batchResponse.successfulRecords
+        },
+        tr @(): {
+            td @(align:'center', bgcolor: "#ABFF3D",style: "color: black !important; font-size:14px; ") : "Registros Fallidos",
+            td @(align:'center', style: "color: #ffffff; font-size: 14px; font-weight: 500; width: 60%") : vars.batchResponse.failedRecords
+        },
+        tr @(): {
+            td @(align:'center', bgcolor: "#ABFF3D",style: "color: black !important; font-size:14px; ") : "Registros Cargados",
+            td @(align:'center', style: "color: #ffffff; font-size: 14px; font-weight: 500; width: 60%") : vars.batchResponse.loadedRecords
+        },
+        tr @(): {
+            td @(align:'center', bgcolor: "#ABFF3D",style: "color: black !important; font-size:14px; ") : "Registros Procesados",
+            td @(align:'center', style: "color: #ffffff; font-size: 14px; font-weight: 500; width: 60%") : vars.batchResponse.processedRecords
+        },
+        tr @(): {
+            td @(align:'center', bgcolor: "#ABFF3D",style: "color: black !important; font-size:14px; ") : "UUID",
+            td @(align:'center', style: "color: #ffffff; font-size: 14px; font-weight: 500; width: 60%") : vars.batchResponse.batchJobInstanceId
+        },
+        tr @(): {
+            td @(align:'center', bgcolor: "#ABFF3D",style: "color: black !important; font-size:14px; ") : "Tipo de proceso",
+            td @(align:'center', style: "color: #ffffff; font-size: 14px; font-weight: 500; width: 60%") : vars.batchResponse.jobName
+        },
+        tr @(): {
+            td @(align:'center', bgcolor: "#ABFF3D",style: "color: black !important; font-size:14px; ") : "Tiempo en Milisegundos",
+            td @(align:'center', style: "color: #ffffff; font-size: 14px; font-weight: 500; width: 60%") : vars.batchResponse.elapsedTimeInMillis
+        },
+    }
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+		<parse-template doc:name="Parse Template" doc:id="de417682-0af8-4bf3-aee3-7d7542247550">
+					<content>&lt;html&gt;
+  &lt;head&gt;&lt;/head&gt;
+  &lt;body&gt;
+    &lt;p&gt;Hola buen día. &lt;/p&gt;
+    &lt;p&gt;Enviamos los productos que fueron actualizados en el SIAM STOCK el día de hoy. &lt;/p&gt;
+    &lt;br /&gt;
+    #[payload]
+&lt;br /&gt;&lt;br /&gt;
+&lt;p&gt;Este es un correo automatizado, por favor no responda.&lt;/p&gt;
+&lt;br /&gt;
+&lt;p&gt;Gracias y saludos.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</content>
+				</parse-template>
+		<email:send doc:name="Send" doc:id="796bb805-48c3-4158-9229-e89fbc1ff940" config-ref="Email_SMTP" fromAddress="${system.smtp.email.from.address}" subject="ACTUALIZACION SIAM STOCK" toAddresses='#[vars.emails splitBy ","]'>
+					<email:body contentType="text/html">
+					</email:body>
+			<email:attachments><![CDATA[#[{
+	"Reporte.csv" : vars.file
+}]]]></email:attachments>
+				</email:send>
+	</sub-flow>
+</mule>

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
 	xmlns:slack="http://www.mulesoft.org/schema/mule/slack"
 	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
 	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:traxion-s-logger="http://www.mulesoft.org/schema/mule/traxion-s-logger"
 	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
 	xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd 
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
 http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd 
 http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
@@ -18,7 +20,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 
 	<configuration-properties doc:name="Configuration properties" doc:id="e266184c-e18b-4e1b-bbb3-5e1fb0215e2e" file="process-pharma-${env}.properties" />
 
-	<global-property doc:name="Global Property" doc:id="79bd727b-d36c-4291-98c0-86616caeeda7" name="env" value="uat" />
+	<global-property doc:name="Global Property" doc:id="79bd727b-d36c-4291-98c0-86616caeeda7" name="env" value="pro" />
 	
 <api-gateway:autodiscovery apiId="${anypoint.platform.autodiscovery}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="441d3a26-eec8-42ec-8999-fc31b39d8ae2" flowRef="process-pharma-api-main" />
 	<tls:context name="TLS_Context" doc:name="TLS Context" doc:id="f54bcc26-e97c-40cc-bb75-cc49eaee9d5d" >
@@ -50,4 +52,11 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		</os:connection>
 	</os:config>
 	<os:object-store name="Object_store_slack_connection" doc:name="Object store" doc:id="69550af9-647c-47cd-bad9-d9e10955a110" maxEntries="10" entryTtlUnit="DAYS" expirationInterval="0" expirationIntervalUnit="DAYS" config-ref="ObjectStore_ConfigReference_SlackConnection" />
+	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="c40ed7a0-f9f9-4f0b-b8f5-4a4a0e533e78" >
+		<email:smtp-connection host="${system.smtp.email.host}" user="${system.smtp.email.from.address}" password="${system.smtp.email.from.pass}" port="${system.smtp.email.port}">
+			<email:properties >
+				<email:property key="mail.smtp.starttls.enable" value="true" />
+			</email:properties>
+		</email:smtp-connection>
+	</email:smtp-config>
 </mule>

@@ -104,6 +104,23 @@ write(
 					</ee:message>
 				</ee:transform>
 				<logger level="INFO" doc:name="Logger" doc:id="4aeb5909-f795-49f6-8647-cec7335e1f9a" message="#[payload]"/>
+				<async doc:name="Async" doc:id="e5538402-d55e-4d8b-b012-e8d4105c90b9">
+					<choice doc:name="Choice" doc:id="e7671894-4aa2-4c7f-b0f3-350ce53932fd">
+					<when expression='#[vars.query_type == "DIF"]'>
+							<try doc:name="Try" doc:id="da359ed8-5f14-459d-bc8c-5751e8fa41f3">
+						<flow-ref doc:name="Call to orchestrator-scheduler-send-report-siam-issste" doc:id="f362fd08-3cbf-4312-a4fb-d5d837417996" name="orchestrator-scheduler-send-report-siam-issste" />
+						<error-handler>
+							<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="cde86c25-8dbf-4651-99aa-227f5b0e6e3e">
+								<logger level="INFO" doc:name="Logger" doc:id="3eb694f2-391f-481a-be85-231de48e80b6" message="FALLO LA GENERACION DEL REPORTE DE ACTUALIZACION" />
+							</on-error-continue>
+						</error-handler>
+					</try>
+					</when>
+						<otherwise >
+							<logger level="INFO" doc:name="Logger" doc:id="aca60c07-611a-474d-989f-a3f16a555868" message="SE ACTUALIZO TODO EL SIAM STOCK" />
+						</otherwise>
+				</choice>
+				</async>
 			</batch:on-complete>
 		</batch:job>
 	</flow>
