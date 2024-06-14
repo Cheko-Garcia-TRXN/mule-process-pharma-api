@@ -79,7 +79,7 @@ output application/json
 	successfulRecords: payload.successfulRecords as String,
 	processedRecords: payload.processedRecords as String,
 	batchJobInstanceId: payload.batchJobInstanceId as String,
-	jobName: if(vars.query_type == "DIF") "Update Siam Stock" else "Create Siam Stock"
+	jobName: if ( vars.query_type == "DIF" ) "Update Siam Stock" else "Create Siam Stock"
 }]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
@@ -102,18 +102,16 @@ output application/json
 						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-write(
-	{
-		totalRecords: payload.totalRecords,
-		elapsedTimeInMillis: payload.elapsedTimeInMillis,
-		failedRecords: payload.failedRecords,
-		loadedRecords: payload.loadedRecords,
-		successfulRecords: payload.successfulRecords,
-		processedRecords: payload.processedRecords,
-		batchJobInstanceId: payload.batchJobInstanceId,
-		jobName: if(vars.query_type == "DIF") "Update Siam Stock" else "Create Siam Stock"
-	}
-)]]></ee:set-payload>
+{
+	totalRecords: payload.totalRecords,
+	elapsedTimeInMillis: payload.elapsedTimeInMillis,
+	failedRecords: payload.failedRecords,
+	loadedRecords: payload.loadedRecords,
+	successfulRecords: payload.successfulRecords,
+	processedRecords: payload.processedRecords,
+	batchJobInstanceId: payload.batchJobInstanceId,
+	jobName: if ( vars.query_type == "DIF" ) "Update Siam Stock" else "Create Siam Stock"
+}]]></ee:set-payload>
 					</ee:message>
 					<ee:variables >
 					</ee:variables>
