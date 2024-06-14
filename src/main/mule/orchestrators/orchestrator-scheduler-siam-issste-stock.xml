@@ -93,7 +93,7 @@ output application/json
 	++ "\n ---------------------------------------------------"
 	++ "\n `SUCCESSFUL SIAM STOCK RESPONSE`"
 	++ "\n ---------------------------------------------------"
-	++ "\n Fecha y hora ->" ++ now() as String
+	++ "\n Fecha y hora ->" ++ (now()>> "-06:00") as String
 	++ "\n" ++ (vars.sendToSlack)
 }]]]></slack:chatpost-message-content>
 				</slack:create-chatpost-message>
