@@ -110,7 +110,7 @@ output application/xml writeDeclaration=false
   &lt;head&gt;&lt;/head&gt;
   &lt;body&gt;
     &lt;p&gt;Hola buen día. &lt;/p&gt;
-    &lt;p&gt;Enviamos los productos que fueron actualizados en el SIAM STOCK el día de hoy. &lt;/p&gt;
+    &lt;p&gt;Enviamos los productos que fueron actualizados en el SIAM STOCK el día #[now() &gt;&gt; &quot;-06:00&quot;]. &lt;/p&gt;
     &lt;br /&gt;
     #[payload]
 &lt;br /&gt;&lt;br /&gt;
