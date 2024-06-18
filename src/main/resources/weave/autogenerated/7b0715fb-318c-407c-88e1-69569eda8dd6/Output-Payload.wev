@@ -1,0 +1,14 @@
+%dw 2.0
+
+type auto_7b0715fb_318c_407c_88e1_69569eda8dd6_Output_Payload = {|
+  traxion_response: {|
+    completed_succesfully: {|
+      error: {|
+        error_type: String, 
+        user_error_description: String, 
+        system_error_description: String
+      |}
+    |}
+  |}
+|}
+

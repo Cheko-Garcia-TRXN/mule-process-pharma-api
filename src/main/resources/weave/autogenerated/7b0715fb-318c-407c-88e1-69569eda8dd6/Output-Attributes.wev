@@ -1,0 +1,9 @@
+%dw 2.0
+
+type auto_7b0715fb_318c_407c_88e1_69569eda8dd6_Output_Attributes = {|
+  statusCode: Number, 
+  headers: { _?: String }, 
+  reasonPhrase: String
+|} {"typeAlias": "HttpResponseAttributes",
+"typeId": "com.mulesoft.connectivity.slack.rest.commons.api.operation.HttpResponseAttributes"}
+

@@ -1,0 +1,18 @@
+%dw 2.0
+
+type auto_7b0715fb_318c_407c_88e1_69569eda8dd6_Input_Variables_records = Array<{|  message: org_mule_runtime_api_message_Message,   error: Null,   variables: {| sendToSlack: String | Binary |}|}>
+type org_mule_runtime_api_message_Message = {|
+  payload: {|
+    completed_succesfully: {|
+      error: {|
+        error_type: String, 
+        user_error_description: String, 
+        system_error_description: String
+      |}
+    |}
+  |}, 
+  attributes: Null
+|} {"typeId": "org.mule.runtime.api.message.Message"}
+
+
+

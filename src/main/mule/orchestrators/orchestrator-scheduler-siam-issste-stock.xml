@@ -1,22 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:slack="http://www.mulesoft.org/schema/mule/slack"
-	xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
-	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:slack="http://www.mulesoft.org/schema/mule/slack" xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd 
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/slack http://www.mulesoft.org/schema/mule/slack/current/mule-slack.xsd">
+http://www.mulesoft.org/schema/mule/slack http://www.mulesoft.org/schema/mule/slack/current/mule-slack.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+	<vm:config name="VM_Config" doc:name="VM Config" doc:id="39eb5289-f17e-444d-bee1-d9eb8a93d942" >
+		<vm:queues >
+			<vm:queue queueName="siam-stock" />
+		</vm:queues>
+	</vm:config>
 	<flow name="orchestrator-update-siam-stockFlow" doc:id="6464424b-4597-454c-ade5-877bb2923a27">
 		<logger level="INFO" doc:name="Logger" doc:id="46ef52e2-5c42-4bcc-805e-d02d82dd8ebf" message="CONSULTANDO TEP" />
 		<flow-ref doc:name="Call to clients-system-tep-get-siam-stock" doc:id="3bd4f22d-339d-4d9c-9b93-0a77c0b4d77e" name="clients-system-tep-get-siam-stock" />
 		<logger level="INFO" doc:name="Logger" doc:id="00d17d6f-b856-420e-8aea-96b33e81ac77" message="FINALIZANDO CONSULTA TEP" />
-		<batch:job jobName="orchestrator-update-siam-stockBatch_Job" doc:id="f36a103c-6240-4b81-87df-4e768721a484" maxFailedRecords="-1" blockSize="200" schedulingStrategy="ROUND_ROBIN">
+		<batch:job jobName="orchestrator-update-siam-stockBatch_Job" doc:id="f36a103c-6240-4b81-87df-4e768721a484" maxFailedRecords="-1" blockSize="200">
 			<batch:process-records>
 				<batch:step name="step_insert_data_siam" doc:id="ca8e0550-8d9d-4f1d-aa80-55f4b95116f8" acceptPolicy="ALL">
 					<batch:aggregator doc:name="Batch Aggregator" doc:id="65c61348-118d-4311-a237-b4d915c2bf4c" size="200">
-						<logger level="INFO" doc:name="Logger" doc:id="4ebf56e3-d3da-4814-af52-4a9890f56e15" message="ENVIANDO LOTE" />
+						<logger level="INFO" doc:name="Logger" doc:id="4ebf56e3-d3da-4814-af52-4a9890f56e15" message="PREPARANDO LOTE" />
 						<ee:transform doc:name="Transform Message1" doc:id="61d669d6-062a-4e2a-9cdc-b377dac59c9a">
 							<ee:message>
 								<ee:set-payload><![CDATA[%dw 2.0
@@ -41,11 +48,11 @@ payload map(item)->{
     sku: item.sku,
     Existencias_totales: item.existencias_totales,
     external_id: item.sku ++ "-ISSSTE-" ++ item.clave_presupuestal
-} wait 2000]]></ee:set-payload>
+} ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 						<logger level="INFO" doc:name="Logger" doc:id="ddf489c5-e6a1-4042-9d9f-c9f75e1c2d1c" message="enviando lote de #[sizeOf(payload)] " category="LOG 2 STEP" />
-						<flow-ref doc:name="Call to clients-system-tep-post-siam-stock" doc:id="af5082bd-1384-472a-924f-5d04065ac111" name="clients-system-tep-post-siam-stock" />
+						<flow-ref doc:name="clients-system-tep-post-siam-stock" doc:id="f0f97642-a71f-47a3-8aa5-cf588e177a7c" name="clients-system-tep-post-siam-stock"/>
 					</batch:aggregator>
 				</batch:step>
 			</batch:process-records>
