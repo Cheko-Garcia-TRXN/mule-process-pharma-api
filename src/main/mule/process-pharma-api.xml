@@ -3,7 +3,7 @@
     <http:listener-config name="process-pharma-api-httpListenerConfig">
         <http:listener-connection host="${http.listener.host}" port="${http.listener.port}" protocol="HTTPS" tlsContext="TLS_Context" readTimeout="${http.listener.read.timeout}" />
     </http:listener-config>
-    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.19:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.20:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="process-pharma-api-main">
         <http:listener config-ref="process-pharma-api-httpListenerConfig" path="${http.listener.path}">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -454,16 +454,5 @@ attributes.queryParams.certification_date_from]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <flow-ref doc:name="Call to orchestrator-get-orders" doc:id="9aa4d398-84ec-47aa-8a8e-2347c4c21ee6" name="orchestrator-get-orders" />
-    </flow>
-    <flow name="post:\test-slack:application\x-www-form-urlencoded:process-pharma-api-config">
-		<ee:transform doc:name="Transform Message" doc:id="84ec5d5e-5276-444a-9645-b800282df182" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-read(payload.payload, "application/json")]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="b221a9db-b9bb-4e64-ba15-d6bbbd2ba522" message="#[payload]" />
     </flow>
 </mule>
