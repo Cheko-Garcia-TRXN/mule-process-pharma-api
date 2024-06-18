@@ -1,0 +1,13 @@
+%dw 2.0
+
+type auto_ea0e082d_0905_44d9_b200_f346bfaf1d90_Output_Payload = {|
+  totalRecords: Null, 
+  elapsedTimeInMillis: Null, 
+  failedRecords: Null, 
+  loadedRecords: Null, 
+  successfulRecords: Null, 
+  processedRecords: Null, 
+  batchJobInstanceId: Null, 
+  jobName: String
+|}
+

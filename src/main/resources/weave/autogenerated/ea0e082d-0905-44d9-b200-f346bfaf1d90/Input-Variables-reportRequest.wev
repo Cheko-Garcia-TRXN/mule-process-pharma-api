@@ -1,0 +1,13 @@
+%dw 2.0
+
+type auto_ea0e082d_0905_44d9_b200_f346bfaf1d90_Input_Variables_reportRequest = {|
+  totalRecords: String, 
+  elapsedTimeInMillis: String, 
+  failedRecords: String, 
+  loadedRecords: String, 
+  successfulRecords: String, 
+  processedRecords: String, 
+  batchJobInstanceId: String, 
+  jobName: String
+|}
+
