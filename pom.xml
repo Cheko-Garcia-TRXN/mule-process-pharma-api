@@ -47,7 +47,7 @@
 						<connectedAppClientSecret>${client.secret}</connectedAppClientSecret>
 						<connectedAppGrantType>client_credentials</connectedAppGrantType>
 						<applicationName>${appname}</applicationName>
-						<artifact>4.5.0</artifact>
+						<artifact>${artifact}</artifact>
 						<environment>${env}</environment>
 						<workerType>${vCore}</workerType>
 						<workers>${workers}</workers>
