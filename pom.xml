@@ -21,7 +21,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
-				<version>3.2.0</version>
+				<version>3.0.0</version>
 			</plugin>
 			<plugin>
 				<groupId>org.mule.tools.maven</groupId>
@@ -145,13 +145,13 @@
 			<url>https://repository.mulesoft.org/releases/</url>
 			<layout>default</layout>
 		</repository>
-  <!-- Replace ORGANIZATION_ID -->
+  <!-- Replace ORGANIZATION_ID 
   <repository>
     <id>PrivateExchangeRepository</id>
     <name>Private Exchange repository</name>
     <url>https://maven.anypoint.mulesoft.com/api/v3/organizations/ab8117f6-d718-4307-b5f7-03262d589cd0/maven</url>
     <layout>default</layout>
-  </repository>    		
+  </repository>    	-->	
 	</repositories>
 
 	<pluginRepositories>
@@ -165,14 +165,14 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
+<!-- 
 <distributionManagement>
-    <!-- Replace ORGANIZATION_ID -->
+    Replace ORGANIZATION_ID
     <repository>
         <id>PrivateExchangeRepository</id>
         <name>Private Exchange repository</name>
         <url>https://maven.anypoint.mulesoft.com/api/v3/organizations/ab8117f6-d718-4307-b5f7-03262d589cd0/maven</url>
         <layout>default</layout>
      </repository>
-</distributionManagement>
+</distributionManagement> -->
 </project>
