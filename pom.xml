@@ -13,7 +13,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<app.runtime>4.4.0</app.runtime>
-		<mule.maven.plugin.version>4.0.0</mule.maven.plugin.version>
+		<mule.maven.plugin.version>4.2.0</mule.maven.plugin.version>
 	</properties>
 
 	<build>
@@ -135,7 +135,7 @@
 			<name>Anypoint Exchange</name>
 			<url>https://maven.anypoint.mulesoft.com/api/v2/maven</url>
 			<layout>default</layout>
-		</repository>	
+		</repository>
 		<repository>
 			<id>anypoint-exchange-v3</id>
 			<name>Anypoint Exchange</name>
@@ -148,13 +148,13 @@
 			<url>https://repository.mulesoft.org/releases/</url>
 			<layout>default</layout>
 		</repository>
-  <!-- Replace ORGANIZATION_ID 
+		<!-- Replace ORGANIZATION_ID 
   <repository>
-    <id>PrivateExchangeRepository</id>
-    <name>Private Exchange repository</name>
-    <url>https://maven.anypoint.mulesoft.com/api/v3/organizations/ab8117f6-d718-4307-b5f7-03262d589cd0/maven</url>
-    <layout>default</layout>
-  </repository>    	-->	
+	<id>PrivateExchangeRepository</id>
+	<name>Private Exchange repository</name>
+	<url>https://maven.anypoint.mulesoft.com/api/v3/organizations/ab8117f6-d718-4307-b5f7-03262d589cd0/maven</url>
+	<layout>default</layout>
+  </repository>    	-->
 	</repositories>
 
 	<pluginRepositories>
@@ -168,14 +168,14 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-<!-- 
+	<!-- 
 <distributionManagement>
-    Replace ORGANIZATION_ID
-    <repository>
-        <id>PrivateExchangeRepository</id>
-        <name>Private Exchange repository</name>
-        <url>https://maven.anypoint.mulesoft.com/api/v3/organizations/ab8117f6-d718-4307-b5f7-03262d589cd0/maven</url>
-        <layout>default</layout>
-     </repository>
+	Replace ORGANIZATION_ID
+	<repository>
+		<id>PrivateExchangeRepository</id>
+		<name>Private Exchange repository</name>
+		<url>https://maven.anypoint.mulesoft.com/api/v3/organizations/ab8117f6-d718-4307-b5f7-03262d589cd0/maven</url>
+		<layout>default</layout>
+	 </repository>
 </distributionManagement> -->
 </project>
