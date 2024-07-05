@@ -301,7 +301,7 @@ output application/json
                 </ee:transform>
                 <logger level="INFO" doc:name="Logger" doc:id="a3d9e687-293c-4e08-9617-ae2dad5ba8ff" message="#[payload]" />
             </on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="173673eb-420a-4a97-824d-03c304011d5d" type="ERROR:SERVICE_UNAVAILABLE">
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="173673eb-420a-4a97-824d-03c304011d5d" type="ERROR:CARTA_PORTE_SERVICE_UNAVAILABLE">
 				<ee:transform doc:name="Transform Message" doc:id="c8a428db-f347-40ab-94e1-a828257f283e" >
 					<ee:message >
 					</ee:message>
@@ -353,6 +353,9 @@ output application/json
 	}
 }]]></ee:set-payload>
 					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[503]]></ee:set-variable>
+					</ee:variables>
 				</ee:transform>
 				<logger level="INFO" doc:name="Logger" doc:id="e82dcc0d-74f2-49f1-add6-20ae67aecb72" message="#[payload]"/>
 			</on-error-propagate>

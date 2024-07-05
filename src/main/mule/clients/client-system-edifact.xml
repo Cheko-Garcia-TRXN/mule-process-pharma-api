@@ -17,7 +17,7 @@ vars.request.queryParams]]]></http:query-params>
 				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7da575d5-498d-42d5-ac10-2de194d9fc32" >
 					<choice doc:name="Choice" doc:id="2d171abe-79e4-4784-b5f3-d0683a3046f0" >
 						<when expression='#[error.muleMessage.typedValue.description contains "503"]'>
-							<raise-error doc:name="Raise error" doc:id="7efe42bd-403a-4e83-8193-21c1ef1d0fd7" type="ERROR:SERVICE_UNAVAILABLE" description="Error al generar carta porte. El servicio no está disponible."/>
+							<raise-error doc:name="Raise error" doc:id="7efe42bd-403a-4e83-8193-21c1ef1d0fd7" type="ERROR:CARTA_PORTE_SERVICE_UNAVAILABLE" description="Error al generar carta porte. El servicio no está disponible."/>
 						</when>
 						<otherwise >
 							<raise-error doc:name="Raise error" doc:id="3c3ea09b-f537-429a-ab6b-917c8bbd2f86" type="ERROR:CARTAPORTECAMPORFC" description="Error al crear carta porte. Falta ingresar el RFC en alguno de los campos correspondientes dentro del array ubicaciones." />
