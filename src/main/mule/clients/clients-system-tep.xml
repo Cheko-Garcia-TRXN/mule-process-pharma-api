@@ -28,6 +28,23 @@ http://www.mulesoft.org/schema/mule/slack http://www.mulesoft.org/schema/mule/sl
 		</http:request>
 			<error-handler >
 				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f8aa35a5-a119-42e6-ac50-27f8f2615265" type="ERROR:SIAMSTOCK">
+					<ee:transform doc:name="Transform Message" doc:id="39a1301d-03ac-4eb0-9eeb-9ef1d0531f2b">
+						<ee:message>
+							<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"traxion_response": {
+		"completed_succesfully": "error": {
+			"error_type": error.errorType.asString as String,
+			"user_error_description": error.detailedDescription as String,
+			"system_error_description": error.detailedDescription as String
+		}
+	}
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<logger level="INFO" doc:name="Logger" doc:id="79015ce8-3241-43b9-ae2f-d99586e538df" message="#[payload]" />
 					<ee:transform doc:name="Prepare message for slack" doc:id="8b0f5b1c-ba0c-41de-9dc7-e6b65b605a6a">
 			<ee:message>
 			</ee:message>
@@ -48,7 +65,8 @@ write(
 )]]></ee:set-variable>
 						</ee:variables>
 		</ee:transform>
-					<slack:create-chatpost-message doc:name="Send Message to slack" doc:id="d0a2d6c9-186b-4ef2-90aa-29505481b474" config-ref="Slack_Connector_Config">
+					<try doc:name="Try" doc:id="076f0978-7d6b-4775-9ba7-86439ddd3b67" >
+						<slack:create-chatpost-message doc:name="Send Message to slack" doc:id="d0a2d6c9-186b-4ef2-90aa-29505481b474" config-ref="Slack_Connector_Config">
 			<slack:chatpost-message-content><![CDATA[#[%dw 2.0
 output application/json
 ---
@@ -62,23 +80,12 @@ output application/json
 	++ "\n" ++ (vars.sendToSlack)
 }]]]></slack:chatpost-message-content>
 		</slack:create-chatpost-message>
-					<ee:transform doc:name="Transform Message" doc:id="39a1301d-03ac-4eb0-9eeb-9ef1d0531f2b" >
-						<ee:message >
-							<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"traxion_response": {
-		"completed_succesfully": "error": {
-			"error_type": error.errorType.asString as String,
-			"user_error_description": error.detailedDescription as String,
-			"system_error_description": error.detailedDescription as String
-		}
-	}
-}]]></ee:set-payload>
-						</ee:message>
-					</ee:transform>
-					<logger level="INFO" doc:name="Logger" doc:id="79015ce8-3241-43b9-ae2f-d99586e538df" message="#[payload]"/>
+						<error-handler >
+							<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b78ae2ca-49b1-44e8-877e-54c52e38c6e7" >
+								<logger level="ERROR" doc:name="Logger" doc:id="b68314b8-2958-4fea-aad2-1d8be6ac691f" message="THIS SLACK ERROR DOES NOT AFFECT THE NORMAL PROCESS. ONLY THE MESSAGES DOES NOT ARRIVE TO SLACK. EVEN SO YOU HAVE TO REVIEW IT. #[error]" category="SLACK CONNECTIVITY."/>
+							</on-error-continue>
+						</error-handler>
+					</try>
 				</on-error-propagate>
 			</error-handler>
 		</try>
@@ -104,6 +111,23 @@ output application/json
 		</http:request>
 			<error-handler >
 				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="1fa548c3-7a4b-46c4-bfad-01587fc22bae" type="ERROR:SIAMSTOCK" >
+					<ee:transform doc:name="Transform Message" doc:id="80ed8763-581f-4547-be9f-ffbad41162bd">
+						<ee:message>
+							<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"traxion_response": {
+		"completed_succesfully": "error": {
+			"error_type": error.errorType.asString as String,
+			"user_error_description": error.detailedDescription as String,
+			"system_error_description": error.detailedDescription as String
+		}
+	}
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<logger level="INFO" doc:name="Logger" doc:id="5b128620-07c1-4d7e-bee7-aaa8402a1217" message="#[payload]" />
 					<ee:transform doc:name="Prepare message for slack" doc:id="f4d02c7c-26e4-4753-8887-f189b1d037cd" >
 						<ee:message >
 						</ee:message>
@@ -124,8 +148,9 @@ write(
 )]]></ee:set-variable>
 						</ee:variables>
 					</ee:transform>
-					<slack:create-chatpost-message doc:name="Send Message to slack" doc:id="902723a1-ba4b-4811-b9e6-7f55f370414d" config-ref="Slack_Connector_Config" >
-						<slack:chatpost-message-content ><![CDATA[#[%dw 2.0
+					<try doc:name="Try" doc:id="e24ec2f4-db93-4c97-8d44-058e89c44efb" >
+						<slack:create-chatpost-message doc:name="Send Message to slack" doc:id="902723a1-ba4b-4811-b9e6-7f55f370414d" config-ref="Slack_Connector_Config">
+						<slack:chatpost-message-content><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
@@ -138,23 +163,12 @@ output application/json
 	++ "\n" ++ (vars.sendToSlack)
 }]]]></slack:chatpost-message-content>
 					</slack:create-chatpost-message>
-					<ee:transform doc:name="Transform Message" doc:id="80ed8763-581f-4547-be9f-ffbad41162bd" >
-						<ee:message >
-							<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"traxion_response": {
-		"completed_succesfully": "error": {
-			"error_type": error.errorType.asString as String,
-			"user_error_description": error.detailedDescription as String,
-			"system_error_description": error.detailedDescription as String
-		}
-	}
-}]]></ee:set-payload>
-						</ee:message>
-					</ee:transform>
-					<logger level="INFO" doc:name="Logger" doc:id="5b128620-07c1-4d7e-bee7-aaa8402a1217" message="#[payload]" />
+						<error-handler >
+							<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c149c676-60d8-42ac-99b3-9ef2cccfe46c" >
+								<logger level="INFO" doc:name="Logger" doc:id="9d915d2a-ac54-4768-9d79-82c0213058dd" message="THIS SLACK ERROR DOES NOT AFFECT THE NORMAL PROCESS. ONLY THE MESSAGES DOES NOT ARRIVE TO SLACK. EVEN SO YOU HAVE TO REVIEW IT. #[error]" category="SLACK CONNECTIVITY."/>
+							</on-error-continue>
+						</error-handler>
+					</try>
 				</on-error-propagate>
 			</error-handler>
 		</try>
