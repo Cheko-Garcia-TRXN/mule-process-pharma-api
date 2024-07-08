@@ -78,7 +78,19 @@ fun suma(cantidad) = sum(cantidad map ((item, index) -> item.cantidad as Number)
 			// |  sum(payload.carta_porte.mercancias.detalles map ($.cantidad as Number))
 			// |  suma(payload.carta_porte.mercancias.detalles)
 			"unidad_peso": payload.carta_porte.mercancias.unidad_peso,
-			"detalles": payload.carta_porte.mercancias.detalles
+			"detalles": payload.carta_porte.mercancias.detalles map {
+				"clave_producto": $.clave_producto,
+				"descripcion": $.descripcion,
+				"cantidad": $.cantidad,
+				"clave": "XPK",
+				"id_origen": $.id_origen,
+				"id_destino": $.id_destino,
+				"peligroso": $.peligroso,
+				"clave_peligroso": $.clave_peligroso,
+				"embalaje": $.embalaje,
+				"peso_kg": $.peso_kg,
+				"guias": $.guias
+			}
 		},
 		"figura_transporte": payload.carta_porte.figura_transporte,
 	}
