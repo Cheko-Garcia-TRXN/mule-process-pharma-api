@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="orchestrator-get-remisions-certified-report-main" doc:id="c0dbae62-244f-4f7b-b36a-8f03d3bedfda" >
+		<flow-ref doc:name="clients-system-crm-get-remisions-certified-report" doc:id="2cbe5bb3-483b-4f4e-8930-aa7f880f9a19" name="clients-system-crm-get-remisions-certified-report"/>
+		<flow-ref doc:name="orchestrator-get-remisions-certified-report-prepare-paylod-csv" doc:id="29f110a0-59fc-4b82-a98c-db1546c5e064" name="orchestrator-get-remisions-certified-report-prepare-paylod-csv"/>
+	</sub-flow>
+	<sub-flow name="orchestrator-get-remisions-certified-report-prepare-paylod-csv" doc:id="cd2309f1-7e92-4819-ab3b-db761a0fe278" >
+		<async doc:name="Async" doc:id="723856f7-939e-457d-958d-f8c9c0bb204e">
+			<ee:transform doc:name="Transform Message" doc:id="986ea2ed-3d4d-4db8-89c2-2c003937bfda" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="message_type" ><![CDATA[%dw 2.0
+output application/json
+---
+"csv"]]></ee:set-variable>
+					<ee:set-variable variableName="folder_name" ><![CDATA[%dw 2.0
+output application/json
+---
+"api=remisiones_certificadas_report"]]></ee:set-variable>
+					<ee:set-variable variableName="message_s3" ><![CDATA[%dw 2.0
+output application/csv
+---
+payload map (remision)->{
+"NO_REMISION": remision.Order__r.Folio_de_Remision__c,
+"UMU": remision.UMU__r.UMU__c,
+"DESCRIPCION_UMU_NUM": remision.UMU__r.Clave_Presupuestal__c,
+"NOMBRE_UMU": remision.UMU__r.Name,
+"CLAVE": remision.Product__r.Product_Code_ID__c,
+"CANTIDAD": remision.Informacion_De_Lotes__r.Piezas_Recibidas__c,
+"COSTO_LINEA": remision.Costo_Promedio__c,
+"PARTIDA_PRESUPUESTAL": remision.Product__r.Partida_Presupuestal__c,
+"SUBPARTIDA_PRESUPUESTAL": remision.Costo_Total__c,
+"IMPORTE": remision.Importe,
+"FECHA_CERTIFICACIÓN": remision.Order__r.Fecha_de_certificacion_de_la_remision__c,
+"LOTE": remision.Informacion_De_Lotes__r.Numero_de_Lote__c,
+"FECHA_CADUCIDAD": remision.Informacion_De_Lotes__r.Fecha_de_Expiracion__c,
+"CODIGO_BARRAS": remision.Product__r.Codigo_Referencia_Cruzada__c
+}]]></ee:set-variable>
+					<ee:set-variable variableName="ext" ><![CDATA[%dw 2.0
+output application/json
+---
+".csv"]]></ee:set-variable>
+					<ee:set-variable variableName="doc_s3_name" ><![CDATA[%dw 2.0
+output application/json
+---
+"remisiones_certificadas_" ++ (vars.certification_date_from default ((now()>> "-06:00") [0 to 18] ) ) ++ "-" ++ (vars.certification_date_to default ((now()>> "-06:00") [0 to 18] ))]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<flow-ref doc:name="orchestrator-send-message-s3-main" doc:id="e7aeeb40-c60a-4496-b54c-eaa05b997954" name="orchestrator-send-message-s3-main" />
+		</async>
+	</sub-flow>
+</mule>

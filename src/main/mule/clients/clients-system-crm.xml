@@ -31,4 +31,21 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 }]]]></http:query-params>
 		</http:request>
 	</sub-flow>
+	<sub-flow name="clients-system-crm-get-remisions-certified-report" doc:id="ab67bf14-0ad8-43c9-aa4b-edc9b0454f1d" >
+		<http:request method="POST" doc:name="Request" doc:id="c5f1027d-62f5-4006-8739-c28fbed244d7" config-ref="HTTP_request_system_crm" path="${client.system.crm.https.path.remisions.certified.report.post}">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : Mule::p('secure::client.system.unigis.https.client_secret'),
+	"client_id" : Mule::p('secure::client.system.unigis.https.client_id')
+}]]]></http:headers>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"remision" : vars.remision,
+	"certification_date_from" : vars.certification_date_from,
+	"certification_date_to" : vars.certification_date_to
+}]]]></http:query-params>
+		</http:request>
+	</sub-flow>	
 </mule>

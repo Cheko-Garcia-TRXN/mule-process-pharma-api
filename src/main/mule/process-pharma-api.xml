@@ -3,7 +3,7 @@
     <http:listener-config name="process-pharma-api-httpListenerConfig">
         <http:listener-connection host="${http.listener.host}" port="${http.listener.port}" protocol="HTTPS" tlsContext="TLS_Context" readTimeout="${http.listener.read.timeout}" />
     </http:listener-config>
-    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.20:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.22:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="process-pharma-api-main">
         <http:listener config-ref="process-pharma-api-httpListenerConfig" path="${http.listener.path}">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -187,8 +187,8 @@ ns ns2 http://ws.edifactwstraxion/
                         <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
                     </ee:variables>
                 </ee:transform>
-				<logger level="INFO" doc:name="Logger" doc:id="7fc67520-6a0b-485b-9ed8-bd371f4ec2a3" message="#[payload]" />
-				<ee:transform doc:name="Transform Message" doc:id="795bf9b2-8234-4a4f-ac2e-4667ab5f1645">
+                <logger level="INFO" doc:name="Logger" doc:id="7fc67520-6a0b-485b-9ed8-bd371f4ec2a3" message="#[payload]" />
+                <ee:transform doc:name="Transform Message" doc:id="795bf9b2-8234-4a4f-ac2e-4667ab5f1645">
                     <ee:message />
                     <ee:variables>
                         <ee:set-variable variableName="sendToSlack"><![CDATA[%dw 2.0
@@ -200,9 +200,9 @@ write({
 })]]></ee:set-variable>
                     </ee:variables>
                 </ee:transform>
-                <try doc:name="Try" doc:id="773e428f-bc5e-4c8e-8100-c7b9d5dae39e" >
-					<slack:create-chatpost-message doc:name="Send Message" doc:id="0ab58cc6-db23-4969-98ca-8546b7557ace" config-ref="Slack_Connector_Config">
-                    <slack:chatpost-message-content><![CDATA[#[%dw 2.0
+                <try doc:name="Try" doc:id="773e428f-bc5e-4c8e-8100-c7b9d5dae39e">
+                    <slack:create-chatpost-message doc:name="Send Message" doc:id="0ab58cc6-db23-4969-98ca-8546b7557ace" config-ref="Slack_Connector_Config">
+                        <slack:chatpost-message-content><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
@@ -214,13 +214,13 @@ output application/json
 	++ "\n Fecha y hora ->" ++ now() as String
 	++ "\n" ++ (vars.sendToSlack)
 }]]]></slack:chatpost-message-content>
-                </slack:create-chatpost-message>
-					<error-handler >
-						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9a9ee4d4-6e9d-4c95-b072-4af9e5aa500a" >
-							<logger level="ERROR" doc:name="Logger" doc:id="61c00a1f-9640-4ad4-b0f9-107569e339c2" message="THIS SLACK ERROR DOES NOT AFFECT THE NORMAL PROCESS. ONLY THE MESSAGES DOES NOT ARRIVE TO SLACK. EVEN SO YOU HAVE TO REVIEW IT. #[error]" category="SLACK CONNECTIVITY."/>
-						</on-error-continue>
-					</error-handler>
-				</try>
+                    </slack:create-chatpost-message>
+                    <error-handler>
+                        <on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9a9ee4d4-6e9d-4c95-b072-4af9e5aa500a">
+                            <logger level="ERROR" doc:name="Logger" doc:id="61c00a1f-9640-4ad4-b0f9-107569e339c2" message="THIS SLACK ERROR DOES NOT AFFECT THE NORMAL PROCESS. ONLY THE MESSAGES DOES NOT ARRIVE TO SLACK. EVEN SO YOU HAVE TO REVIEW IT. #[error]" category="SLACK CONNECTIVITY." />
+                        </on-error-continue>
+                    </error-handler>
+                </try>
             </on-error-propagate>
             <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="a4eda8ea-f815-4e81-a113-de218810db6f" type="ERROR:CARTAPORTECAMPORFC">
                 <ee:transform doc:name="Transform Message" doc:id="32e2c0a7-e27f-442f-a38c-1bddb4e8efc4">
@@ -236,8 +236,8 @@ output application/json
                         <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
                     </ee:variables>
                 </ee:transform>
-				<logger level="INFO" doc:name="Logger" doc:id="359315c5-4178-446d-a75e-1156da5ee7e4" message="#[payload]" />
-				<ee:transform doc:name="Transform Message" doc:id="65d16329-714b-4869-804f-cd017ca2ccfc">
+                <logger level="INFO" doc:name="Logger" doc:id="359315c5-4178-446d-a75e-1156da5ee7e4" message="#[payload]" />
+                <ee:transform doc:name="Transform Message" doc:id="65d16329-714b-4869-804f-cd017ca2ccfc">
                     <ee:message />
                     <ee:variables>
                         <ee:set-variable variableName="sendToSlack"><![CDATA[%dw 2.0
@@ -248,9 +248,9 @@ write({
 })]]></ee:set-variable>
                     </ee:variables>
                 </ee:transform>
-                <try doc:name="Try" doc:id="c0164c1e-e3e6-4f90-bfbc-73002c73bf14" >
-					<slack:create-chatpost-message doc:name="Send Message" doc:id="e237af81-39d7-4b94-b266-9759f2ecbe9d" config-ref="Slack_Connector_Config">
-                    <slack:chatpost-message-content><![CDATA[#[%dw 2.0
+                <try doc:name="Try" doc:id="c0164c1e-e3e6-4f90-bfbc-73002c73bf14">
+                    <slack:create-chatpost-message doc:name="Send Message" doc:id="e237af81-39d7-4b94-b266-9759f2ecbe9d" config-ref="Slack_Connector_Config">
+                        <slack:chatpost-message-content><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
@@ -262,13 +262,13 @@ output application/json
 	++ "\n Fecha y hora ->" ++ now() as String
 	++ "\n" ++ (vars.sendToSlack)
 }]]]></slack:chatpost-message-content>
-                </slack:create-chatpost-message>
-					<error-handler >
-						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="827e4674-d0f2-4a09-bfe8-df50f8a343e4" >
-							<logger level="ERROR" doc:name="Logger" doc:id="a3bb9e7d-dda2-442b-b8b7-427f2c64b15e" message="THIS SLACK ERROR DOES NOT AFFECT THE NORMAL PROCESS. ONLY THE MESSAGES DOES NOT ARRIVE TO SLACK. EVEN SO YOU HAVE TO REVIEW IT. #[error]" category="SLACK CONNECTIVITY."/>
-						</on-error-continue>
-					</error-handler>
-				</try>
+                    </slack:create-chatpost-message>
+                    <error-handler>
+                        <on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="827e4674-d0f2-4a09-bfe8-df50f8a343e4">
+                            <logger level="ERROR" doc:name="Logger" doc:id="a3bb9e7d-dda2-442b-b8b7-427f2c64b15e" message="THIS SLACK ERROR DOES NOT AFFECT THE NORMAL PROCESS. ONLY THE MESSAGES DOES NOT ARRIVE TO SLACK. EVEN SO YOU HAVE TO REVIEW IT. #[error]" category="SLACK CONNECTIVITY." />
+                        </on-error-continue>
+                    </error-handler>
+                </try>
             </on-error-propagate>
             <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="320c267e-a1e6-4997-bd9d-02c71ae77eab" type="ERROR:BADRFCCARTAPORTE">
                 <ee:transform doc:name="Transform Message" doc:id="a998489a-d277-4a1b-b473-9749137757f1">
@@ -284,8 +284,8 @@ output application/json
                         <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
                     </ee:variables>
                 </ee:transform>
-				<logger level="INFO" doc:name="Logger" doc:id="a3d9e687-293c-4e08-9617-ae2dad5ba8ff" message="#[payload]" />
-				<ee:transform doc:name="Transform Message" doc:id="bf3f7ac8-3517-499f-bcfb-2660cb5c724a">
+                <logger level="INFO" doc:name="Logger" doc:id="a3d9e687-293c-4e08-9617-ae2dad5ba8ff" message="#[payload]" />
+                <ee:transform doc:name="Transform Message" doc:id="bf3f7ac8-3517-499f-bcfb-2660cb5c724a">
                     <ee:message />
                     <ee:variables>
                         <ee:set-variable variableName="sendToSlack"><![CDATA[%dw 2.0
@@ -300,9 +300,9 @@ write({
 })]]></ee:set-variable>
                     </ee:variables>
                 </ee:transform>
-                <try doc:name="Try" doc:id="1006e87e-e511-490b-92fc-bacbc686f9c7" >
-					<slack:create-chatpost-message doc:name="Send Message" doc:id="5684d72f-149f-4072-b39d-917a18d7f6b0" config-ref="Slack_Connector_Config">
-                    <slack:chatpost-message-content><![CDATA[#[%dw 2.0
+                <try doc:name="Try" doc:id="1006e87e-e511-490b-92fc-bacbc686f9c7">
+                    <slack:create-chatpost-message doc:name="Send Message" doc:id="5684d72f-149f-4072-b39d-917a18d7f6b0" config-ref="Slack_Connector_Config">
+                        <slack:chatpost-message-content><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
@@ -314,18 +314,18 @@ output application/json
 	++ "\n Fecha y hora ->" ++ now() as String
 	++ "\n" ++ (vars.sendToSlack)
 }]]]></slack:chatpost-message-content>
-                </slack:create-chatpost-message>
-					<error-handler >
-						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="43ba7cba-ddb4-43ee-a4c0-61afcd641dca" >
-							<logger level="ERROR" doc:name="Logger" doc:id="e4bed673-39ee-4176-af58-1306e1796ba2" message="THIS SLACK ERROR DOES NOT AFFECT THE NORMAL PROCESS. ONLY THE MESSAGES DOES NOT ARRIVE TO SLACK. EVEN SO YOU HAVE TO REVIEW IT. #[error]" category="SLACK CONNECTIVITY."/>
-						</on-error-continue>
-					</error-handler>
-				</try>
+                    </slack:create-chatpost-message>
+                    <error-handler>
+                        <on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="43ba7cba-ddb4-43ee-a4c0-61afcd641dca">
+                            <logger level="ERROR" doc:name="Logger" doc:id="e4bed673-39ee-4176-af58-1306e1796ba2" message="THIS SLACK ERROR DOES NOT AFFECT THE NORMAL PROCESS. ONLY THE MESSAGES DOES NOT ARRIVE TO SLACK. EVEN SO YOU HAVE TO REVIEW IT. #[error]" category="SLACK CONNECTIVITY." />
+                        </on-error-continue>
+                    </error-handler>
+                </try>
             </on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="173673eb-420a-4a97-824d-03c304011d5d" type="ERROR:CARTA_PORTE_SERVICE_UNAVAILABLE">
-				<ee:transform doc:name="Transform Message" doc:id="8321b81c-995f-4098-acc9-fe8df240ae54">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="173673eb-420a-4a97-824d-03c304011d5d" type="ERROR:CARTA_PORTE_SERVICE_UNAVAILABLE">
+                <ee:transform doc:name="Transform Message" doc:id="8321b81c-995f-4098-acc9-fe8df240ae54">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
@@ -339,17 +339,16 @@ output application/json
 		}
 	}
 }]]></ee:set-payload>
-					</ee:message>
-					<ee:variables>
-						<ee:set-variable variableName="httpStatus"><![CDATA[503]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-				<logger level="ERROR" doc:name="Logger" doc:id="e82dcc0d-74f2-49f1-add6-20ae67aecb72" message="#[payload]" />
-				<ee:transform doc:name="Transform Message" doc:id="c8a428db-f347-40ab-94e1-a828257f283e" >
-					<ee:message >
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="sendToSlack" ><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[503]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+                <logger level="ERROR" doc:name="Logger" doc:id="e82dcc0d-74f2-49f1-add6-20ae67aecb72" message="#[payload]" />
+                <ee:transform doc:name="Transform Message" doc:id="c8a428db-f347-40ab-94e1-a828257f283e">
+                    <ee:message />
+                    <ee:variables>
+                        <ee:set-variable variableName="sendToSlack"><![CDATA[%dw 2.0
 output application/json
 ---
 write({
@@ -363,11 +362,11 @@ write({
 		}
 	}
 })]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-				<try doc:name="Try" doc:id="5fa28163-a748-4715-8ad8-47800e881b07" >
-					<slack:create-chatpost-message doc:name="Send Message" doc:id="e43f47bc-d70c-474a-8ee8-ff496afc89ff" config-ref="Slack_Connector_Config">
-					<slack:chatpost-message-content><![CDATA[#[%dw 2.0
+                    </ee:variables>
+                </ee:transform>
+                <try doc:name="Try" doc:id="5fa28163-a748-4715-8ad8-47800e881b07">
+                    <slack:create-chatpost-message doc:name="Send Message" doc:id="e43f47bc-d70c-474a-8ee8-ff496afc89ff" config-ref="Slack_Connector_Config">
+                        <slack:chatpost-message-content><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
@@ -379,15 +378,15 @@ output application/json
 	++ "\n Fecha y hora ->" ++ now() as String
 	++ "\n" ++ (vars.sendToSlack)
 }]]]></slack:chatpost-message-content>
-				</slack:create-chatpost-message>
-					<error-handler >
-						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d8c3d563-a153-4efc-877c-4568e296fcc8" >
-							<logger level="ERROR" doc:name="Logger" doc:id="fdfff027-3105-4970-be3e-d7f957671f61" message="THIS SLACK ERROR DOES NOT AFFECT THE NORMAL PROCESS. ONLY THE MESSAGES DOES NOT ARRIVE TO SLACK. EVEN SO YOU HAVE TO REVIEW IT. #[error]" category="SLACK CONNECTIVITY."/>
-						</on-error-continue>
-					</error-handler>
-				</try>
-			</on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f7be221e-c58b-4804-9040-ab0924c948fd" type="ANY">
+                    </slack:create-chatpost-message>
+                    <error-handler>
+                        <on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d8c3d563-a153-4efc-877c-4568e296fcc8">
+                            <logger level="ERROR" doc:name="Logger" doc:id="fdfff027-3105-4970-be3e-d7f957671f61" message="THIS SLACK ERROR DOES NOT AFFECT THE NORMAL PROCESS. ONLY THE MESSAGES DOES NOT ARRIVE TO SLACK. EVEN SO YOU HAVE TO REVIEW IT. #[error]" category="SLACK CONNECTIVITY." />
+                        </on-error-continue>
+                    </error-handler>
+                </try>
+            </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f7be221e-c58b-4804-9040-ab0924c948fd" type="ANY">
                 <ee:transform doc:name="Transform Message" doc:id="47c74224-daf4-4e95-899f-a4cdd66ae06c">
                     <ee:message>
                         <ee:set-payload><![CDATA[output application/json
@@ -540,5 +539,26 @@ attributes.queryParams.certification_date_from]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <flow-ref doc:name="Call to orchestrator-get-orders" doc:id="9aa4d398-84ec-47aa-8a8e-2347c4c21ee6" name="orchestrator-get-orders" />
+    </flow>
+    <flow name="post:\crm\remisions\certified\report:process-pharma-api-config">
+        <ee:transform doc:name="set params" doc:id="67392fa8-ca05-4fba-a7ce-34ec1b021ea6">
+            <ee:message />
+            <ee:variables>
+                <ee:set-variable variableName="certification_date_to"><![CDATA[%dw 2.0
+output application/java
+---
+attributes.queryParams.certification_date_to]]></ee:set-variable>
+                <ee:set-variable variableName="certification_date_from"><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.certification_date_from]]></ee:set-variable>
+				<ee:set-variable variableName="remision" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.remision]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <logger level="INFO" doc:name="Logger" doc:id="e13d6942-44ea-4c81-86cd-720aa0108b5f" message="RANGO DE FECHAS  DESDE #[vars.certification_date_from] HASTA #[vars.certification_date_to]" />
+        <flow-ref doc:name="orchestrator-get-remisions-certified-report-main" doc:id="aac25009-692d-4ac9-af97-d8420a29164a" name="orchestrator-get-remisions-certified-report-main"/>
     </flow>
 </mule>

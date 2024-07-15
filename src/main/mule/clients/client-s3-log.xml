@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+	<sub-flow name="client-s3-log-request" doc:id="1cf3bd23-9e7e-4c21-8b01-38ebf81cd7f7" >
+		<async doc:name="Async" doc:id="caaa0c4f-d9e1-4ab9-851a-cbe54a172934" >
+			<try doc:name="Try" doc:id="b03255b1-961b-41c3-8c7f-b6b1fa4d17bc" >
+				<flow-ref doc:name="Call to client-utils-fwk-stream-call-service-file" doc:id="8c3ba69b-3096-4319-8bf5-4eccc8a197fe" name="client-utils-fwk-stream-call-service-file" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="3915b6a1-b85c-48a9-83a3-3d762bc2f779" >
+						<logger level="INFO" doc:name="Logger" doc:id="93384086-ccdf-48d0-8bfd-290c8b588cb2" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</async>
+	</sub-flow>
+		<sub-flow name="client-utils-fwk-stream-call-service-file" doc:id="d2acb135-e901-4ee7-99a3-509076c63923" >
+		<http:request method="POST" doc:name="Request" doc:id="4f649998-8eba-4ac3-84b1-481ec6f93976" config-ref="client-utils-fwk-stream-HTTP_Request_configuration" path="${client.utils.fwk.stream.http.path.file}" target="responseSearch">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_id": p('client.utils.fwk.stream.https.client_id'),
+	"client_secret": p('client.utils.fwk.stream.https.client_secret')
+}]]]></http:headers>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="3a9d8374-a50d-4a06-a8a5-f5a0d0537ba8" message="#[vars.responseSearch]"/>
+	</sub-flow>
+</mule>

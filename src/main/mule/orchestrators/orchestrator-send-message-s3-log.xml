@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="orchestrator-send-message-s3-main" doc:id="474ae853-b3cf-43a3-9b49-a9b01f54d14b" >
+		<ee:transform doc:name="set S3 Variables" doc:id="e35664d6-d186-43cc-9e8d-9765fc17873e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+import * from dw::core::Binaries
+output application/json
+---
+{
+   "api":"process-pharma-api",
+   "message_type":vars.message_type,
+   "s3": p('client.aws.s3.bucket.files.utils.fwk'),
+   "correlation_id":correlationId,
+   "logger": true,
+   "created_pk": now() as String {format: "uuuuMM"},
+   "timestamp": now() as String {format: "uuuuMMddKKmmssSS"},
+   "identifier": vars.folder_name ++ "/created_pk="++ now() as String {format: "uuuuMM"} ++ "/created_pk="++ now() as String {format: "uuuuMMdd"} ++ "/" ++ (vars.doc_s3_name default "NO_PROVIDER")  ++ vars.ext,   
+   "key": vars.folder_name ++ "/created_pk="++ now() as String {format: "uuuuMM"} ++ "/created_pk="++ now() as String {format: "uuuuMMdd"} ++ "/" ++ (vars.doc_s3_name default "NO_PROVIDER") ++ vars.ext,
+   "message": toBase64(write(vars.message_s3, "application/csv"))
+   
+}
+ ]]></ee:set-payload>
+			</ee:message>
+			<ee:variables />
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="8ae4bf3a-9d94-45dc-b1f0-a7220befe836" message="#[payload]"/>
+		<flow-ref doc:name="client-s3-log-request" doc:id="47733840-aef8-43fc-9143-d2729454cc69" name="client-s3-log-request" />
+	</sub-flow>
+</mule>

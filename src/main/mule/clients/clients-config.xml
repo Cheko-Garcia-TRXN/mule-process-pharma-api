@@ -18,4 +18,7 @@ http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/
 	<http:request-config name="HTTP_Request_configuration-system-tms-tep-api" doc:name="HTTP Request configuration" doc:id="86cfa5c7-6d52-4cf9-9306-fe177b8f6d8e" responseTimeout="${client.system.tep.https.response.timeout}">
 		<http:request-connection protocol="HTTPS" host="${client.system.tep.https.host}" port="${client.system.tep.https.port}" maxConnections="${client.system.tep.https.max.connections}" connectionIdleTimeout="${client.system.tep.https.connection.idle.timeout}" responseBufferSize="${client.system.tep.https.response.buffer.size}"/>
 	</http:request-config>
+	<http:request-config name="client-utils-fwk-stream-HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="1bca3744-2fce-4acf-8646-2c79b3020c60" responseTimeout="${client.utils.fwk.stream.http.timeout}">
+		<http:request-connection host="${client.utils.fwk.stream.http.host}" port="${client.utils.fwk.stream.http.port}" maxConnections="${client.utils.fwk.stream.http.max.connections}" connectionIdleTimeout="${client.utils.fwk.stream.http.connection.idle.timeout}" responseBufferSize="${client.utils.fwk.stream.http.response.buffer.size}" protocol="HTTPS"/>
+	</http:request-config>	
 </mule>

@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_cd2309f1_7e92_4819_ab3b_db761a0fe278_Output_Variables_certification_date_to = Any
+
