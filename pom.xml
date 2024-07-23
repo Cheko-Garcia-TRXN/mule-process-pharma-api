@@ -12,7 +12,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<app.runtime>4.7-e-java8</app.runtime>
+		<app.runtime>4.4.0</app.runtime>
 		<mule.maven.plugin.version>4.2.0</mule.maven.plugin.version>
 		<munit.version>3.0.0</munit.version>
 	</properties>
@@ -30,7 +30,6 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<classifier>mule-application</classifier>
 					<sharedLibraries>
 						<sharedLibrary>
 							<groupId>org.apache.activemq</groupId>
@@ -40,6 +39,7 @@
 					<cloudHubDeployment>
 						<uri>https://anypoint.mulesoft.com</uri>
 						<businessGroupId>${businessGroupId}</businessGroupId>
+						<deploymentTimeout>${deploymentTimeOut}</deploymentTimeout>
 						<muleVersion>${mule.version}</muleVersion>
 						<connectedAppClientId>${client.id}</connectedAppClientId>
 						<connectedAppClientSecret>${client.secret}</connectedAppClientSecret>
@@ -56,6 +56,7 @@
 							<anypoint.platform.autodiscovery>${prop.autodiscovery}</anypoint.platform.autodiscovery>
 						</properties>
 					</cloudHubDeployment>
+					<classifier>mule-application</classifier>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -172,13 +173,7 @@
 			<url>https://repository.mulesoft.org/releases/</url>
 			<layout>default</layout>
 		</repository>
-		<!-- Replace ORGANIZATION_ID 
-  <repository>
-	<id>PrivateExchangeRepository</id>
-	<name>Private Exchange repository</name>
-	<url>https://maven.anypoint.mulesoft.com/api/v3/organizations/ab8117f6-d718-4307-b5f7-03262d589cd0/maven</url>
-	<layout>default</layout>
-  </repository>    	-->
+
 	</repositories>
 
 	<pluginRepositories>
@@ -192,14 +187,5 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-	<!-- 
-<distributionManagement>
-	Replace ORGANIZATION_ID
-	<repository>
-		<id>PrivateExchangeRepository</id>
-		<name>Private Exchange repository</name>
-		<url>https://maven.anypoint.mulesoft.com/api/v3/organizations/ab8117f6-d718-4307-b5f7-03262d589cd0/maven</url>
-		<layout>default</layout>
-	 </repository>
-</distributionManagement> -->
+
 </project>
