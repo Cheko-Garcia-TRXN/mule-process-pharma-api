@@ -9,7 +9,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
 http://www.mulesoft.org/schema/mule/utils-fwk-stream http://www.mulesoft.org/schema/mule/utils-fwk-stream/current/mule-utils-fwk-stream.xsd">
 	<utils-fwk-stream:config name="Utils_FWK_Stream_Config" doc:name="Utils FWK Stream Config" doc:id="8f24858b-4034-4e6e-8e62-b3b15f48447b" property_host="${client.utils.fwk.stream.http.host}" property_port="${client.utils.fwk.stream.http.port}" property_basePath="/api" property_protocol="HTTPS" property_responseTimeout="${client.utils.fwk.stream.http.timeout}" >
-		<expiration-policy maxIdleTime="${client.utils.fwk.stream.http.connection.idle.timeou}" />
+		<expiration-policy maxIdleTime="${client.utils.fwk.stream.http.connection.idle.timeout}" />
 	</utils-fwk-stream:config>
 	<sub-flow name="client-s3-log-request" doc:id="1cf3bd23-9e7e-4c21-8b01-38ebf81cd7f7" >
 		<async doc:name="Async" doc:id="caaa0c4f-d9e1-4ab9-851a-cbe54a172934" >
