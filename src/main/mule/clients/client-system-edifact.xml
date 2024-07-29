@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:system-edifact-connection="http://www.mulesoft.org/schema/mule/system-edifact-connection" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/system-edifact-connection http://www.mulesoft.org/schema/mule/system-edifact-connection/current/mule-system-edifact-connection.xsd">
+	<system-edifact-connection:config name="System_edifact_connection_Config" doc:name="System-edifact_connection Config" doc:id="de91d27d-58d3-4eeb-82e5-2ee5f6661353" property_host="${client.system.pac.http.host}" property_port="${client.system.pac.http.port}" property_basePath="/api" property_protocol="HTTPS" property_responseTimeout="${client.system.pac.https.response.timeout}">
+		<expiration-policy maxIdleTime="${client.system.pac.http.connection.idle.timeout}" timeUnit="MILLISECONDS" />
+	</system-edifact-connection:config>
 	<flow name="client-system-edifact" doc:id="9d53c7d2-0739-43cf-b167-24baebafb6af" >
 		<try doc:name="Try" doc:id="0f650f65-5a9d-49a8-a960-9c0685df722b" >
 			<http:request method="#[vars.request.method]" doc:name="Request" doc:id="809ad3f8-f3ff-48d0-8ea3-85d7b0e7f1c6" config-ref="HTTP_Request_configuration-System-edifact-connection" path="#[vars.request.path]" outputMimeType="application/xml" sendCorrelationId="ALWAYS" correlationId="#[correlationId]" target="cpResponse">

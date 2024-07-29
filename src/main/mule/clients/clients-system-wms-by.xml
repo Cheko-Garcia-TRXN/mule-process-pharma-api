@@ -1,23 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+<mule xmlns:system-wms-api="http://www.mulesoft.org/schema/mule/system-wms-api" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/system-wms-api http://www.mulesoft.org/schema/mule/system-wms-api/current/mule-system-wms-api.xsd">
+	<system-wms-api:config name="System_wms_api_Config" doc:name="System-wms-api Config" doc:id="d3331d4c-dddf-484f-9256-6b778d83c5cc" property_host="${client.system.wms.api.https.host}" property_port="${client.system.wms.api.https.port}" property_basePath="/api" property_protocol="HTTPS" property_responseTimeout="${client.system.wms.api.https.response.timeout}" >
+		<expiration-policy maxIdleTime="${client.system.wms.api.https.connection.idle.timeout}" timeUnit="MILLISECONDS" />
+	</system-wms-api:config>
 	<sub-flow name="clients-post-system-wms-availability-api" doc:id="3523e576-2af3-425e-a591-3c29396b3990" >
-		<http:request method="POST" doc:name="Request" doc:id="eba2ca3d-ca2c-43e2-af94-019e70a6222f" config-ref="HTTP_request_system_wms" path="${client.system.wms.api.https.path.availability.post}">
-			<http:body ><![CDATA[#[vars.skuArray]]]></http:body>
+		<!-- [STUDIO:"Request"]<http:request method="PUT" doc:name="Request" doc:id="eba2ca3d-ca2c-43e2-af94-019e70a6222f" config-ref="HTTP_request_system_wms" path="${client.system.wms.api.https.path.availability.post}">
+			<http:body ><![CDATA[#[vars.skuArray&#93;&#93;&#93;></http:body>
 			<http:headers ><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
-	"client_secret" : p('client.system.albatros.api.https.client_id'),
-	"client_id" : p('client.system.albatros.api.https.client_secret')
-}]]]></http:headers>
+	"client_secret" : p('client.system.wms.api.https.client_secret'),
+	"client_id" : p('client.system.wms.api.https.client_id')
+}&#93;&#93;&#93;></http:headers>
 			<http:query-params ><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
 	"customer_name": vars.customerName
-}]]]></http:query-params>
-		</http:request>
+}&#93;&#93;&#93;></http:query-params>
+		</http:request> [STUDIO] -->
+		<system-wms-api:get-availability-for-skus doc:name="Get availability for sku's request" doc:id="56e48030-7251-4b1a-817e-dfe64e833580" config-ref="System_wms_api_Config" client-id="#[p('client.system.wms.api.https.client_id')]" client-secret="#[p('client.system.wms.api.https.client_secret')]" customer-name="#[vars.customerName]">
+			<system-wms-api:get-availability-for-skus-request-data ><![CDATA[#[vars.skuArray]]]></system-wms-api:get-availability-for-skus-request-data>
+		</system-wms-api:get-availability-for-skus>
 	</sub-flow>
 </mule>

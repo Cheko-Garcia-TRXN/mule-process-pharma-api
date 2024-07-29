@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+<mule xmlns:utils-fwk-stream="http://www.mulesoft.org/schema/mule/utils-fwk-stream"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
-http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/utils-fwk-stream http://www.mulesoft.org/schema/mule/utils-fwk-stream/current/mule-utils-fwk-stream.xsd">
+	<utils-fwk-stream:config name="Utils_FWK_Stream_Config" doc:name="Utils FWK Stream Config" doc:id="8f24858b-4034-4e6e-8e62-b3b15f48447b" property_host="${client.utils.fwk.stream.http.host}" property_port="${client.utils.fwk.stream.http.port}" property_basePath="/api" property_protocol="HTTPS" property_responseTimeout="${client.utils.fwk.stream.http.timeout}" >
+		<expiration-policy maxIdleTime="${client.utils.fwk.stream.http.connection.idle.timeou}" />
+	</utils-fwk-stream:config>
 	<sub-flow name="client-s3-log-request" doc:id="1cf3bd23-9e7e-4c21-8b01-38ebf81cd7f7" >
 		<async doc:name="Async" doc:id="caaa0c4f-d9e1-4ab9-851a-cbe54a172934" >
 			<try doc:name="Try" doc:id="b03255b1-961b-41c3-8c7f-b6b1fa4d17bc" >
@@ -20,14 +24,15 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 		</async>
 	</sub-flow>
 		<sub-flow name="client-utils-fwk-stream-call-service-file" doc:id="d2acb135-e901-4ee7-99a3-509076c63923" >
-		<http:request method="POST" doc:name="Request" doc:id="4f649998-8eba-4ac3-84b1-481ec6f93976" config-ref="client-utils-fwk-stream-HTTP_Request_configuration" path="${client.utils.fwk.stream.http.path.file}" target="responseSearch">
+		<!-- [STUDIO:"Request"]<http:request method="POST" doc:name="Request" doc:id="4f649998-8eba-4ac3-84b1-481ec6f93976" config-ref="client-utils-fwk-stream-HTTP_Request_configuration" path="${client.utils.fwk.stream.http.path.file}" target="responseSearch">
 			<http:headers ><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
 	"client_id": p('client.utils.fwk.stream.https.client_id'),
 	"client_secret": p('client.utils.fwk.stream.https.client_secret')
-}]]]></http:headers>
-		</http:request>
+}&#93;&#93;&#93;></http:headers>
+		</http:request> [STUDIO] -->
+		<utils-fwk-stream:update-file doc:name="Update file post request" doc:id="549e9899-6368-4996-acc6-b2d660aaaf76" target="responseSearch" client-id="${client.utils.fwk.stream.https.client_id}" client-secret="${client.utils.fwk.stream.https.client_secret}" config-ref="Utils_FWK_Stream_Config"/>
 		<logger level="INFO" doc:name="Logger" doc:id="3a9d8374-a50d-4a06-a8a5-f5a0d0537ba8" message="#[vars.responseSearch]"/>
 	</sub-flow>
 </mule>

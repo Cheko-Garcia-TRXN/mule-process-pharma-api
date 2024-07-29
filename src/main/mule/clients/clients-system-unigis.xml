@@ -1,44 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:system-tms-unigis="http://www.mulesoft.org/schema/mule/system-tms-unigis" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/system-tms-unigis http://www.mulesoft.org/schema/mule/system-tms-unigis/current/mule-system-tms-unigis.xsd">
+	<system-tms-unigis:config name="System_tms_unigis_Config" doc:name="System-tms-unigis Config" doc:id="ef03dc82-c8e1-413d-a463-61033e676ca0" property_host="${client.system.unigis.https.host}" property_port="${client.system.unigis.https.port}" property_basePath="/api" property_protocol="HTTPS" property_responseTimeout="${client.system.unigis.https.response.timeout}" >
+		<expiration-policy maxIdleTime="${client.system.unigis.https.connection.idle.timeout}" timeUnit="MILLISECONDS" />
+	</system-tms-unigis:config>
 	<sub-flow name="clients-system-unigis-post-tms-setteld" doc:id="bf646ba0-8b91-4d68-9d14-d0bd7eb31f7c" >
-		<http:request method="PATCH" doc:name="Request" doc:id="0f57e6c1-a37f-4522-ae01-170a85ba6790" config-ref="HTTP_Request_system-unigis" path="${client.system.unigis.https.path.post.tms.shipments.settled}">
+		<!-- [STUDIO:"Request"]<http:request method="PATCH" doc:name="Request" doc:id="0f57e6c1-a37f-4522-ae01-170a85ba6790" config-ref="HTTP_Request_system-unigis" path="${client.system.unigis.https.path.post.tms.shipments.settled}">
 			<http:headers ><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
 	"client_secret" : Mule::p('secure::client.system.unigis.https.client_secret'),
 	"client_id" : Mule::p('secure::client.system.unigis.https.client_id')
-}]]]></http:headers>
+}&#93;&#93;&#93;></http:headers>
 			<http:uri-params ><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
 	"id_guide" : vars.id_guia
-}]]]></http:uri-params>
+}&#93;&#93;&#93;></http:uri-params>
 			<http:query-params ><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
 	"source_system" : vars.source_system
-}]]]></http:query-params>
-		</http:request>
+}&#93;&#93;&#93;></http:query-params>
+		</http:request> [STUDIO] -->
+		<system-tms-unigis:update-guide doc:name="update guide request" doc:id="5bad7056-fc1b-4b2c-a6f1-639873fe6bc8" config-ref="System_tms_unigis_Config" client-id="#[p('secure::client.system.unigis.https.client_id')]" client-secret="#[p('secure::client.system.unigis.https.client_secret')]" source-system="#[vars.source_system]" id-guide="#[vars.id_guia]"/>
 	</sub-flow>
 	<sub-flow name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="787fd8a4-b421-412a-a60f-28068f6493db" >
-		<http:request method="POST" doc:name="Request" doc:id="25afeb99-e5f3-414a-91c8-3d055ad63723" config-ref="HTTP_Request_system-unigis" path="${client.system.unigis.https.path.post.tms.bill_lading}">
+		<!-- [STUDIO:"Request"]<http:request method="POST" doc:name="Request" doc:id="25afeb99-e5f3-414a-91c8-3d055ad63723" config-ref="HTTP_Request_system-unigis" path="${client.system.unigis.https.path.post.tms.bill_lading}">
 			<http:headers ><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
 	"client_secret" : Mule::p('secure::client.system.unigis.https.client_secret'),
 	"client_id" : Mule::p('secure::client.system.unigis.https.client_id')
-}]]]></http:headers>
+}&#93;&#93;&#93;></http:headers>
 			<http:query-params ><![CDATA[#[output application/json
----
+&#45;&#45;-
 {
 	"source_system" : vars.source_system
-}]]]></http:query-params>
-		</http:request>
+}&#93;&#93;&#93;></http:query-params>
+		</http:request> [STUDIO] -->
+		<system-tms-unigis:bill-lading doc:name="Bill lading request" doc:id="e59cad87-a43c-4b5b-9d69-bdeecebc807f" config-ref="System_tms_unigis_Config" client-id="#[p('secure::client.system.unigis.https.client_secret')]" client-secret="#[p('secure::client.system.unigis.https.client_secret')]" source-system="#[vars.source_system]"/>
 	</sub-flow>
 	
 </mule>

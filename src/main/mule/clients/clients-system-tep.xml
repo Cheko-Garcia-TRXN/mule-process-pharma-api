@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:slack="http://www.mulesoft.org/schema/mule/slack" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:system-tms-tep-api="http://www.mulesoft.org/schema/mule/system-tms-tep-api" xmlns:slack="http://www.mulesoft.org/schema/mule/slack"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
-http://www.mulesoft.org/schema/mule/slack http://www.mulesoft.org/schema/mule/slack/current/mule-slack.xsd">
+http://www.mulesoft.org/schema/mule/slack http://www.mulesoft.org/schema/mule/slack/current/mule-slack.xsd
+http://www.mulesoft.org/schema/mule/system-tms-tep-api http://www.mulesoft.org/schema/mule/system-tms-tep-api/current/mule-system-tms-tep-api.xsd">
+	<system-tms-tep-api:config name="System_tms_tep_api_Config" doc:name="System-tms-tep-api Config" doc:id="6fc77134-3e69-4bd6-bb85-f76c2c4f39d5" property_host="${client.system.tep.https.host}" property_port="${client.system.tep.https.port}" property_basePath="/api" property_protocol="HTTPS" property_responseTimeout="${client.system.tep.https.response.timeout}" >
+		<expiration-policy maxIdleTime="${client.system.tep.https.connection.idle.timeout}" timeUnit="MILLISECONDS" />
+	</system-tms-tep-api:config>
 	<sub-flow name="clients-system-tep-get-siam-stock" doc:id="ac28aa06-13bd-4a76-b6b7-e56d255c6262" >
 		<try doc:name="Try" doc:id="1c4dfbc5-38de-46ae-8ceb-adeab353302d" >
 			<http:request method="GET" doc:name="Request" doc:id="be1d34e5-b75c-41b8-957b-15f31e269b0d" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.get.siam.stock}">
@@ -174,33 +178,35 @@ output application/json
 		</try>
 	</sub-flow>
 	<sub-flow name="clients-system-unigis-post-tms-load-confirmation" doc:id="7ccec42a-1d0d-42e6-9767-b102af63afc6" >
-		<http:request method="POST" doc:name="Request" doc:id="49b7b2cb-26b5-49e2-bbf0-a8ff8599b6f8" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.post.tms.shipments.loads.confirmation}" >
+		<!-- [STUDIO:"Request"]<http:request method="POST" doc:name="Request" doc:id="49b7b2cb-26b5-49e2-bbf0-a8ff8599b6f8" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.post.tms.shipments.loads.confirmation}" >
 			<http:headers ><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
 	"client_secret" : Mule::p('secure::client.system.tep.https.client_secret'),
 	"client_id" : Mule::p('secure::client.system.tep.https.client_id')
-}]]]></http:headers>
+}&#93;&#93;&#93;></http:headers>
 			<http:query-params ><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
 	"source_system" : vars.source_system
-}]]]></http:query-params>
-		</http:request>
+}&#93;&#93;&#93;></http:query-params>
+		</http:request> [STUDIO] -->
+		<system-tms-tep-api:load-confirmation doc:name="load confirmation" doc:id="b3d6a3df-a938-4d15-8645-c658a286f0f3" config-ref="System_tms_tep_api_Config" client-id="#[p('secure::client.system.tep.https.client_id')]" client-secret="#[p('secure::client.system.tep.https.client_secret')]" source-system="#[vars.source_system]"/>
 	</sub-flow>
 	<sub-flow name="clients-system-unigis-post-tms-products" doc:id="78c60b4f-b5fc-4029-984c-92f935a72574" >
-		<http:request method="POST" doc:name="Request" doc:id="3f17c140-ecbd-4602-a6ca-f608e0c93548" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.post.tms.shipments.products}" >
+		<!-- [STUDIO:"Request"]<http:request method="POST" doc:name="Request" doc:id="3f17c140-ecbd-4602-a6ca-f608e0c93548" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.post.tms.shipments.products}" >
 			<http:headers ><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
 	"client_secret" : Mule::p('secure::client.system.tep.https.client_secret'),
 	"client_id" : Mule::p('secure::client.system.tep.https.client_id')
-}]]]></http:headers>
+}&#93;&#93;&#93;></http:headers>
 			<http:query-params ><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
 	"source_system" : vars.source_system
-}]]]></http:query-params>
-		</http:request>
+}&#93;&#93;&#93;></http:query-params>
+		</http:request> [STUDIO] -->
+		<system-tms-tep-api:products doc:name="Products" doc:id="c5eba6a3-839a-49be-ac70-8674a4b6d8ad" config-ref="System_tms_tep_api_Config" client-id="#[p('secure::client.system.tep.https.client_id')]" client-secret="#[p('secure::client.system.tep.https.client_secret')]" source-system="#[vars.source_system]"/>
 	</sub-flow>
 </mule>
