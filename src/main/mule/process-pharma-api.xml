@@ -3,7 +3,7 @@
     <http:listener-config name="process-pharma-api-httpListenerConfig">
         <http:listener-connection host="${http.listener.host}" port="${http.listener.port}" protocol="HTTPS" tlsContext="TLS_Context" readTimeout="${http.listener.read.timeout}" />
     </http:listener-config>
-    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.22:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.24:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="process-pharma-api-main">
         <http:listener config-ref="process-pharma-api-httpListenerConfig" path="${http.listener.path}">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -552,13 +552,13 @@ attributes.queryParams.certification_date_to]]></ee:set-variable>
 output application/json
 ---
 attributes.queryParams.certification_date_from]]></ee:set-variable>
-				<ee:set-variable variableName="remision" ><![CDATA[%dw 2.0
+                <ee:set-variable variableName="remision"><![CDATA[%dw 2.0
 output application/json
 ---
 attributes.queryParams.remision]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <logger level="INFO" doc:name="Logger" doc:id="e13d6942-44ea-4c81-86cd-720aa0108b5f" message="RANGO DE FECHAS  DESDE #[vars.certification_date_from] HASTA #[vars.certification_date_to]" />
-        <flow-ref doc:name="orchestrator-get-remisions-certified-report-main" doc:id="aac25009-692d-4ac9-af97-d8420a29164a" name="orchestrator-get-remisions-certified-report-main"/>
+        <flow-ref doc:name="orchestrator-get-remisions-certified-report-main" doc:id="aac25009-692d-4ac9-af97-d8420a29164a" name="orchestrator-get-remisions-certified-report-main" />
     </flow>
 </mule>
