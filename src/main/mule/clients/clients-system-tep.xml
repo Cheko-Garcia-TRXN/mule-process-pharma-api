@@ -191,7 +191,7 @@ output application/json
 	"source_system" : vars.source_system
 }&#93;&#93;&#93;></http:query-params>
 		</http:request> [STUDIO] -->
-		<system-tms-tep-api:load-confirmation doc:name="load confirmation" doc:id="b3d6a3df-a938-4d15-8645-c658a286f0f3" config-ref="System_tms_tep_api_Config" client-id="#[p('secure::client.system.tep.https.client_id')]" client-secret="#[p('secure::client.system.tep.https.client_secret')]" source-system="#[vars.source_system]"/>
+		<system-tms-tep-api:load-confirmation doc:name="load confirmation" doc:id="b3d6a3df-a938-4d15-8645-c658a286f0f3" config-ref="System_tms_tep_api_Config" client-id="#[Mule::p('secure::client.system.tep.https.client_id')]" client-secret="#[Mule::p('secure::client.system.tep.https.client_secret')]" source-system="#[vars.source_system]"/>
 	</sub-flow>
 	<sub-flow name="clients-system-unigis-post-tms-products" doc:id="78c60b4f-b5fc-4029-984c-92f935a72574" >
 		<!-- [STUDIO:"Request"]<http:request method="POST" doc:name="Request" doc:id="3f17c140-ecbd-4602-a6ca-f608e0c93548" config-ref="HTTP_Request_configuration-system-tms-tep-api" path="${client.system.tep.https.path.post.tms.shipments.products}" >
@@ -207,6 +207,6 @@ output application/json
 	"source_system" : vars.source_system
 }&#93;&#93;&#93;></http:query-params>
 		</http:request> [STUDIO] -->
-		<system-tms-tep-api:products doc:name="Products" doc:id="c5eba6a3-839a-49be-ac70-8674a4b6d8ad" config-ref="System_tms_tep_api_Config" client-id="#[p('secure::client.system.tep.https.client_id')]" client-secret="#[p('secure::client.system.tep.https.client_secret')]" source-system="#[vars.source_system]"/>
+		<system-tms-tep-api:products doc:name="Products" doc:id="c5eba6a3-839a-49be-ac70-8674a4b6d8ad" config-ref="System_tms_tep_api_Config" client-id="#[Mule::p('secure::client.system.tep.https.client_id')]" client-secret="#[Mule::p('secure::client.system.tep.https.client_secret')]" source-system="#[vars.source_system]"/>
 	</sub-flow>
 </mule>
