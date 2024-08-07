@@ -930,6 +930,7 @@ vars.provIngrAuxArrayExtract ++ vars.saleOrdrAuxArrayExtract]]></ee:set-variable
 			<ee:message>
 					<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
+import * from dw::Runtime
 ---
 {
 	"identificador_pedido": payload.d.EX_RETURN.VBKD_BSTKD,
@@ -946,7 +947,7 @@ output application/json
 	payload.d.EX_RETURN.VBAK_VBELN
 	else "",
 	"correlation_id": correlationId
-}]]></ee:set-payload>
+} wait 60000]]></ee:set-payload>
 			</ee:message>
 			<ee:variables>
 			</ee:variables>
@@ -959,7 +960,7 @@ output application/json
 				<ee:set-variable variableName="respSapExtract" ><![CDATA[%dw 2.0
 output application/json
 ---
-vars.respSapArray map($.typedValue) orderBy($.identificador_pedido) reduce($$ ++ $) filterObject($ != "")]]></ee:set-variable>
+vars.respSapArray map($.typedValue)]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="6ae96bba-b410-4899-8d10-02fcf31a8e43" message="#[vars.respSapArray]"/>
