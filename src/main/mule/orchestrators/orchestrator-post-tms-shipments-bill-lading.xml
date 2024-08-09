@@ -947,7 +947,7 @@ import * from dw::Runtime
 	payload.d.EX_RETURN.VBAK_VBELN
 	else "",
 	"correlation_id": correlationId
-} wait 60000]]></ee:set-payload>
+}]]></ee:set-payload>
 			</ee:message>
 			<ee:variables>
 			</ee:variables>
