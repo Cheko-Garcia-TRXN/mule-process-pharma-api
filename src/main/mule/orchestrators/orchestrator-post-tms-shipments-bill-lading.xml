@@ -85,7 +85,7 @@ fun suma(cantidad) = sum(cantidad map ((item, index) -> item.cantidad as Number)
 				"clave": "XPK",
 				"id_origen": $.id_origen,
 				"id_destino": $.id_destino,
-				"peligroso": $.peligroso,
+				"peligroso": "NO",
 				"clave_peligroso": $.clave_peligroso,
 				"embalaje": $.embalaje,
 				"peso_kg": $.peso_kg,
@@ -239,6 +239,7 @@ output application/java
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="cd602511-fb4e-4f74-8fd8-54d99aaf0bd9" message="#[payload]"/>
 		<async doc:name="Async" doc:id="ee6fb9de-d426-4fa2-87da-df16ac3a981b">
 			<ee:transform doc:name="Transform original payload carta porte" doc:id="6ba866f1-307f-461b-8b45-e26f548104f0">
 				<ee:message>
