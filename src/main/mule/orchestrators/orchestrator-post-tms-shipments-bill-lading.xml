@@ -399,6 +399,7 @@ fun totMerc(total) = sum(total.cantidad)
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="fd62b3cb-7cfc-4e56-941e-d64bab03e15a" message="PAYLOAD FINAL #[payload]"/>
 			</when>
 			<otherwise >
 				<ee:transform doc:name="Original payload cp map" doc:id="6055edc5-f096-4b67-98f4-96dee0268f73">
@@ -499,6 +500,7 @@ fun totMerc(total) = sum(total.cantidad)
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="977edee2-2a42-48b0-b6d2-109003473f81" message="PAYLOAD FINAL #[payload]"/>
 			</otherwise>
 		</choice>
 		<flow-ref doc:name="Call-clients-process-post-carta-porte-full-api-test" doc:id="7eb1a298-2e76-4cd9-81b6-5b9999ee62cc" name="clients-process-post-carta-porte-full-api-test"/>
