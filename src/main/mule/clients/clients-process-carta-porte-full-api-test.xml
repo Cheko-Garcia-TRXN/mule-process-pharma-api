@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="clients-process-post-carta-porte-full-api-test" doc:id="6b26ed04-c8d6-4487-bb75-ff2022afb26a" >
+		<http:request method="POST" doc:name="Request" doc:id="5eb8f518-8907-4052-acd0-f1ccb0c74964" config-ref="HTTP_Request_configuration_Process_Carta_Porte_Full_Api_Test" path="${client.process.cartaporte.full.api.test.https.api.carta_porte}" target="cpResponse" sendCorrelationId="ALWAYS" correlationId="#[correlationId]" outputMimeType="application/xml">
+			<http:headers ><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	"client_id": p('client.process.cartaporte.full.api.test.https.client_id'),
+	"client_secret": p('client.process.cartaporte.full.api.test.https.client_secret')
+}]]]></http:headers>
+		</http:request>
+	</sub-flow>
+</mule>
