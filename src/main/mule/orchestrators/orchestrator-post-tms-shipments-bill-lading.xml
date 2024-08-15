@@ -853,7 +853,7 @@ fun formatdate(d: DateTime) = d as String {
 		"VBAK_VKBUR": "MD00",//3000710
 		"VBAK_VKGRP": "MD0",//3000718
 		"VBAK_XBLNR": "",
-		"KUAGV_KUNNR": payload.id_cliente,
+		"KUAGV_KUNNR": "0" ++ payload.id_cliente,
 		"VBKD_BSTKD": payload.numero_pedido,
 		"VBKD_BSTDK": formatdate(now() >> toTimeZone("America/Mexico_City")),
 		"VBKD_ZTERM": "N015",
@@ -1059,7 +1059,7 @@ fun formatdate(d: DateTime) = d as String {
 		"VBAK_VKBUR": "MD00",//3000710
 		"VBAK_VKGRP": "MD0",//3000718
 		"VBAK_XBLNR": "",
-		"KUAGV_KUNNR": payload.id_cliente,
+		"KUAGV_KUNNR": "0" ++ payload.id_cliente,
 		"VBKD_BSTKD": payload.numero_pedido,
 		"VBKD_BSTDK": formatdate(now() >> toTimeZone("America/Mexico_City")),
 		"VBKD_ZTERM": "N015",
