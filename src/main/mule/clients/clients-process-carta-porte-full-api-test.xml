@@ -14,6 +14,6 @@ output application/java
 	"client_secret": p('client.process.cartaporte.full.api.test.https.client_secret')
 }]]]></http:headers>
 		</http:request>
-		<logger level="INFO" doc:name="Logger" doc:id="479ade24-08ab-464d-879b-8726ba814ee6" message="#[vars.cpResponse]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="479ade24-08ab-464d-879b-8726ba814ee6" message="#[vars.cpResponse]" category="CARTA PORTE RESPONSE"/>
 	</sub-flow>
 </mule>

@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_d3bf1f47_cd13_455c_9dbf_368473c2a423_Input_Variables_sendToSlack = String | Binary
+

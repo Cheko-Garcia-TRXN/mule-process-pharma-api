@@ -172,6 +172,30 @@ output application/json
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="b172b86d-6c33-4e04-b4a9-50a1959ccbbc" type="CARTAPORTE:BAD_REQUEST">
+                <ee:transform doc:name="Transform Message" doc:id="63984202-0b61-4622-814c-c4631071208c">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"traxion_response": {
+		"completed_succesfully": "false",
+		"error": {
+			"error_type": "CARTA_PORTE:BAD_REQUEST",
+			"user_error_description": error.description,
+			"system_error_description": error.description
+		}
+	}
+}
+]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+				<flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="dead0e83-0731-4e03-b134-eb479867745c" name="orchestrator-send-message-to-slack-main"/>
+            </on-error-propagate>            
             <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f307ae51-e879-4b60-a5f6-948d39c4680a" type="ERROR:CARTAPORTE">
                 <ee:transform doc:name="Transform Message" doc:id="5b532ab3-825e-447f-a804-35427e3b05ed">
                     <ee:message>

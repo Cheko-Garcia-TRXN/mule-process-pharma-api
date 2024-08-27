@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
 	<sub-flow name="orchestrator-post-tms-bill_lading" doc:id="a1f274b8-8173-4381-9680-c3ad654e8f58" >
 		<logger level="INFO" doc:name="Logger" doc:id="5ac23ef9-b6eb-4092-8597-359d561d4233" message="#[payload]"/>
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-traslado-process-carta-porte-full-api" doc:id="12da03a6-210c-4eef-b727-cff180b4919e" name="orchestrator-post-tms-shipments-bill-lading-traslado-process-carta-porte-full-api"/>
@@ -504,6 +505,15 @@ fun totMerc(total) = sum(total.cantidad)
 			</otherwise>
 		</choice>
 		<flow-ref doc:name="Call-clients-process-post-carta-porte-full-api-test" doc:id="7eb1a298-2e76-4cd9-81b6-5b9999ee62cc" name="clients-process-post-carta-porte-full-api-test"/>
+		<flow-ref doc:name="orchestrator-post-tms-shipments-bill-lading-validate-reponse-carta-porte" doc:id="c0de7d66-4691-47bd-af48-082824214ec6" name="orchestrator-post-tms-shipments-bill-lading-validate-reponse-carta-porte"/>
+	</sub-flow>
+	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-validate-reponse-carta-porte" doc:id="2f347874-16db-4919-9b2e-72a932153d05" >
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.cpResponse.body.generaComprobanteResponse.return.codigo]" doc:name="Set response_code" doc:id="3875fed3-713a-48b4-9cab-77f4c378bb46" variableName="response_code"/>
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.cpResponse.body.generaComprobanteResponse.return.descripcion]" doc:name="Set error_message" doc:id="5de5d02b-d4b8-4a58-ba8a-1c8a98ae27fe" variableName="error_message"/>
+		<logger level="INFO" doc:name="Logger" doc:id="3ba8c72d-4d24-4944-990e-1bf85e82dd6f" message="#[vars.response_code]"/>
+		<validation:is-false doc:name="validate code " doc:id="f2925dc5-9891-4059-a723-fe2bd484629f" expression='#[vars.response_code != "100"]' message="#[vars.error_message]">
+			<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="CARTAPORTE:BAD_REQUEST" />
+		</validation:is-false>
 	</sub-flow>
 	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-send-document-pdf-carta-porte" doc:id="da8a09d3-707c-45e7-ab4e-b38ca6a6f8a6" >
 		<parallel-foreach doc:name="Parallel For Each" doc:id="4ed55ce2-d468-49c2-acec-8d2181951fcf" collection="#[vars.originalPayload.sap_info]" target="createDocsResp">
