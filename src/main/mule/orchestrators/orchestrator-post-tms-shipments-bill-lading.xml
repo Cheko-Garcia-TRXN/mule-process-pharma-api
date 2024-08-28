@@ -18,7 +18,7 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-join-responses-provs-sales" doc:id="d3b6c4fc-c252-4ad3-94cd-39f2d269da13" name="orchestrator-post-tms-shipments-bill-join-responses-provs-sales"/>
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-set-response-sap-info" doc:id="4eeb1c67-779c-40ad-a3b6-847ae827ca83" name="orchestrator-post-tms-shipments-bill-lading-set-response-sap-info"/>
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-update-response-sap-info" doc:id="3cf00b6a-8301-4b48-a012-d9f8def86952" name="orchestrator-post-tms-shipments-bill-lading-update-response-sap-info"/>
-		<logger level="INFO" doc:name="Logger" doc:id="e39f241f-9855-4733-998e-e881d99cac4c" message="#[payload]"/>
+		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="e39f241f-9855-4733-998e-e881d99cac4c" message="#[payload&#93;"/> [STUDIO] -->
 	</sub-flow>
 	<!-- [STUDIO:"orchestrator-post-tms-shipments-bill-lading-traslado"]<sub-flow name="orchestrator-post-tms-shipments-bill-lading-traslado" doc:id="7034adce-6810-4ee6-b910-d57ffade1e52">
 		<ee:transform doc:name="Create mapping bill lading original structure" doc:id="ddea9e09-7ae5-4f19-aeb4-71683c87b481">
@@ -510,7 +510,6 @@ fun totMerc(total) = sum(total.cantidad)
 	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-validate-reponse-carta-porte" doc:id="2f347874-16db-4919-9b2e-72a932153d05" >
 		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.cpResponse.body.generaComprobanteResponse.return.codigo]" doc:name="Set response_code" doc:id="3875fed3-713a-48b4-9cab-77f4c378bb46" variableName="response_code"/>
 		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.cpResponse.body.generaComprobanteResponse.return.descripcion]" doc:name="Set error_message" doc:id="5de5d02b-d4b8-4a58-ba8a-1c8a98ae27fe" variableName="error_message"/>
-		<logger level="INFO" doc:name="Logger" doc:id="3ba8c72d-4d24-4944-990e-1bf85e82dd6f" message="#[vars.response_code]"/>
 		<validation:is-false doc:name="validate code " doc:id="f2925dc5-9891-4059-a723-fe2bd484629f" expression='#[vars.response_code != "100"]' message="#[vars.error_message]">
 			<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="CARTAPORTE:BAD_REQUEST" />
 		</validation:is-false>
@@ -941,6 +940,7 @@ output application/json
 vars.provIngrAuxArray map((item)-> item.typedValue)]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="ec1faced-39ff-4e61-96b7-bd683a5c8c88" message="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.provIngrAuxArrayExtract]" category="PROVISION INGRESO" />
 	</sub-flow>
 	<sub-flow name="orchestrator-post-tms-shipments-sales-order-process-003" doc:id="d2cedf08-cba3-4d34-ab6d-aeda8aeb82d8" >
 		<!-- [STUDIO:"For Each"]<foreach doc:name="For Each" doc:id="dced2f48-325e-40b7-8319-69f00360a86a" collection="#[vars.originalPayload.sap_info&#93;">
@@ -1147,6 +1147,7 @@ output application/json
 vars.saleOrdrAuxArray map((item)-> item.typedValue)]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="125f1956-09a5-4404-8e3f-081d07650c3c" message="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.saleOrdrAuxArrayExtract]" category="ORDEN DE VENTA" />
 	</sub-flow>
 	<sub-flow name="orchestrator-post-tms-shipments-bill-join-responses-provs-sales" doc:id="41de809b-6b01-4e4f-b0f7-678012290dee" >
 		<ee:transform doc:name="Join arrays responses" doc:id="d940a616-7d7e-41d8-a3bb-181abd9c6ebf" >
@@ -1199,7 +1200,7 @@ output application/json
 vars.respSapArray map($.typedValue)]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="6ae96bba-b410-4899-8d10-02fcf31a8e43" message="#[vars.respSapArray]"/>
+		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="6ae96bba-b410-4899-8d10-02fcf31a8e43" message="#[%dw 2.0&#10;output application/json&#10;&#45;&#45;-&#10;vars.respSapArray&#93;"/> [STUDIO] -->
 	</sub-flow>
 	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-update-response-sap-info" doc:id="aefb0455-fdf8-447e-bf0b-4f68277cf0bc" >
 		<ee:transform doc:name="Set structure response" doc:id="b1a03dab-a2d7-4520-b671-11c7a245548f" >
@@ -1211,7 +1212,26 @@ ns ns2 http://ws.edifactwstraxion/
 {
 	"traxion_response": {
 		"completed_succesfully": true,
-		"response": vars.respSapExtract,
+		"response_sap": if(isEmpty(vars.respSapExtract filter ((item, index) -> item.identificador_pedido != null)))
+		[
+			{       
+			    "identificador_pedido": "No se genero provision ingreso",
+			    "numero_factura_provision": "",
+			    "numero_pedido_provision": "",
+			    "numero_factura_venta": "",
+			    "numero_pedido_venta": "",
+			    "correlation_id": vars.respSapExtract..correlation_id[0]
+			},
+			{
+			           
+			    "identificador_pedido": "No se genero orden de venta",
+			    "numero_factura_provision": "",
+			    "numero_pedido_provision": "",
+			    "numero_factura_venta": "",
+			    "numero_pedido_venta": "",
+			    "correlation_id": vars.respSapExtract..correlation_id[0]
+			}
+		] else vars.respSapExtract,
 		"response_pac": {
 			"return": {
 				"codigo": vars.cpResponse.body.ns2#generaComprobanteResponse.return.codigo,
@@ -1241,6 +1261,6 @@ vars.structureFinalResponse update{
 }&#93;&#93;></ee:set-payload>
 			</ee:message>
 		</ee:transform> [STUDIO] -->
-		<logger level="INFO" doc:name="Logger" doc:id="6969e81c-fbba-4133-bf5a-669b17ebac5d" message="#[payload]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="6969e81c-fbba-4133-bf5a-669b17ebac5d" message='#[%dw 2.0&#10;output application/json&#10;ns ns2 http://ws.edifactwstraxion/&#10;---&#10;{&#10;	"traxion_response": {&#10;		"completed_succesfully": true,&#10;		"response_sap": vars.respSapExtract,&#10;		"response_pac": {&#10;			"return": {&#10;				"codigo": vars.cpResponse.body.ns2#generaComprobanteResponse.return.codigo,&#10;				"descripcion": vars.cpResponse.body.ns2#generaComprobanteResponse.return.descripcion,&#10;				"fechaTimbrado": vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado,&#10;				"noCertificado": vars.cpResponse.body.ns2#generaComprobanteResponse.return.noCertificado,&#10;				"selloCFDI": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.selloCFDI),&#10;				"selloSAT": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.selloSAT),&#10;				"UUID": vars.cpResponse.body.ns2#generaComprobanteResponse.return.UUID&#10;			}&#10;		}&#10;	}&#10;}]'/>
 	</sub-flow>
 </mule>
