@@ -5,20 +5,20 @@
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
 		<flow name="orchestrator-scheduler-siam-issste-stock-dif" doc:id="0d939035-1cd9-41da-a749-c82eb47c85ea">
-		<scheduler doc:name="DIF" doc:id="52f2e1a1-9f50-4141-84b1-a6cb652fc07b" >
+		<!-- [STUDIO:"DIF"]<scheduler doc:name="DIF" doc:id="52f2e1a1-9f50-4141-84b1-a6cb652fc07b" >
 			<scheduling-strategy >
 				<fixed-frequency frequency="10" timeUnit="HOURS"/>
 			</scheduling-strategy>
-		</scheduler>
+		</scheduler> [STUDIO] -->
 		<set-variable value="DIF" doc:name="Set query_type" doc:id="3d20c206-51fd-4d51-8f31-47cdac4c3087" variableName="query_type"/>
 		<flow-ref doc:name="orchestrator-update-siam-stockFlow" doc:id="b92dbd7a-14c2-4637-9ae1-cc249b2608e3" name="orchestrator-update-siam-stockFlow"/>
 	</flow>
 		<flow name="orchestrator-scheduler-siam-issste-stock-update-all" doc:id="dae7fe92-5d4b-4912-bbc2-bf3f0dd13721">
-		<scheduler doc:name="ALL" doc:id="f0492bf6-4c7f-4e8d-bc0e-352774c3c045">
+		<!-- [STUDIO:"ALL"]<scheduler doc:name="ALL" doc:id="f0492bf6-4c7f-4e8d-bc0e-352774c3c045">
 			<scheduling-strategy>
 				<fixed-frequency frequency="10" timeUnit="HOURS" />
 			</scheduling-strategy>
-		</scheduler>
+		</scheduler> [STUDIO] -->
 		<flow-ref doc:name="orchestrator-update-all-siam-stock-update-all" doc:id="1432bd1d-e90f-4a31-8edd-aa221a7ea141" name="orchestrator-update-all-siam-stock-update-all" />
 	</flow>	
 </mule>
