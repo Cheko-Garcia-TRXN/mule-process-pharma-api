@@ -3,7 +3,7 @@
     <http:listener-config name="process-pharma-api-httpListenerConfig">
         <http:listener-connection host="${http.listener.host}" port="${http.listener.port}" protocol="HTTPS" tlsContext="TLS_Context" readTimeout="${http.listener.read.timeout}" />
     </http:listener-config>
-    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.24:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.25:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="process-pharma-api-main">
         <http:listener config-ref="process-pharma-api-httpListenerConfig" path="${http.listener.path}">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -187,15 +187,14 @@ output application/json
 			"system_error_description": error.description
 		}
 	}
-}
-]]></ee:set-payload>
+}]]></ee:set-payload>
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
                     </ee:variables>
                 </ee:transform>
-				<flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="dead0e83-0731-4e03-b134-eb479867745c" name="orchestrator-send-message-to-slack-main"/>
-            </on-error-propagate>            
+                <flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="dead0e83-0731-4e03-b134-eb479867745c" name="orchestrator-send-message-to-slack-main" />
+            </on-error-propagate>
             <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f307ae51-e879-4b60-a5f6-948d39c4680a" type="ERROR:CARTAPORTE">
                 <ee:transform doc:name="Transform Message" doc:id="5b532ab3-825e-447f-a804-35427e3b05ed">
                     <ee:message>
@@ -548,5 +547,35 @@ attributes.queryParams.remision]]></ee:set-variable>
         </ee:transform>
         <logger level="INFO" doc:name="Logger" doc:id="e13d6942-44ea-4c81-86cd-720aa0108b5f" message="RANGO DE FECHAS  DESDE #[vars.certification_date_from] HASTA #[vars.certification_date_to]" />
         <flow-ref doc:name="orchestrator-get-remisions-certified-report-main" doc:id="aac25009-692d-4ac9-af97-d8420a29164a" name="orchestrator-get-remisions-certified-report-main" />
+    </flow>
+    <flow name="post:\imss\orders:application\json:process-pharma-api-config">
+        <logger level="INFO" doc:name="Logger" doc:id="8a2054da-a31a-4f44-a24b-3916cc7bb0a2" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="93e7692f-cc80-4ad5-a853-604a1848aa5a" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="source_system" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.source_system]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<!-- [STUDIO:"orchestrator-post-create-order-unigis-main"]<flow-ref doc:name="orchestrator-post-create-order-unigis-main" doc:id="cc819b51-b156-4a25-be7b-2e7db4aff22a" name="orchestrator-post-create-order-unigis-main"/> [STUDIO] -->
+		<ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  traxion_response: {
+    completed_succesfully: "true",
+    response: {
+      message: "successful",
+      data: {}
+    }
+  }
+} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
     </flow>
 </mule>
