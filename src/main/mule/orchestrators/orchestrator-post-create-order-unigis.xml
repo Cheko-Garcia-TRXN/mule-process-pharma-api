@@ -1,9 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<sub-flow name="orchestrator-post-create-order-unigis-main" doc:id="c2a90945-ed8f-443a-a809-0bc7e61cfa10" >
+		<flow-ref doc:name="orchestrator-post-create-order-unigis-create-order-request" doc:id="23b88ae2-b017-45d6-9fa6-fb809c2d177e" name="orchestrator-post-create-order-unigis-create-order-request"/>
 		<flow-ref doc:name="clients-system-unigis-create-order" doc:id="2ef17715-5098-40b8-9d65-5140e4af126a" name="clients-system-unigis-create-order"/>
+	</sub-flow>
+	<sub-flow name="orchestrator-post-create-order-unigis-create-order-request" doc:id="dc18995d-1337-4c95-ad51-8dc0733c8d77" >
+		<ee:transform doc:name="Transform Message" doc:id="b4363216-0a4a-41ea-a64e-2a2f354213a0">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "fechaViaje": payload.CrearViajeCompleto.crearviaje.FechaViaje,
+  "fechaInicioPlan": payload.CrearViajeCompleto.crearviaje.FechaInicioPlan,
+  "fechaFinPlan": payload.CrearViajeCompleto.crearviaje.fechaFinPlan,
+  "referencia": payload.CrearViajeCompleto.crearviaje.Referencia,
+  "descripcion": payload.CrearViajeCompleto.crearviaje.Descripcion,
+  "sucursal": payload.CrearViajeCompleto.crearviaje.Sucursal,
+  "operacion": payload.CrearViajeCompleto.crearviaje.Operacion,
+  "empresa": payload.CrearViajeCompleto.crearviaje.Empresa,
+  "tipoViaje": payload.CrearViajeCompleto.crearviaje.TipoViaje,
+  "refCliente": payload.CrearViajeCompleto.crearviaje.cliente.RefCliente,
+  "razonSocialCliente": payload.CrearViajeCompleto.crearviaje.cliente.RazonSocial,
+  "direccionCliente": payload.CrearViajeCompleto.crearviaje.cliente.Direccion,
+  "depositoSalida": payload.CrearViajeCompleto.crearviaje.depositoSalida.RefDepositoExterno,
+  "depositoLlegada": payload.CrearViajeCompleto.crearviaje.depositoLlegada.RefDepositoExterno,
+  "paradas": payload.CrearViajeCompleto.crearviaje.Paradas.*pParada map(item)-> {
+      "secuencia": item.Secuencia,
+      "tipoParada": item.TipoParada,
+      "descripcion": item.Descripcion,
+      "inicioHorarioPlanificado": item.InicioHorarioPlanificado,
+      "finHorarioPlanificado": item.FinHorarioPlanificado,
+      "refCliente": item.cliente.RefCliente,
+      "razonSocialCliente": item.cliente.RazonSocial,
+      "direccionCliente": item.cliente.Direccion,
+      "items": item.Items.*pParadaItem map(item)->
+        {
+          "refDocumento": item.RefDocumento,
+          "refDocumentoAdicional": item.refDocumentoAdicional,
+          "descripcion": item.Descripcion,
+          "cantidad": item.Cantidad,
+          "volumen": item.Volumen,
+          "peso": item.Peso,
+          "pallets": item.Pallets,
+          "productoLinea": item.ProductoLinea,
+          "apilablePermitido": item.Apilable_Permitido
+        }
+    }
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
 	</sub-flow>
 </mule>

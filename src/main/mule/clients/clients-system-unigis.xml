@@ -49,6 +49,7 @@ http://www.mulesoft.org/schema/mule/system-tms-unigis http://www.mulesoft.org/sc
 	<sub-flow name="clients-system-unigis-create-order" doc:id="311b5dd8-cc47-47fb-bb2e-e4c5ebd04ef6" >
 		<logger level="INFO" doc:name="Logger" doc:id="a6cded00-2707-40f9-84bf-debe1b8edc10" message="#[payload]"/>
 		<system-tms-unigis:create-unigis-order doc:name="Create UNIGIS order" doc:id="dddcd6d8-70f2-481e-bb74-7970230ff796" config-ref="System_tms_unigis_Config" client-id="#[p('client.system.unigis.https.client_id')]" client-secret="#[p('client.system.unigis.https.client_secret')]" source-system="#[vars.source_system]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="88f6b0f2-03f9-4528-87c1-e81766b00181" message="#[payload]"/>
 	</sub-flow>
 	
 </mule>
