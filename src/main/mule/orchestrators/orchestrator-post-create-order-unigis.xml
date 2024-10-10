@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="orchestrator-post-create-order-unigis-main" doc:id="c2a90945-ed8f-443a-a809-0bc7e61cfa10" >
+		<flow-ref doc:name="clients-system-unigis-create-order" doc:id="2ef17715-5098-40b8-9d65-5140e4af126a" name="clients-system-unigis-create-order"/>
+	</sub-flow>
+</mule>
