@@ -463,7 +463,9 @@ fun totMerc(total) = sum(total.cantidad)
 				"guias": $.guias
 			})
 		},
-		"figura_transporte": payload.carta_porte.figura_transporte,
+		"figura_transporte": payload.carta_porte.figura_transporte update {
+            case .transportista.vehiculo.remolques -> payload.carta_porte.figura_transporte.transportista.vehiculo.remolques filter ((value) -> !isEmpty(value.placas))
+        },
 		"traslado": {
 			"serie": payload.carta_porte.serie,
 			"folio": "",
