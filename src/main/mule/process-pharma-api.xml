@@ -549,7 +549,8 @@ attributes.queryParams.remision]]></ee:set-variable>
         <flow-ref doc:name="orchestrator-get-remisions-certified-report-main" doc:id="aac25009-692d-4ac9-af97-d8420a29164a" name="orchestrator-get-remisions-certified-report-main" />
     </flow>
     <flow name="post:\imss\orders:application\json:process-pharma-api-config">
-        <ee:transform doc:name="Transform Message">
+        <logger level="INFO" doc:name="Logger" doc:id="8a2054da-a31a-4f44-a24b-3916cc7bb0a2" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
