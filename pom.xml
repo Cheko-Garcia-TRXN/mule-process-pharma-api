@@ -209,16 +209,16 @@
 		</dependency>
 		<dependency>
 			<groupId>ab8117f6-d718-4307-b5f7-03262d589cd0</groupId>
-			<artifactId>process-pharma-api</artifactId>
-			<version>1.0.25</version>
-			<classifier>raml</classifier>
-			<type>zip</type>
-		</dependency>
-		<dependency>
-			<groupId>ab8117f6-d718-4307-b5f7-03262d589cd0</groupId>
 			<artifactId>mule-plugin-system-tms-unigis-api</artifactId>
 			<version>1.0.12</version>
 			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>ab8117f6-d718-4307-b5f7-03262d589cd0</groupId>
+			<artifactId>process-pharma-api</artifactId>
+			<version>1.0.27</version>
+			<classifier>raml</classifier>
+			<type>zip</type>
 		</dependency>
 	</dependencies>
 

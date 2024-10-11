@@ -5,15 +5,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<sub-flow name="orchestrator-post-create-order-unigis-main" doc:id="c2a90945-ed8f-443a-a809-0bc7e61cfa10" >
-		<flow-ref doc:name="orchestrator-post-create-order-unigis-create-order-request" doc:id="23b88ae2-b017-45d6-9fa6-fb809c2d177e" name="orchestrator-post-create-order-unigis-create-order-request"/>
+		<!-- [STUDIO:"orchestrator-post-create-order-unigis-create-order-request"]<flow-ref doc:name="orchestrator-post-create-order-unigis-create-order-request" doc:id="23b88ae2-b017-45d6-9fa6-fb809c2d177e" name="orchestrator-post-create-order-unigis-create-order-request"/> [STUDIO] -->
 		<flow-ref doc:name="clients-system-unigis-create-order" doc:id="2ef17715-5098-40b8-9d65-5140e4af126a" name="clients-system-unigis-create-order"/>
 	</sub-flow>
-	<sub-flow name="orchestrator-post-create-order-unigis-create-order-request" doc:id="dc18995d-1337-4c95-ad51-8dc0733c8d77" >
+	<!-- [STUDIO:"orchestrator-post-create-order-unigis-create-order-request"]<sub-flow name="orchestrator-post-create-order-unigis-create-order-request" doc:id="dc18995d-1337-4c95-ad51-8dc0733c8d77" >
 		<ee:transform doc:name="Transform Message" doc:id="b4363216-0a4a-41ea-a64e-2a2f354213a0">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
----
+&#45;&#45;-
 {
   "fechaViaje": payload.CrearViajeCompleto.crearviaje.FechaViaje,
   "fechaInicioPlan": payload.CrearViajeCompleto.crearviaje.FechaInicioPlan,
@@ -53,8 +53,8 @@ output application/json
           "claveSat": item.Varchar3   
         }
     }
-}]]></ee:set-payload>
+}&#93;&#93;></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-	</sub-flow>
+	</sub-flow> [STUDIO] -->
 </mule>
