@@ -560,11 +560,11 @@ attributes.queryParams.source_system]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <flow-ref doc:name="orchestrator-post-create-order-unigis-main" doc:id="cc819b51-b156-4a25-be7b-2e7db4aff22a" name="orchestrator-post-create-order-unigis-main" />
-        <ee:transform doc:name="Transform Message">
+        <!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
----
+&#45;&#45;-
 {
   traxion_response: {
     completed_succesfully: "true",
@@ -573,8 +573,8 @@ output application/json
       data: {}
     }
   }
-} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+} as Object {encoding: "UTF-8", mediaType: "application/json"}&#93;&#93;></ee:set-payload>
             </ee:message>
-        </ee:transform>
+        </ee:transform> [STUDIO] -->
     </flow>
 </mule>
