@@ -17,7 +17,7 @@ output application/json
 {
   "fechaViaje": payload.CrearViajeCompleto.crearviaje.FechaViaje,
   "fechaInicioPlan": payload.CrearViajeCompleto.crearviaje.FechaInicioPlan,
-  "fechaFinPlan": payload.CrearViajeCompleto.crearviaje.fechaFinPlan,
+  "fechaFinPlan": payload.CrearViajeCompleto.crearviaje.FechaFinPlan,
   "referencia": payload.CrearViajeCompleto.crearviaje.Referencia,
   "descripcion": payload.CrearViajeCompleto.crearviaje.Descripcion,
   "sucursal": payload.CrearViajeCompleto.crearviaje.Sucursal,
