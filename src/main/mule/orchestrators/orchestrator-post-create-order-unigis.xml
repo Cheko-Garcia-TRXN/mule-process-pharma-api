@@ -41,13 +41,13 @@ output application/json
       "items": item.Items.*pParadaItem map(item)->
         {
           "refDocumento": item.RefDocumento,
-          "refDocumentoAdicional": item.refDocumentoAdicional,
+          "refDocumentoAdicional": item.RefDocumentoAdicional,
           "descripcion": item.Descripcion,
           "cantidad": item.Cantidad,
           "volumen": item.Volumen,
           "peso": item.Peso,
           "pallets": item.Pallets,
-          "productoLinea": item.ProductoLinea,
+          "productoLinea": item.ProductoLinea ,
           "apilablePermitido": item.Apilable_Permitido,
           "embalaje": item.Varchar2,
           "claveSat": item.Varchar3   
