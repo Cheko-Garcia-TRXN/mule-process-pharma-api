@@ -48,7 +48,9 @@ output application/json
           "peso": item.Peso,
           "pallets": item.Pallets,
           "productoLinea": item.ProductoLinea,
-          "apilablePermitido": item.Apilable_Permitido
+          "apilablePermitido": item.Apilable_Permitido,
+          "embalaje": item.Varchar2,
+          "claveSat": item.Varchar3   
         }
     }
 }]]></ee:set-payload>
