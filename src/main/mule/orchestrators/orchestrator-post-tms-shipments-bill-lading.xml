@@ -347,7 +347,8 @@ fun totMerc(total) = sum(total.cantidad)
 		},
 		"figura_transporte": {
 			"transportista": {
-				"permiso": payload.carta_porte.figura_transporte.transportista.permiso,
+				//"permiso": payload.carta_porte.figura_transporte.transportista.permiso,
+				"permiso": "TPAF01",
 				"permiso_numero": payload.carta_porte.figura_transporte.transportista.permiso_numero,
 				"vehiculo": {
 					"aseguradora": payload.carta_porte.figura_transporte.transportista.vehiculo.aseguradora,
@@ -464,6 +465,7 @@ fun totMerc(total) = sum(total.cantidad)
 			})
 		},
 		"figura_transporte": payload.carta_porte.figura_transporte update {
+			case .transportista.permiso -> "TPAF01"
             case .transportista.vehiculo.remolques -> payload.carta_porte.figura_transporte.transportista.vehiculo.remolques filter ((value) -> !isEmpty(value.placas))
         },
 		"traslado": {
