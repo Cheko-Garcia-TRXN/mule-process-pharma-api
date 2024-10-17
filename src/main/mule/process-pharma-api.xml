@@ -205,7 +205,7 @@ output application/json
 	"traxion_response": {
 		"completed_succesfully": "false",
 		"error": {
-			"error_type": "TMS:ERROR",
+			"error_type": "UNIGIS:ERROR",
 			"user_error_description": error.description,
 			"system_error_description": error.description
 		}
