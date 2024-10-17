@@ -220,6 +220,18 @@
 			<classifier>raml</classifier>
 			<type>zip</type>
 		</dependency>
+		<dependency>
+			<groupId>ab8117f6-d718-4307-b5f7-03262d589cd0</groupId>
+			<artifactId>mule-plugin-system-load-api</artifactId>
+			<version>1.0.9</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>ab8117f6-d718-4307-b5f7-03262d589cd0</groupId>
+			<artifactId>mule-plugin-experience-traxporta</artifactId>
+			<version>1.0.50</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
 	</dependencies>
 
 	<repositories>

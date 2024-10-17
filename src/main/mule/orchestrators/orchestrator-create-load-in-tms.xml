@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="orchestrator-create-load-in-tms-main" doc:id="92e17be1-01f0-4604-a6e3-f1dfb7686c4a" >
+		<flow-ref doc:name="orchestrator-create-load-in-tms-create-shipment" doc:id="3c6f6163-07b2-41c1-959f-5571e50f8337" name="orchestrator-create-load-in-tms-create-shipment"/>
+		<flow-ref doc:name="orchestrator-create-load-in-tms-create-load" doc:id="625dccac-0772-4947-8735-9abae08bc2ad" name="orchestrator-create-load-in-tms-create-load"/>
+		<flow-ref doc:name="orchestrator-create-load-in-tms-assign-shipment-load" doc:id="b759345e-d1f8-45c0-b27f-465b59edc15c" name="orchestrator-create-load-in-tms-assign-shipment-load"/>
+	</sub-flow>
+	<sub-flow name="orchestrator-create-load-in-tms-create-shipment" doc:id="868a8eb1-ffd1-4970-9666-39d0375a675b" >
+		<ee:transform doc:name="Transform Message" doc:id="88d29055-ef75-4fed-82e6-8390b667ac25">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+fun formatDate(aString) = aString as String { format:"dd/MM/uuuu KK:mm:ss"}
+fun traductorOrigen(aString) = aString match {
+  case "098321150905" -> "HUEHUETOCA"
+  case "098322150905" -> "CENADI"
+  else -> "UNKNOWN"
+}
+---
+{
+    "shipment_number": "",
+    "tracking_number": vars.req_tms_by.no_reposicion,//numero de reposicion 
+    "commodity_code": "SECO", //siempre seco para imss
+    "customer_code": "0201028270", // TMS 0201028270 
+    "ship_from_location_code": vars.req_tms_by.origen, // TMS define
+    "ship_to_location_code": vars.req_tms_by.destino, // TMS define
+    "project_name": "CTL_INSABI", // TMS  CTL_IMSS_ORDINARIO
+    "tipo_pedido": "",
+    "profit_center_code": "TT010101", //TT010101
+    "equipment_type_code": "",
+    "service_code": "FTL", //FTL simpre
+    "load_datetime": formatDate(vars.req_tms_by.pick_from_date default now()),//PickupFromDateTime || DeliveryFromDateTime  format "01/17/2023 10:58:47"
+    "appointment_datetime": formatDate(vars.req_tms_by.pick_to_date default now()),//PickupToDateTime || DeliveryToDateTime format "01/17/2023 10:58:47"
+    "container": [
+        {
+            "item_number": "_0",
+            "NumberOfUnits": "1",
+            "ItemDescription": "NA",
+            "container_type_code": "PALLET",
+            "quantity": "1",
+            "freight_class_nominal_weight": "3500",
+            "length": "1.000",
+            "height": "1.500",
+            "width": "1.200",
+            "flexible_quantity1": "",
+            "flexible_quantity2": ""
+        }
+    ]
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="client-traxion-traxporta-create-shipment" doc:id="022b7497-fe29-4dd7-a5cc-d2c7881ffabc" name="client-traxion-traxporta-create-shipment" />
+	</sub-flow>
+	<sub-flow name="orchestrator-create-load-in-tms-create-load" doc:id="787d1ed2-fadd-4e73-ac9e-6a82ffb7d0f7" >
+		<ee:transform doc:name="Transform Message" doc:id="43063c7e-68bb-4e83-b4e4-4df07c780889" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "description": vars.req_tms_by.no_viaje_unigis,
+  "plan_id": "7777"
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="client-system-load-api-create-load" doc:id="5bd88fbd-4a84-4182-98dd-858e7f29e740" name="client-system-load-api-create-load"/>
+	</sub-flow>
+	<sub-flow name="orchestrator-create-load-in-tms-assign-shipment-load" doc:id="777f0d89-d4a1-474d-accd-15dea5f5d0f8" >
+		<ee:transform doc:name="Transform Message" doc:id="4c8675b5-2fcd-435c-9f3b-34bd20e16080" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "load_id": vars.traxion_response.response.data.body.processLoadCreateResponse.SystemLoadID,
+  "shipments":[vars.resp_create_shipment.traxion_response.response.shipment.ShipmentNumber]
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="client-system-load-api-assign-shipment-to-load" doc:id="0390597e-405f-4a3b-ad12-82c60948ebb4" name="client-system-load-api-assign-shipment-to-load"/>
+	</sub-flow>
+</mule>

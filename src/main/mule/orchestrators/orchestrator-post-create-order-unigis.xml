@@ -5,8 +5,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<sub-flow name="orchestrator-post-create-order-unigis-main" doc:id="c2a90945-ed8f-443a-a809-0bc7e61cfa10" >
-		<!-- [STUDIO:"orchestrator-post-create-order-unigis-create-order-request"]<flow-ref doc:name="orchestrator-post-create-order-unigis-create-order-request" doc:id="23b88ae2-b017-45d6-9fa6-fb809c2d177e" name="orchestrator-post-create-order-unigis-create-order-request"/> [STUDIO] -->
 		<flow-ref doc:name="clients-system-unigis-create-order" doc:id="2ef17715-5098-40b8-9d65-5140e4af126a" name="clients-system-unigis-create-order"/>
+		<flow-ref doc:name="orchestrator-post-create-order-unigis-create-order-tms-blueyonder" doc:id="0f649e14-3682-484c-a192-2d909fade3be" name="orchestrator-post-create-order-unigis-create-order-tms-blueyonder"/>
 	</sub-flow>
 	<!-- [STUDIO:"orchestrator-post-create-order-unigis-create-order-request"]<sub-flow name="orchestrator-post-create-order-unigis-create-order-request" doc:id="dc18995d-1337-4c95-ad51-8dc0733c8d77" >
 		<ee:transform doc:name="Transform Message" doc:id="b4363216-0a4a-41ea-a64e-2a2f354213a0">
@@ -57,4 +57,23 @@ output application/json
 			</ee:message>
 		</ee:transform>
 	</sub-flow> [STUDIO] -->
+	<sub-flow name="orchestrator-post-create-order-unigis-create-order-tms-blueyonder" doc:id="cffcb174-93ff-48d4-8830-5182df8e8ee1" >
+		<ee:transform doc:name="Transform Message" doc:id="60b69b26-cc0f-4c9d-8c53-5771ef5bc71f" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="req_tms_by" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "no_reposicion": payload.referencia,
+    "no_viaje_unigis": vars.resp_create_order_unigis.traxion_response.response.data.id_viaje,
+    "origen": payload.depositoSalida,
+    "destino": payload...refCliente[0],
+    "pick_from_date": payload.fechaFinPlan,
+    "pick_to_date": payload..finHorarioPlanificado[0]
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="orchestrator-create-load-in-tms-main" doc:id="a77958e7-0326-47e9-a8d4-b5b574caa688" name="orchestrator-create-load-in-tms-main" />
+	</sub-flow>
 </mule>

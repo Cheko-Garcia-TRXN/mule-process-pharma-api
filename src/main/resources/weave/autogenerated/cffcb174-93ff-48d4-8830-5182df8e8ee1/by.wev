@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_cffcb174_93ff_48d4_8830_5182df8e8ee1_Output_Variables_req_tms_by = Any
+
