@@ -25,7 +25,7 @@ fun traductorOrigen(aString) = aString match {
     "shipment_number": "",
     "tracking_number": vars.req_tms_by.no_reposicion,//numero de reposicion 
     "commodity_code": "SECO", //siempre seco para imss
-    "customer_code": "0201028270", // TMS 0201028270 
+    "customer_code": "0201028832", // TMS 0201028270 
     "ship_from_location_code": vars.req_tms_by.origen, // TMS define
     "ship_to_location_code": vars.req_tms_by.destino, // TMS define
     "project_name": "CTL_INSABI", // TMS  CTL_IMSS_ORDINARIO
