@@ -30,7 +30,7 @@ write(payload)]]></ee:set-variable>
 output application/json
 ---
 {
-	"channel": Mule::p('slack.connection.channel'),
+	"channel": vars.channel,
 	"text": "`Attention!` <!channel> There was an error in a mule app-> :warning: "
 	++ "\n ---------------------------------------------------"
 	++ "\n `ERROR PROVENIENTE DEL PACK DE CARTA PORTE`"

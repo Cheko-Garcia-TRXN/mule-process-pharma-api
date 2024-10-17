@@ -191,6 +191,10 @@ output application/json
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+						<ee:set-variable variableName="channel" ><![CDATA[%dw 2.0
+output application/json
+---
+p('slack.connection.channel.imss')]]></ee:set-variable>
                     </ee:variables>
                 </ee:transform>
                 <flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="3f1241d5-f41c-44ca-a248-9ccd5ffe3c84" name="orchestrator-send-message-to-slack-main" />
@@ -214,6 +218,10 @@ output application/json
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+						<ee:set-variable variableName="channel" ><![CDATA[%dw 2.0
+output application/json
+---
+p('slack.connection.channel.imss')]]></ee:set-variable>
                     </ee:variables>
                 </ee:transform>
                 <flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="cd4ad2c1-6922-4f13-b4f3-90e8cf62fe37" name="orchestrator-send-message-to-slack-main" />
@@ -237,6 +245,10 @@ output application/json
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+						<ee:set-variable variableName="channel" ><![CDATA[%dw 2.0
+output application/json
+---
+p('slack.connection.channel')]]></ee:set-variable>
                     </ee:variables>
                 </ee:transform>
                 <flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="dead0e83-0731-4e03-b134-eb479867745c" name="orchestrator-send-message-to-slack-main" />
