@@ -5,6 +5,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/traxion-traxporta-api http://www.mulesoft.org/schema/mule/traxion-traxporta-api/current/mule-traxion-traxporta-api.xsd">
 	<sub-flow name="client-traxion-traxporta-create-shipment" doc:id="b92f4810-745b-4851-9bd6-c146b9d67488" >
-		<traxion-traxporta-api:create-shipment division-code="TXP-WMS-CTL" doc:name="Create Shipment" doc:id="00b831ef-3e85-4340-9f6f-829ddc2b8100" config-ref="Traxion_traxporta_api_Config" target="resp_create_shipment"/>
+		<traxion-traxporta-api:create-shipment division-code="TXP-WMS-CTL" doc:name="Create Shipment" doc:id="00b831ef-3e85-4340-9f6f-829ddc2b8100" config-ref="Traxion_traxporta_api_Config" target="resp_create_shipment">
+			<error-mapping targetType="ERROR:TMS" />
+		</traxion-traxporta-api:create-shipment>
 	</sub-flow>
 </mule>

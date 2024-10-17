@@ -172,6 +172,52 @@ output application/json
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="451c3de1-7508-48d6-8d04-adb82e483881" type="ERROR:TMS">
+                <ee:transform doc:name="Transform Message" doc:id="ea22c37c-88f9-4708-879b-bdc84f734526">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"traxion_response": {
+		"completed_succesfully": "false",
+		"error": {
+			"error_type": "TMS:ERROR",
+			"user_error_description": error.description,
+			"system_error_description": error.description
+		}
+	}
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+                <flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="3f1241d5-f41c-44ca-a248-9ccd5ffe3c84" name="orchestrator-send-message-to-slack-main" />
+            </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="bd1dbf95-3225-4b5e-8b42-8217e925fabd" type="ERROR:UNIGIS">
+                <ee:transform doc:name="Transform Message" doc:id="c96dd0b5-0840-4706-a039-ed122c6b5750">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"traxion_response": {
+		"completed_succesfully": "false",
+		"error": {
+			"error_type": "TMS:ERROR",
+			"user_error_description": error.description,
+			"system_error_description": error.description
+		}
+	}
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+                <flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="cd4ad2c1-6922-4f13-b4f3-90e8cf62fe37" name="orchestrator-send-message-to-slack-main" />
+            </on-error-propagate>                        
             <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="b172b86d-6c33-4e04-b4a9-50a1959ccbbc" type="CARTAPORTE:BAD_REQUEST">
                 <ee:transform doc:name="Transform Message" doc:id="63984202-0b61-4622-814c-c4631071208c">
                     <ee:message>

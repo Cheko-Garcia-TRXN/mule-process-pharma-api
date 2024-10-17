@@ -5,9 +5,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/system-load-api http://www.mulesoft.org/schema/mule/system-load-api/current/mule-system-load-api.xsd">
 	<sub-flow name="client-system-load-api-create-load" doc:id="2b269c2e-bc6d-4856-bb6d-f1998a552c83" >
-		<system-load-api:load-create doc:name="load create" doc:id="db869319-22a5-40ea-9565-1618a22aad38" config-ref="System_load_api_Config" client-id="${client.system.loads.api.https.client_id}" client-secret="${client.system.loads.api.https.client_secret}" target="resp_create_load"/>
+		<system-load-api:load-create doc:name="load create" doc:id="db869319-22a5-40ea-9565-1618a22aad38" config-ref="System_load_api_Config" client-id="${client.system.loads.api.https.client_id}" client-secret="${client.system.loads.api.https.client_secret}" target="resp_create_load">
+			<error-mapping targetType="ERROR:TMS" />
+		</system-load-api:load-create>
 	</sub-flow>
 	<sub-flow name="client-system-load-api-assign-shipment-to-load" doc:id="0e689d9b-38eb-49bd-aaeb-b5e52998ef22" >
-		<system-load-api:assing-shipment-load doc:name="assing shipment load" doc:id="91ce07c2-68d6-42f5-82a8-1bc33a9aa500" config-ref="System_load_api_Config" client-id="${client.system.loads.api.https.client_id}" client-secret="${client.system.loads.api.https.client_secret}" target="resp_assign_shipment"/>
+		<system-load-api:assing-shipment-load doc:name="assing shipment load" doc:id="91ce07c2-68d6-42f5-82a8-1bc33a9aa500" config-ref="System_load_api_Config" client-id="${client.system.loads.api.https.client_id}" client-secret="${client.system.loads.api.https.client_secret}" target="resp_assign_shipment">
+			<error-mapping targetType="ERROR:TMS" />
+		</system-load-api:assing-shipment-load>
 	</sub-flow>
 </mule>
