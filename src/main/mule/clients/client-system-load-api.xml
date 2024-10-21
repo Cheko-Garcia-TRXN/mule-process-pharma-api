@@ -5,13 +5,17 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/system-load-api http://www.mulesoft.org/schema/mule/system-load-api/current/mule-system-load-api.xsd">
 	<sub-flow name="client-system-load-api-create-load" doc:id="2b269c2e-bc6d-4856-bb6d-f1998a552c83" >
+		<logger level="INFO" doc:name="Logger" doc:id="57cf0bc2-3699-4cff-9b17-5a31f44bb03f" message="#[payload]"/>
 		<system-load-api:load-create doc:name="load create" doc:id="db869319-22a5-40ea-9565-1618a22aad38" config-ref="System_load_api_Config" client-id="${client.system.loads.api.https.client_id}" client-secret="${client.system.loads.api.https.client_secret}" target="resp_create_load">
 			<error-mapping targetType="ERROR:TMS" />
 		</system-load-api:load-create>
+		<logger level="INFO" doc:name="Logger" doc:id="6d9427b3-c79e-4a0f-bb71-ae432efcb2d8" message="#[vars.resp_create_load]"/>
 	</sub-flow>
 	<sub-flow name="client-system-load-api-assign-shipment-to-load" doc:id="0e689d9b-38eb-49bd-aaeb-b5e52998ef22" >
+		<logger level="INFO" doc:name="Logger" doc:id="5d46fbd9-287a-40a6-bf83-2e4f5254c136" message="#[payload]"/>
 		<system-load-api:assing-shipment-load doc:name="assing shipment load" doc:id="91ce07c2-68d6-42f5-82a8-1bc33a9aa500" config-ref="System_load_api_Config" client-id="${client.system.loads.api.https.client_id}" client-secret="${client.system.loads.api.https.client_secret}" target="resp_assign_shipment">
 			<error-mapping targetType="ERROR:TMS" />
 		</system-load-api:assing-shipment-load>
+		<logger level="INFO" doc:name="Logger" doc:id="3057dcbc-0ab6-407f-97cb-0bfff3fd0070" message="#[vars.resp_assign_shipment]"/>
 	</sub-flow>
 </mule>

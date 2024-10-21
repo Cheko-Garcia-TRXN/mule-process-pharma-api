@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:traxion-traxporta-api="http://www.mulesoft.org/schema/mule/traxion-traxporta-api" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/traxion-traxporta-api http://www.mulesoft.org/schema/mule/traxion-traxporta-api/current/mule-traxion-traxporta-api.xsd">
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:traxion-traxporta-api="http://www.mulesoft.org/schema/mule/traxion-traxporta-api"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/traxion-traxporta-api http://www.mulesoft.org/schema/mule/traxion-traxporta-api/current/mule-traxion-traxporta-api.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 	<sub-flow name="client-traxion-traxporta-create-shipment" doc:id="b92f4810-745b-4851-9bd6-c146b9d67488" >
-		<traxion-traxporta-api:create-shipment division-code="TXP-WMS-CTL" doc:name="Create Shipment" doc:id="00b831ef-3e85-4340-9f6f-829ddc2b8100" config-ref="Traxion_traxporta_api_Config" target="resp_create_shipment">
+		<logger level="INFO" doc:name="Logger" doc:id="bffb3a48-426c-4b57-a647-8e7d73bdbb9e" message="#[payload]" />
+		<!-- [STUDIO:"Create Shipment"]<traxion-traxporta-api:create-shipment division-code="TXP-WMS-CTL" doc:name="Create Shipment" doc:id="00b831ef-3e85-4340-9f6f-829ddc2b8100" config-ref="Traxion_traxporta_api_Config" target="resp_create_shipment">
 			<error-mapping targetType="ERROR:TMS" />
-		</traxion-traxporta-api:create-shipment>
+		</traxion-traxporta-api:create-shipment> [STUDIO] -->
+		<http:request method="POST" doc:name="Request" doc:id="8055cd81-8144-41c2-b035-34ca14a95451" config-ref="client-traxion-traxporta-HTTP_Request_configuration" path="${client.traxion.traxporta.https.path.create.shipment}" target="resp_create_shipment" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : vars.access_token_mule,
+	"Content-Type" : "application/json"
+}]]]></http:headers>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"division_code" : "TXP-WMS-CTL"
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="Logger1" doc:id="ca5e5a5e-c48c-4450-9b4a-eecbaf5be3f5" message="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.resp_create_shipment]" />
 	</sub-flow>
 </mule>
