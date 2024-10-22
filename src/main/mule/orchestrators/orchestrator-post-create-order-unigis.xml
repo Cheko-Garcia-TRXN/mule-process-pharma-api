@@ -68,7 +68,7 @@ output application/json
     "no_reposicion": payload.referencia,
     "no_viaje_unigis": vars.resp_create_order_unigis.traxion_response.response.data.id_viaje,
     "origen": payload.depositoSalida,
-    "destino": payload...refCliente[0],
+    "destino": payload...refDomicilioExternoCliente[0],
     "pick_from_date": payload.fechaFinPlan,
     "pick_to_date": payload..finHorarioPlanificado[0]
 }]]></ee:set-variable>

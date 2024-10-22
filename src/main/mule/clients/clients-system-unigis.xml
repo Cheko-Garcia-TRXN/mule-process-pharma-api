@@ -51,7 +51,7 @@ http://www.mulesoft.org/schema/mule/system-tms-unigis http://www.mulesoft.org/sc
 		<system-tms-unigis:create-unigis-order doc:name="Create UNIGIS order" doc:id="dddcd6d8-70f2-481e-bb74-7970230ff796" config-ref="System_tms_unigis_Config" client-id="#[p('client.system.unigis.https.client_id')]" client-secret="#[p('client.system.unigis.https.client_secret')]" source-system="#[vars.source_system]" target="resp_create_order_unigis">
 			<error-mapping targetType="ERROR:UNIGIS" />
 		</system-tms-unigis:create-unigis-order>
-		<logger level="INFO" doc:name="Logger" doc:id="88f6b0f2-03f9-4528-87c1-e81766b00181" message="#[payload]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="88f6b0f2-03f9-4528-87c1-e81766b00181" message="#[vars.resp_create_order_unigis]"/>
 	</sub-flow>
 	
 </mule>
