@@ -386,16 +386,16 @@ var receptor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "03")
 				}
 			},
 			"receptor": {
-				"rfc": receptor.rfc,
-				"nombre": receptor.nombre,
-				"regimen_fiscal": receptor.regimen_fiscal,
+				"rfc": emisor.rfc,
+				"nombre": emisor.nombre,
+				"regimen_fiscal": emisor.regimen_fiscal,
 				"domicilio": {
-					"calle": receptor.domicilio.calle,
-					"calle2": receptor.domicilio.calle2,
-					"ciudad": receptor.domicilio.ciudad,
-					"estado": receptor.domicilio.estado,
-					"pais": receptor.domicilio.pais,
-					"postal": receptor.domicilio.postal
+					"calle": emisor.domicilio.calle,
+					"calle2": emisor.domicilio.calle2,
+					"ciudad": emisor.domicilio.ciudad,
+					"estado": emisor.domicilio.estado,
+					"pais": emisor.domicilio.pais,
+					"postal": emisor.domicilio.postal
 				}
 			}
 		}
@@ -492,16 +492,16 @@ var receptor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "03")
 				}
 			},
 			"receptor": {
-				"rfc": receptor.rfc,
-				"nombre": receptor.nombre,
-				"regimen_fiscal": receptor.regimen_fiscal,
+				"rfc": emisor.rfc,
+				"nombre": emisor.nombre,
+				"regimen_fiscal": emisor.regimen_fiscal,
 				"domicilio": {
-					"calle": receptor.domicilio.calle,
-					"calle2": receptor.domicilio.calle2,
-					"ciudad": receptor.domicilio.ciudad,
-					"estado": receptor.domicilio.estado,
-					"pais": receptor.domicilio.pais,
-					"postal": receptor.domicilio.postal
+					"calle": emisor.domicilio.calle,
+					"calle2": emisor.domicilio.calle2,
+					"ciudad": emisor.domicilio.ciudad,
+					"estado": emisor.domicilio.estado,
+					"pais": emisor.domicilio.pais,
+					"postal": emisor.domicilio.postal
 				}
 			}
 		}
