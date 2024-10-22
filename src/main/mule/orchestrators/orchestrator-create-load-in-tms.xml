@@ -15,7 +15,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
-fun formatDate(aString) = aString as String { format:"dd/MM/uuuu KK:mm:ss"}
+fun formatDate(aString) = aString as String { format:"MM/dd/uuuu KK:mm:ss"}
 fun traductorOrigen(aString) = aString match {
   case "098321150905" -> "HUEHUETOCA"
   case "098322150905" -> "CENADI"
@@ -34,8 +34,8 @@ fun traductorOrigen(aString) = aString match {
     "profit_center_code": "TT010101", //TT010101
     "equipment_type_code": "",
     "service_code": "FTL", //FTL simpre
-    "load_datetime": formatDate(vars.req_tms_by.pick_from_date default now()),//PickupFromDateTime || DeliveryFromDateTime  format "01/17/2023 10:58:47"
-    "appointment_datetime": formatDate(vars.req_tms_by.pick_to_date default now()),//PickupToDateTime || DeliveryToDateTime format "01/17/2023 10:58:47"
+    "load_datetime": formatDate(vars.req_tms_by.pick_from_date as DateTime default now()),//PickupFromDateTime || DeliveryFromDateTime  format "01/17/2023 10:58:47"
+    "appointment_datetime": formatDate(vars.req_tms_by.pick_to_date as DateTime default now()),//PickupToDateTime || DeliveryToDateTime format "01/17/2023 10:58:47"
     "container": [
         {
             "item_number": "_0",
