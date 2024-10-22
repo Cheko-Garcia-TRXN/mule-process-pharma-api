@@ -290,6 +290,8 @@ output application/json
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 fun totMerc(total) = sum(total.cantidad)
+var emisor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "01"))[0]
+var receptor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "03"))[0]
 ---
 {
 	"traxion": {
@@ -367,33 +369,33 @@ fun totMerc(total) = sum(total.cantidad)
 		"traslado": {
 			"serie": payload.carta_porte.serie,
 			"folio": "",
-			"lugar_expedicion": payload.carta_porte.ubicaciones[0].domicilio.postal,
+			"lugar_expedicion": emisor.domicilio.postal,
 			"sociedad_sap": payload.sap_info[0].sociedad_sap,
 			"exportacion": payload.carta_porte.exportacion,
 			"emisor": {
-				"rfc": payload.carta_porte.ubicaciones[0].rfc,
-				"nombre": payload.carta_porte.ubicaciones[0].nombre,
-				"regimen_fiscal": payload.carta_porte.ubicaciones[0].regimen_fiscal,
+				"rfc": emisor.rfc,
+				"nombre": emisor.nombre,
+				"regimen_fiscal": emisor.regimen_fiscal,
 				"domicilio": {
-					"calle": payload.carta_porte.ubicaciones[0].domicilio.calle,
-					"calle2": payload.carta_porte.ubicaciones[0].domicilio.calle2,
-					"ciudad": payload.carta_porte.ubicaciones[0].domicilio.ciudad,
-					"estado": payload.carta_porte.ubicaciones[0].domicilio.estado,
-					"pais": payload.carta_porte.ubicaciones[0].domicilio.pais,
-					"postal": payload.carta_porte.ubicaciones[0].domicilio.postal
+					"calle": emisor.domicilio.calle,
+					"calle2": emisor.domicilio.calle2,
+					"ciudad": emisor.domicilio.ciudad,
+					"estado": emisor.domicilio.estado,
+					"pais": emisor.domicilio.pais,
+					"postal": emisor.domicilio.postal
 				}
 			},
 			"receptor": {
-				"rfc": payload.carta_porte.ubicaciones[1].rfc,
-				"nombre": payload.carta_porte.ubicaciones[1].nombre,
-				"regimen_fiscal": payload.carta_porte.ubicaciones[0].regimen_fiscal,
+				"rfc": receptor.rfc,
+				"nombre": receptor.nombre,
+				"regimen_fiscal": receptor.regimen_fiscal,
 				"domicilio": {
-					"calle": payload.carta_porte.ubicaciones[1].domicilio.calle,
-					"calle2": payload.carta_porte.ubicaciones[1].domicilio.calle2,
-					"ciudad": payload.carta_porte.ubicaciones[1].domicilio.ciudad,
-					"estado": payload.carta_porte.ubicaciones[1].domicilio.estado,
-					"pais": payload.carta_porte.ubicaciones[1].domicilio.pais,
-					"postal": payload.carta_porte.ubicaciones[1].domicilio.postal
+					"calle": receptor.domicilio.calle,
+					"calle2": receptor.domicilio.calle2,
+					"ciudad": receptor.domicilio.ciudad,
+					"estado": receptor.domicilio.estado,
+					"pais": receptor.domicilio.pais,
+					"postal": receptor.domicilio.postal
 				}
 			}
 		}
