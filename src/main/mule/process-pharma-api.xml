@@ -184,7 +184,7 @@ output application/json
 		"error": {
 			"error_type": "TMS:ERROR",
 			"user_error_description": error.description,
-			"system_error_description": error.muleMessage.typedValue.traxion_response.error default error.description
+			"system_error_description": error.muleMessage.typedValue.traxion_response.error.user_error_description default error.description
 		}
 	}
 }]]></ee:set-payload>
