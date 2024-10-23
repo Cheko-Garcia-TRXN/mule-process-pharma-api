@@ -11,6 +11,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 			<error-mapping targetType="ERROR:TMS" />
 		</traxion-traxporta-api:create-shipment> [STUDIO] -->
 		<http:request method="POST" doc:name="Request" doc:id="8055cd81-8144-41c2-b035-34ca14a95451" config-ref="client-traxion-traxporta-HTTP_Request_configuration" path="${client.traxion.traxporta.https.path.create.shipment}" target="resp_create_shipment" >
+			<error-mapping targetType="ERROR:TMS" />
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
