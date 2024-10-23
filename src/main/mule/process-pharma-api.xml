@@ -206,6 +206,39 @@ output application/json
                 <logger level="INFO" doc:name="Logger" doc:id="af1cec0b-b4c8-48fe-a0c2-94cc43b9487f" />
 				<flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="3f1241d5-f41c-44ca-a248-9ccd5ffe3c84" name="orchestrator-send-message-to-slack-main" />
             </on-error-propagate>
+<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="84626715-47fc-4661-9954-7bcdd66a5a0c" type="ERROR:UNIGIS_EMPTY_FIELDS">
+                <ee:transform doc:name="Transform Message" doc:id="9e67031e-d21f-459e-b78f-66a82f13fdb8">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+///error.muleMessage.typedValue
+---
+{
+	"traxion_response": {
+		"completed_succesfully": "false",
+		"error": {
+			"error_type": "ERROR:UNIGIS_EMPTY_FIELDS",
+			"user_error_description": error.description,
+			"system_error_description": error.message
+		}
+	}
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+						<ee:set-variable variableName="channel" ><![CDATA[%dw 2.0
+output application/json
+---
+p('slack.connection.channel.imss')]]></ee:set-variable>
+						<ee:set-variable variableName="service_provider" ><![CDATA[%dw 2.0
+output application/json
+---
+"ERROR PROVENIENTE DE UNIGIS CREACION DE ORDEN"]]></ee:set-variable>
+                    </ee:variables>
+                    
+                </ee:transform>
+                <flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="8a791c0d-1ca6-4f89-a520-0e29e9f98207" name="orchestrator-send-message-to-slack-main" />
+            </on-error-propagate>            
             <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="bd1dbf95-3225-4b5e-8b42-8217e925fabd" type="ERROR:UNIGIS">
                 <ee:transform doc:name="Transform Message" doc:id="c96dd0b5-0840-4706-a039-ed122c6b5750">
                     <ee:message>
