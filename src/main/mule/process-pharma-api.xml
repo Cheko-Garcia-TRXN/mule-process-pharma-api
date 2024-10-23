@@ -184,7 +184,7 @@ output application/json
 		"error": {
 			"error_type": "TMS:ERROR",
 			"user_error_description": error.description,
-			"system_error_description": error.description
+			"system_error_description": error.muleMessage.typedValue.traxion_response.error default error.description
 		}
 	}
 }]]></ee:set-payload>
@@ -203,7 +203,8 @@ output application/json
          
                     
                 </ee:transform>
-                <flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="3f1241d5-f41c-44ca-a248-9ccd5ffe3c84" name="orchestrator-send-message-to-slack-main" />
+                <logger level="INFO" doc:name="Logger" doc:id="af1cec0b-b4c8-48fe-a0c2-94cc43b9487f" />
+				<flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="3f1241d5-f41c-44ca-a248-9ccd5ffe3c84" name="orchestrator-send-message-to-slack-main" />
             </on-error-propagate>
             <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="bd1dbf95-3225-4b5e-8b42-8217e925fabd" type="ERROR:UNIGIS">
                 <ee:transform doc:name="Transform Message" doc:id="c96dd0b5-0840-4706-a039-ed122c6b5750">
