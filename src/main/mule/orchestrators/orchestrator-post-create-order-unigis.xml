@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
 	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
@@ -79,7 +78,7 @@ output application/json
 		</ee:transform>
 		<flow-ref doc:name="orchestrator-create-load-in-tms-main" doc:id="a77958e7-0326-47e9-a8d4-b5b574caa688" name="orchestrator-create-load-in-tms-main" />
 	</sub-flow>
-<sub-flow name="orchestrator-post-create-order-validate-fields" doc:id="db621e7a-a390-4ed6-8742-b606bd14017e" >
+	<sub-flow name="orchestrator-post-create-order-validate-fields" doc:id="db621e7a-a390-4ed6-8742-b606bd14017e" >
 		<!-- [STUDIO:"Is true"]<validation:is-true doc:name="Is true" doc:id="f4cd9fe5-42c8-477a-8dfa-11cc1ec61db1" expression="#[isEmpty(payload.fechaViaje) or isEmpty(payload.fechaInicioPlan)&#93;" message="Alguna de las fechas viene vacias, favor de validar. ">
 			<error-mapping targetType="ERROR:UNIGIS_EMPTY_FIELDS" />
 		</validation:is-true> [STUDIO] -->
