@@ -159,12 +159,6 @@
 		</dependency>
 		<dependency>
 			<groupId>ab8117f6-d718-4307-b5f7-03262d589cd0</groupId>
-			<artifactId>mule-plugin-system-crm-api</artifactId>
-			<version>1.0.26</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
-			<groupId>ab8117f6-d718-4307-b5f7-03262d589cd0</groupId>
 			<artifactId>mule-plugin-system-tms-tep-api</artifactId>
 			<version>1.0.15</version>
 			<classifier>mule-plugin</classifier>
@@ -230,6 +224,12 @@
 			<groupId>ab8117f6-d718-4307-b5f7-03262d589cd0</groupId>
 			<artifactId>mule-plugin-experience-traxporta</artifactId>
 			<version>1.0.50</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>ab8117f6-d718-4307-b5f7-03262d589cd0</groupId>
+			<artifactId>mule-plugin-system-crm-api</artifactId>
+			<version>1.0.32</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 	</dependencies>
