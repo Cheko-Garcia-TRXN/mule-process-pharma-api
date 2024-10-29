@@ -18,7 +18,7 @@ http://www.mulesoft.org/schema/mule/system-crm http://www.mulesoft.org/schema/mu
 	"client_id" : Mule::p('secure::client.system.crm.https.client_secret')
 }&#93;&#93;&#93;></http:headers>
 		</http:request> [STUDIO] -->
-		<system-crm:get-all-products doc:name="get all products request" doc:id="245f7c6a-affd-4608-9087-f7c30d1d69e5" config-ref="System_CRM_Config" client-id="#[p('secure::client.system.crm.https.client_id')]" client-secret="#[p('secure::client.system.crm.https.client_secret')]"/>
+		<system-crm:get-all-products doc:name="get all products request" doc:id="245f7c6a-affd-4608-9087-f7c30d1d69e5" config-ref="System_CRM_Config" client-id="#[p('client.system.crm.https.client_id')]" client-secret="#[p('client.system.crm.https.client_secret')]"/>
 	</sub-flow>
 	<sub-flow name="clients-system-crm-get-orders" doc:id="82523151-d1e3-4cbc-a4bb-391350d1aaed" >
 		<!-- [STUDIO:"Request"]<http:request method="GET" doc:name="Request" doc:id="dd47082c-6ac0-4810-967b-a5a1438d9b74" config-ref="HTTP_request_system_crm" path="${client.system.crm.https.path.orders.post}">
@@ -35,7 +35,7 @@ http://www.mulesoft.org/schema/mule/system-crm http://www.mulesoft.org/schema/mu
 	"certification_date_to" : vars.certification_date_to
 }&#93;&#93;&#93;></http:query-params>
 		</http:request> [STUDIO] -->
-		<system-crm:get-orders-by-last-modified-date doc:name="Get orders by last modified date request" doc:id="6293c035-4dfb-4d97-b7a0-5a4ede9aa54e" config-ref="System_CRM_Config" client-id="#[Mule::p('secure::client.system.crm.https.client_id')]" client-secret="#[Mule::p('secure::client.system.crm.https.client_secret')]" certification-date-from="#[vars.certification_date_from]" certification-date-to="#[vars.certification_date_to]" no-remision="#[vars.no_remision]"/>
+		<system-crm:get-orders-by-last-modified-date doc:name="Get orders by last modified date request" doc:id="6293c035-4dfb-4d97-b7a0-5a4ede9aa54e" config-ref="System_CRM_Config" client-id="#[Mule::p('client.system.crm.https.client_id')]" client-secret="#[Mule::p('client.system.crm.https.client_secret')]" certification-date-from="#[vars.certification_date_from]" certification-date-to="#[vars.certification_date_to]" no-remision="#[vars.no_remision]"/>
 	</sub-flow>
 	<sub-flow name="clients-system-crm-get-remisions-certified-report" doc:id="ab67bf14-0ad8-43c9-aa4b-edc9b0454f1d" >
 		<!-- [STUDIO:"Request"]<http:request method="POST" doc:name="Request" doc:id="c5f1027d-62f5-4006-8739-c28fbed244d7" config-ref="HTTP_request_system_crm" path="${client.system.crm.https.path.remisions.certified.report.post}">
@@ -53,6 +53,6 @@ http://www.mulesoft.org/schema/mule/system-crm http://www.mulesoft.org/schema/mu
 	"certification_date_to" : vars.certification_date_to
 }&#93;&#93;&#93;></http:query-params>
 		</http:request> [STUDIO] -->
-		<system-crm:get-remisions-certified-report doc:name="Get Remisions Certified Report" doc:id="28a254c2-ff30-4be4-ab2d-feb1bd98d956" config-ref="System_CRM_Config" client-id="#[p('secure::client.system.crm.https.client_id')]" client-secret="#[p('secure::client.system.crm.https.client_secret')]" no-remision="#[vars.remision]" certification-date-from="#[vars.certification_date_from]" certification-date-to="#[vars.certification_date_to]"/>
+		<system-crm:get-remisions-certified-report doc:name="Get Remisions Certified Report" doc:id="28a254c2-ff30-4be4-ab2d-feb1bd98d956" config-ref="System_CRM_Config" client-id="#[p('client.system.crm.https.client_id')]" client-secret="#[p('client.system.crm.https.client_secret')]" no-remision="#[vars.remision]" certification-date-from="#[vars.certification_date_from]" certification-date-to="#[vars.certification_date_to]"/>
 	</sub-flow>	
 </mule>
