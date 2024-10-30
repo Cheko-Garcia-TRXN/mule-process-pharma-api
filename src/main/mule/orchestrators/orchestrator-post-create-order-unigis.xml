@@ -71,8 +71,8 @@ output application/json
     "no_viaje_unigis": vars.resp_create_order_unigis.traxion_response.response.data.id_viaje,
     "origen": payload.depositoSalida,
     "destino": payload...refDomicilioExternoCliente[0],
-    "pick_from_date": payload.fechaFinPlan,
-    "pick_to_date": payload..finHorarioPlanificado[0]
+    "pick_from_date": payload.fechaArribo,
+    "pick_to_date": payload.fechaArribo + |P3D|
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
