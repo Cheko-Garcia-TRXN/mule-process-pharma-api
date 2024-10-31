@@ -32,7 +32,7 @@ output application/json
 ---
 {
 	"channel": vars.channel,
-	"text": "`Attention!` <!channel> There was an error in a mule app-> :warning: "
+	"text": "`Attention!` <!channel> There was an error in process-pharma-> :warning: "
 	++ "\n ---------------------------------------------------"
 	++ "\n `"++ vars.service_provider++"`"
 	++ "\n ---------------------------------------------------"
