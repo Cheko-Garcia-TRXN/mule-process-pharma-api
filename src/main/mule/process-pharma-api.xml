@@ -3,7 +3,7 @@
     <http:listener-config name="process-pharma-api-httpListenerConfig">
         <http:listener-connection host="${http.listener.host}" port="${http.listener.port}" protocol="HTTPS" tlsContext="TLS_Context" readTimeout="${http.listener.read.timeout}" />
     </http:listener-config>
-    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.28:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.29:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="process-pharma-api-main">
         <http:listener config-ref="process-pharma-api-httpListenerConfig" path="${http.listener.path}">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -677,25 +677,28 @@ payload]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <flow-ref doc:name="orchestrator-post-create-order-unigis-main" doc:id="cc819b51-b156-4a25-be7b-2e7db4aff22a" name="orchestrator-post-create-order-unigis-main" />
-        <!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message">
+    </flow>
+    <flow name="post:\slack\message:application\json:process-pharma-api-config">
+        <logger level="INFO" doc:name="Logger" doc:id="012104c4-478f-499f-9561-d92d654e4c77" message="#[payload]" />
+		<ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
-&#45;&#45;-
-{
-  traxion_response: {
-    completed_succesfully: "true",
-    response: {
-      message: "successful",
-      data: {}
-    }
-  }
-} as Object {encoding: "UTF-8", mediaType: "application/json"}&#93;&#93;></ee:set-payload>
+---
+payload.message]]></ee:set-payload>
             </ee:message>
-        </ee:transform> [STUDIO] -->
-    </flow>
-    <flow name="post:\salck\message:application\json:process-pharma-api-config">
-        <logger level="INFO" doc:name="Logger" doc:id="012104c4-478f-499f-9561-d92d654e4c77" message="#[payload]"/>
+            <ee:variables>
+                <ee:set-variable variableName="channel"><![CDATA[%dw 2.0
+output application/json
+---
+payload.message_chanel]]></ee:set-variable>
+                <ee:set-variable variableName="service_provider"><![CDATA[%dw 2.0
+output application/json
+---
+payload.message_source]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="8a369e14-2bc6-48eb-804b-4de02bd2378d" name="orchestrator-send-message-to-slack-main" />
 		<ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
@@ -703,10 +706,10 @@ output application/json
 ---
 {
   traxion_response: {
-    completed_succesfully: "fals",
+    completed_succesfully: "true",
     response: {
       message: "successful",
-      data: payload
+      data: {}
     }
   }
 } as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
