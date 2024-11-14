@@ -13,7 +13,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<app.runtime>4.7-e-java8</app.runtime>
-		<mule.maven.plugin.version>4.2.0</mule.maven.plugin.version>
+		<mule.maven.plugin.version>4.3.0</mule.maven.plugin.version>
 		<munit.version>3.0.0</munit.version>
 	</properties>
 
@@ -209,13 +209,6 @@
 		</dependency>
 		<dependency>
 			<groupId>ab8117f6-d718-4307-b5f7-03262d589cd0</groupId>
-			<artifactId>process-pharma-api</artifactId>
-			<version>1.0.27</version>
-			<classifier>raml</classifier>
-			<type>zip</type>
-		</dependency>
-		<dependency>
-			<groupId>ab8117f6-d718-4307-b5f7-03262d589cd0</groupId>
 			<artifactId>mule-plugin-system-load-api</artifactId>
 			<version>1.0.9</version>
 			<classifier>mule-plugin</classifier>
@@ -231,6 +224,13 @@
 			<artifactId>mule-plugin-system-crm-api</artifactId>
 			<version>1.0.32</version>
 			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>ab8117f6-d718-4307-b5f7-03262d589cd0</groupId>
+			<artifactId>process-pharma-api</artifactId>
+			<version>1.0.28</version>
+			<classifier>raml</classifier>
+			<type>zip</type>
 		</dependency>
 	</dependencies>
 
