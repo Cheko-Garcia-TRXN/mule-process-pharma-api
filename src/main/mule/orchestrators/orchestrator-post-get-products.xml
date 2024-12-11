@@ -10,7 +10,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<!-- [STUDIO:"Call to clients-system-crm-products-request"]<flow-ref doc:name="Call to clients-system-crm-products-request" doc:id="c0a290e5-be59-42c0-a2e9-648bf7054c63" name="clients-system-crm-products-request"/> [STUDIO] -->
 		<flow-ref doc:name="Call to clients-system-crm-get-products" doc:id="a2c518ea-71d5-47e4-b925-8f63c97e44fe" name="clients-system-crm-get-products" />
 		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload.Product_Code_ID__c]" doc:name="skuArray" doc:id="fd7a7fbd-9628-4934-b02a-dc6326222f42" variableName="skuArray"/>
-		<logger level="INFO" doc:name="Logger" doc:id="cf1627a9-baab-4f16-83e8-95ce80095560" message="#[vars.skuArray]"/>
+		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="cf1627a9-baab-4f16-83e8-95ce80095560" message="#[vars.skuArray&#93;"/> [STUDIO] -->
 		<flow-ref doc:name="Call to orchestrator-post-get-productsSub_Flow" doc:id="0b8b7314-ad16-4606-9340-4643bc31ab0f" name="orchestrator-post-get-productsSub_Flow" target="costGroup"/>
 		<flow-ref doc:name="Call to clients-system-crm-products-response" doc:id="45232ad2-da90-4e04-8074-b4d5665a4099" name="clients-system-crm-products-response"/>
 	</sub-flow>
