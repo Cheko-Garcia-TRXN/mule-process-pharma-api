@@ -636,6 +636,10 @@ attributes.queryParams.certification_date_from]]></ee:set-variable>
 output application/json
 ---
 attributes.queryParams.no_remision]]></ee:set-variable>
+				<ee:set-variable variableName="status" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.status]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <flow-ref doc:name="Call to orchestrator-get-orders" doc:id="9aa4d398-84ec-47aa-8a8e-2347c4c21ee6" name="orchestrator-get-orders" />
