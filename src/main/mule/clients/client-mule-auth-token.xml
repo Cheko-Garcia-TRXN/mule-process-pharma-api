@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:system-oauth-provider="http://www.mulesoft.org/schema/mule/system-oauth-provider" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/system-oauth-provider http://www.mulesoft.org/schema/mule/system-oauth-provider/current/mule-system-oauth-provider.xsd">
+	<http:request-config name="client-system-auth-mule_HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="5097f435-a291-4c0d-941b-462f3145e3cd" responseTimeout="${client.system.auth.http.reponse.timeout}">
+		<http:request-connection host="${client.system.auth.http.host}" port="${client.system.auth.http.port}" maxConnections="${client.system.auth.max.connections}" connectionIdleTimeout="${client.system.auth.http.connection.idle.timeout}" responseBufferSize="${client.system.auth.http.response.buffer.size}" protocol="HTTPS"/>
+	</http:request-config>
+	<sub-flow name="client-mule-auth-token-main" doc:id="0b334567-34a1-41d5-94fe-4b29d627573f" >
+		<flow-ref doc:name="client-mule-auth-token-prepare-credentials" doc:id="99f8091a-24b7-4b53-a082-607ecff8b525" name="client-mule-auth-token-prepare-credentials"/>
+		<flow-ref doc:name="client-mule-auth-token-call-get-token" doc:id="a7aebe45-5af4-4b2f-bc17-1341d9760bab" name="client-mule-auth-token-call-get-token"/>
+		<flow-ref doc:name="client-mule-auth-token-set-token-in-var" doc:id="6002a034-1042-4c5c-a15a-34ca0f8ea96f" name="client-mule-auth-token-set-token-in-var"/>
+	</sub-flow>
+	<sub-flow name="client-mule-auth-token-prepare-credentials" doc:id="a4eed0f4-32ae-4159-9001-edb649c1bff5" >
+		<ee:transform doc:name="Transform Message" doc:id="432dd221-93e8-44e5-9239-0c3c99b6ed77">
+			<ee:message>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="client_id" ><![CDATA[%dw 2.0
+output application/json
+---
+p('client.system.auth.token.client_id')]]></ee:set-variable>
+				<ee:set-variable variableName="client_secret" ><![CDATA[%dw 2.0
+output application/json
+---
+p('client.system.auth.token.client_secret')]]></ee:set-variable>
+				<ee:set-variable variableName="grant_type" ><![CDATA[%dw 2.0
+output application/json
+---
+p('client.system.auth.token.grant_type')]]></ee:set-variable>
+				<ee:set-variable variableName="scope" ><![CDATA[%dw 2.0
+output application/json
+---
+p('client.system.auth.token.scope')]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="client-mule-auth-token-call-get-token" doc:id="25c2cc57-69e8-4394-96fb-cf4a852d8992" >
+		<http:request method="POST" doc:name="Request" doc:id="853408c1-4955-44c6-93ac-3abc4a85e382" config-ref="client-system-auth-mule_HTTP_Request_configuration" path="${client.system.auth.http.path.get.token}">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : vars.client_secret,
+	"scope" : vars.scope,
+	"grant_type" : vars.grant_type,
+	"client_id" : vars.client_id
+}]]]></http:headers>
+		</http:request>
+		<!-- [STUDIO:"Get oauth token request"]<system-oauth-provider:get-oauth-token doc:name="Get oauth token request" doc:id="79df7041-a467-493c-ba00-51a29386f68a" config-ref="System_oauth_provider_Config" client-id="#[vars.client_id&#93;" client-secret="#[vars.client_secret&#93;" scope="#[vars.scope&#93;" grant-type="#[vars.grant_type&#93;"/> [STUDIO] -->
+	</sub-flow>
+	<sub-flow name="client-mule-auth-token-set-token-in-var" doc:id="0810f475-041a-4d04-abf1-e8e7c84f2e2c" >
+		<ee:transform doc:name="Transform Message" doc:id="58a207de-9013-4817-920e-3acb9209ebf1">
+			<ee:message>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="access_token_mule" ><![CDATA[%dw 2.0
+output application/json
+---
+"Bearer " ++ payload.access_token]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+</mule>

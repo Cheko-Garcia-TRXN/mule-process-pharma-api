@@ -26,5 +26,6 @@ http://www.mulesoft.org/schema/mule/system-wms-api http://www.mulesoft.org/schem
 		<system-wms-api:get-availability-for-skus doc:name="Get availability for sku's request" doc:id="56e48030-7251-4b1a-817e-dfe64e833580" config-ref="System_wms_api_Config" client-id="#[p('client.system.wms.api.https.client_id')]" client-secret="#[p('client.system.wms.api.https.client_secret')]" customer-name="#[vars.customerName]">
 			<system-wms-api:get-availability-for-skus-request-data ><![CDATA[#[vars.skuArray]]]></system-wms-api:get-availability-for-skus-request-data>
 		</system-wms-api:get-availability-for-skus>
+		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="10cfb277-63f6-4a9a-8e6d-087fbba50075" message="#[payload&#93;"/> [STUDIO] -->
 	</sub-flow>
 </mule>

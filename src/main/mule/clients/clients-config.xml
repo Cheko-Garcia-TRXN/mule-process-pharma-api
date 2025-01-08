@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+<mule xmlns:system-load-api="http://www.mulesoft.org/schema/mule/system-load-api"
+	xmlns:traxion-traxporta-api="http://www.mulesoft.org/schema/mule/traxion-traxporta-api" xmlns:system-tms-unigis="http://www.mulesoft.org/schema/mule/system-tms-unigis"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:sqs="http://www.mulesoft.org/schema/mule/sqs" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/current/mule-sqs.xsd">
+http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/current/mule-sqs.xsd
+http://www.mulesoft.org/schema/mule/system-tms-unigis http://www.mulesoft.org/schema/mule/system-tms-unigis/current/mule-system-tms-unigis.xsd
+http://www.mulesoft.org/schema/mule/traxion-traxporta-api http://www.mulesoft.org/schema/mule/traxion-traxporta-api/current/mule-traxion-traxporta-api.xsd
+http://www.mulesoft.org/schema/mule/system-load-api http://www.mulesoft.org/schema/mule/system-load-api/current/mule-system-load-api.xsd">
 	<http:request-config name="HTTP_request_system_wms" doc:name="HTTP Request configuration" doc:id="42f419ab-c379-49d6-b923-60093c1ff755" responseTimeout="${client.system.wms.api.https.response.timeout}">
         <http:request-connection protocol="HTTPS" host="${client.system.wms.api.https.host}" port="${client.system.wms.api.https.port}" connectionIdleTimeout="${client.system.wms.api.https.connection.idle.timeout}" maxConnections="${client.system.wms.api.https.max.connections}" responseBufferSize="${client.system.wms.api.https.response.buffer.size}"/>
     </http:request-config>
+	<http:request-config name="client-traxion-traxporta-HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="dbcee463-2134-4aba-9569-262d57375b8d" responseTimeout="${client.traxion.traxporta.https.response.timeout}">
+		<http:request-connection host="${client.traxion.traxporta.https.host}" maxConnections="${client.traxion.traxporta.https.max.connections}" connectionIdleTimeout="${client.traxion.traxporta.https.connection.idle.timeout}" responseBufferSize="${client.traxion.traxporta.https.response.buffer.size}" protocol="HTTPS" tlsContext="TLS_Context" port="${client.traxion.traxporta.https.port}"/>
+		<expiration-policy />
+	</http:request-config>	    
 	<http:request-config name="HTTP_request_system_crm" doc:name="HTTP Request configuration" doc:id="65f97719-fca7-4714-af90-0e76b61a818f" responseTimeout="${client.system.crm.https.response.timeout}">
 		<http:request-connection protocol="HTTPS" host="${client.system.crm.https.host}" port="${client.system.crm.https.port}" maxConnections="${client.system.crm.https.max.connections}" connectionIdleTimeout="${client.system.crm.https.connection.idle.timeout}" responseBufferSize="${client.system.crm.https.response.buffer.size}" />
 	</http:request-config>
@@ -20,5 +27,8 @@ http://www.mulesoft.org/schema/mule/sqs http://www.mulesoft.org/schema/mule/sqs/
 	</http:request-config>
 	<http:request-config name="client-utils-fwk-stream-HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="1bca3744-2fce-4acf-8646-2c79b3020c60" responseTimeout="${client.utils.fwk.stream.http.timeout}">
 		<http:request-connection host="${client.utils.fwk.stream.http.host}" port="${client.utils.fwk.stream.http.port}" maxConnections="${client.utils.fwk.stream.http.max.connections}" connectionIdleTimeout="${client.utils.fwk.stream.http.connection.idle.timeout}" responseBufferSize="${client.utils.fwk.stream.http.response.buffer.size}" protocol="HTTPS"/>
-	</http:request-config>	
+	</http:request-config>
+<system-load-api:config name="System_load_api_Config" doc:name="System-load-api Config" doc:id="5189a908-71d4-497c-bd4d-39976d8f7f7a" property_host="${client.system.loads.api.https.host}" property_port="${client.system.loads.api.https.port}" property_basePath="/api" property_protocol="HTTPS" property_responseTimeout="${client.system.loads.api.https.response.timeout}" />
+	
+<traxion-traxporta-api:config name="Traxion_traxporta_api_Config" doc:name="Traxion-traxporta-api Config" doc:id="7f7896cf-05b0-46e9-8f2c-f60b817a506b" property_host="${client.traxion.traxporta.https.host}" property_port="${client.traxion.traxporta.https.port}" property_basePath="/api" property_protocol="HTTPS" property_responseTimeout="${client.traxion.traxporta.https.response.timeout}" />	
 </mule>

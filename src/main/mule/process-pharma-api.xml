@@ -3,7 +3,7 @@
     <http:listener-config name="process-pharma-api-httpListenerConfig">
         <http:listener-connection host="${http.listener.host}" port="${http.listener.port}" protocol="HTTPS" tlsContext="TLS_Context" readTimeout="${http.listener.read.timeout}" />
     </http:listener-config>
-    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.27:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.29:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="process-pharma-api-main">
         <http:listener config-ref="process-pharma-api-httpListenerConfig" path="${http.listener.path}">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -172,6 +172,107 @@ output application/json
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="451c3de1-7508-48d6-8d04-adb82e483881" type="ERROR:TMS">
+                <ee:transform doc:name="Transform Message" doc:id="ea22c37c-88f9-4708-879b-bdc84f734526">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"traxion_response": {
+		"completed_succesfully": "false",
+		"error": {
+			"error_type": "TMS:ERROR",
+			"reference": vars.req_tms_by.no_reposicion,
+			"order": vars.req_tms_by.no_viaje_unigis, 
+			"user_error_description": error.description,
+			"system_error_description": error.muleMessage.typedValue.traxion_response.error.user_error_description default error.description
+		}
+	}
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                        <ee:set-variable variableName="channel"><![CDATA[%dw 2.0
+output application/json
+---
+p('slack.connection.channel.imss')]]></ee:set-variable>
+                        <ee:set-variable variableName="service_provider"><![CDATA[%dw 2.0
+output application/json
+---
+"ERROR PROVENIENTE DE TMS BLUEYONDER CREACION DE ORDEN"]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+                <logger level="INFO" doc:name="Logger" doc:id="af1cec0b-b4c8-48fe-a0c2-94cc43b9487f" />
+                <flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="3f1241d5-f41c-44ca-a248-9ccd5ffe3c84" name="orchestrator-send-message-to-slack-main" />
+            </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="84626715-47fc-4661-9954-7bcdd66a5a0c" type="ERROR:UNIGIS_EMPTY_FIELDS">
+                <ee:transform doc:name="Transform Message" doc:id="9e67031e-d21f-459e-b78f-66a82f13fdb8">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+///error.muleMessage.typedValue
+---
+{
+	"traxion_response": {
+		"completed_succesfully": "false",
+		"error": {
+			"error_type": "ERROR:UNIGIS_EMPTY_FIELDS",
+			"reference": payload.referencia,
+			"client": payload.refCliente, 
+			"user_error_description": error.description,
+			"system_error_description": error.message
+		}
+	}
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                        <ee:set-variable variableName="channel"><![CDATA[%dw 2.0
+output application/json
+---
+p('slack.connection.channel.imss')]]></ee:set-variable>
+                        <ee:set-variable variableName="service_provider"><![CDATA[%dw 2.0
+output application/json
+---
+"ERROR PROVENIENTE DE UNIGIS CREACION DE ORDEN"]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+                <flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="8a791c0d-1ca6-4f89-a520-0e29e9f98207" name="orchestrator-send-message-to-slack-main" />
+            </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="bd1dbf95-3225-4b5e-8b42-8217e925fabd" type="ERROR:UNIGIS">
+                <ee:transform doc:name="Transform Message" doc:id="c96dd0b5-0840-4706-a039-ed122c6b5750">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"traxion_response": {
+		"completed_succesfully": "false",
+		"error": {
+			"error_type": "UNIGIS:ERROR",
+			"reference": payload.referencia,
+			"client": payload.refCliente, 
+			"user_error_description": error.description,
+			"system_error_description": error.description
+		}
+	}
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                        <ee:set-variable variableName="channel"><![CDATA[%dw 2.0
+output application/json
+---
+p('slack.connection.channel.imss')]]></ee:set-variable>
+                        <ee:set-variable variableName="service_provider"><![CDATA[%dw 2.0
+output application/json
+---
+"ERROR PROVENIENTE DE UNIGIS CREACION DE ORDEN"]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+                <flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="cd4ad2c1-6922-4f13-b4f3-90e8cf62fe37" name="orchestrator-send-message-to-slack-main" />
+            </on-error-propagate>
             <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="b172b86d-6c33-4e04-b4a9-50a1959ccbbc" type="CARTAPORTE:BAD_REQUEST">
                 <ee:transform doc:name="Transform Message" doc:id="63984202-0b61-4622-814c-c4631071208c">
                     <ee:message>
@@ -191,6 +292,14 @@ output application/json
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                        <ee:set-variable variableName="channel"><![CDATA[%dw 2.0
+output application/json
+---
+p('slack.connection.channel')]]></ee:set-variable>
+                        <ee:set-variable variableName="service_provider"><![CDATA[%dw 2.0
+output application/json
+---
+"ERROR PROVENIENTE DEL PACK DE CARTA PORTE"]]></ee:set-variable>
                     </ee:variables>
                 </ee:transform>
                 <flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="dead0e83-0731-4e03-b134-eb479867745c" name="orchestrator-send-message-to-slack-main" />
@@ -523,6 +632,14 @@ attributes.queryParams.certification_date_to]]></ee:set-variable>
 output application/json
 ---
 attributes.queryParams.certification_date_from]]></ee:set-variable>
+                <ee:set-variable variableName="no_remision"><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.no_remision]]></ee:set-variable>
+				<ee:set-variable variableName="status" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.status]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <flow-ref doc:name="Call to orchestrator-get-orders" doc:id="9aa4d398-84ec-47aa-8a8e-2347c4c21ee6" name="orchestrator-get-orders" />
@@ -557,14 +674,40 @@ attributes.queryParams.remision]]></ee:set-variable>
 output application/json
 ---
 attributes.queryParams.source_system]]></ee:set-variable>
+                <ee:set-variable variableName="payloadBK"><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <flow-ref doc:name="orchestrator-post-create-order-unigis-main" doc:id="cc819b51-b156-4a25-be7b-2e7db4aff22a" name="orchestrator-post-create-order-unigis-main" />
-        <!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message">
+    </flow>
+    <flow name="post:\slack\message:application\json:process-pharma-api-config">
+        <logger level="INFO" doc:name="Logger" doc:id="012104c4-478f-499f-9561-d92d654e4c77" message="#[payload]" />
+		<ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
-&#45;&#45;-
+---
+payload.message]]></ee:set-payload>
+            </ee:message>
+            <ee:variables>
+                <ee:set-variable variableName="channel"><![CDATA[%dw 2.0
+output application/json
+---
+payload.message_chanel]]></ee:set-variable>
+                <ee:set-variable variableName="service_provider"><![CDATA[%dw 2.0
+output application/json
+---
+payload.message_source]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<flow-ref doc:name="orchestrator-send-message-to-slack-main" doc:id="8a369e14-2bc6-48eb-804b-4de02bd2378d" name="orchestrator-send-message-to-slack-main" />
+		<ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
 {
   traxion_response: {
     completed_succesfully: "true",
@@ -573,8 +716,8 @@ output application/json
       data: {}
     }
   }
-} as Object {encoding: "UTF-8", mediaType: "application/json"}&#93;&#93;></ee:set-payload>
+} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
             </ee:message>
-        </ee:transform> [STUDIO] -->
+        </ee:transform>
     </flow>
 </mule>

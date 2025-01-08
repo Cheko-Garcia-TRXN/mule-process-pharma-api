@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_0b334567_34a1_41d5_94fe_4b29d627573f_Output_Variables_grant_type = String
+
