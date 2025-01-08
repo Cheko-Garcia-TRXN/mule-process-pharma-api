@@ -1207,12 +1207,12 @@ vars.respSapArray map($.typedValue)]]></ee:set-variable>
 		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="6ae96bba-b410-4899-8d10-02fcf31a8e43" message="#[%dw 2.0&#10;output application/json&#10;&#45;&#45;-&#10;vars.respSapArray&#93;"/> [STUDIO] -->
 	</sub-flow>
 	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-update-response-sap-info" doc:id="aefb0455-fdf8-447e-bf0b-4f68277cf0bc" >
-		<ee:transform doc:name="Set structure response" doc:id="b1a03dab-a2d7-4520-b671-11c7a245548f" >
+		<!-- [STUDIO:"Set structure response"]<ee:transform doc:name="Set structure response" doc:id="b1a03dab-a2d7-4520-b671-11c7a245548f" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ns ns2 http://ws.edifactwstraxion/
----
+&#45;&#45;-
 {
 	"traxion_response": {
 		"completed_succesfully": true,
@@ -1224,7 +1224,7 @@ ns ns2 http://ws.edifactwstraxion/
 			    "numero_pedido_provision": "",
 			    "numero_factura_venta": "",
 			    "numero_pedido_venta": "",
-			    "correlation_id": vars.respSapExtract..correlation_id[0]
+			    "correlation_id": vars.respSapExtract..correlation_id[0&#93;
 			},
 			{
 			           
@@ -1233,9 +1233,37 @@ ns ns2 http://ws.edifactwstraxion/
 			    "numero_pedido_provision": "",
 			    "numero_factura_venta": "",
 			    "numero_pedido_venta": "",
-			    "correlation_id": vars.respSapExtract..correlation_id[0]
+			    "correlation_id": vars.respSapExtract..correlation_id[0&#93;
 			}
-		] else vars.respSapExtract,
+		&#93; else vars.respSapExtract,
+		"response_pac": {
+			"return": {
+				"codigo": vars.cpResponse.body.ns2#generaComprobanteResponse.return.codigo,
+				"descripcion": vars.cpResponse.body.ns2#generaComprobanteResponse.return.descripcion,
+				"documentopdf": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.documentopdf),
+				"documentoxml": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.documentoxml),
+				"fechaTimbrado": vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado,
+				"noCertificado": vars.cpResponse.body.ns2#generaComprobanteResponse.return.noCertificado,
+				"selloCFDI": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.selloCFDI),
+				"selloSAT": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.selloSAT),
+				"UUID": vars.cpResponse.body.ns2#generaComprobanteResponse.return.UUID
+			}
+		}
+	}
+}&#93;&#93;></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+			</ee:variables>
+		</ee:transform> [STUDIO] -->
+		<ee:transform doc:name="Set structure response no sap" doc:id="9f4f52af-71d8-406e-9eb0-3b9d4b117fa9">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+ns ns2 http://ws.edifactwstraxion/
+---
+{
+	"traxion_response": {
+		"completed_succesfully": true,
 		"response_pac": {
 			"return": {
 				"codigo": vars.cpResponse.body.ns2#generaComprobanteResponse.return.codigo,
@@ -1252,8 +1280,7 @@ ns ns2 http://ws.edifactwstraxion/
 	}
 }]]></ee:set-payload>
 			</ee:message>
-			<ee:variables >
-			</ee:variables>
+			<ee:variables />
 		</ee:transform>
 		<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message" doc:id="ee36be66-bc84-48cc-9e32-635693e19485" >
 			<ee:message >
