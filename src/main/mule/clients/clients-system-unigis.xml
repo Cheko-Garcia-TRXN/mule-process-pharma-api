@@ -44,7 +44,7 @@ http://www.mulesoft.org/schema/mule/system-tms-unigis http://www.mulesoft.org/sc
 	"source_system" : vars.source_system
 }&#93;&#93;&#93;></http:query-params>
 		</http:request> [STUDIO] -->
-		<system-tms-unigis:bill-lading doc:name="Bill lading request" doc:id="e59cad87-a43c-4b5b-9d69-bdeecebc807f" config-ref="System_tms_unigis_Config" client-id="#[p('client.system.unigis.https.client_id')]" client-secret="#[p('client.system.unigis.https.client_secret')]" source-system="#[vars.source_system]"/>
+		<!-- [STUDIO:"Bill lading request"]<system-tms-unigis:bill-lading doc:name="Bill lading request" doc:id="e59cad87-a43c-4b5b-9d69-bdeecebc807f" config-ref="System_tms_unigis_Config" client-id="#[p('client.system.unigis.https.client_id')&#93;" client-secret="#[p('client.system.unigis.https.client_secret')&#93;" source-system="#[vars.source_system&#93;"/> [STUDIO] -->
 	</sub-flow>
 	<sub-flow name="clients-system-unigis-create-order" doc:id="311b5dd8-cc47-47fb-bb2e-e4c5ebd04ef6" >
 		<logger level="INFO" doc:name="Logger" doc:id="a6cded00-2707-40f9-84bf-debe1b8edc10" message="#[payload]"/>
