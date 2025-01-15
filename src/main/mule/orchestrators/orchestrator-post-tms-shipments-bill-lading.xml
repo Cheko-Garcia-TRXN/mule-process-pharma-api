@@ -16,7 +16,7 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-provision-sap-process-001"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-provision-sap-process-001" doc:id="0b8b7314-ad16-4606-9340-4643bc31ab0f" name="orchestrator-post-tms-shipments-provision-sap-process-001"/> [STUDIO] -->
 		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-sales-order-process-003"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-sales-order-process-003" doc:id="6ce8cca8-905f-4ed9-ac63-68622d8e21c5" name="orchestrator-post-tms-shipments-sales-order-process-003"/> [STUDIO] -->
 		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-bill-join-responses-provs-sales"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-join-responses-provs-sales" doc:id="d3b6c4fc-c252-4ad3-94cd-39f2d269da13" name="orchestrator-post-tms-shipments-bill-join-responses-provs-sales"/> [STUDIO] -->
-		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-set-response-sap-info" doc:id="4eeb1c67-779c-40ad-a3b6-847ae827ca83" name="orchestrator-post-tms-shipments-bill-lading-set-response-sap-info"/>
+		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-bill-lading-set-response-sap-info"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-set-response-sap-info" doc:id="4eeb1c67-779c-40ad-a3b6-847ae827ca83" name="orchestrator-post-tms-shipments-bill-lading-set-response-sap-info"/> [STUDIO] -->
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-update-response-sap-info" doc:id="3cf00b6a-8301-4b48-a012-d9f8def86952" name="orchestrator-post-tms-shipments-bill-lading-update-response-sap-info"/>
 		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="e39f241f-9855-4733-998e-e881d99cac4c" message="#[payload&#93;"/> [STUDIO] -->
 	</sub-flow>
@@ -522,11 +522,11 @@ var receptor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "03")
 			<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="CARTAPORTE:BAD_REQUEST" />
 		</validation:is-false>
 	</sub-flow>
-	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-send-document-pdf-carta-porte" doc:id="da8a09d3-707c-45e7-ab4e-b38ca6a6f8a6" >
+	<flow name="orchestrator-post-tms-shipments-bill-lading-send-document-pdf-carta-porte" doc:id="152e19c4-4a13-4587-8cc2-d75bc8015c19" >
 		<parallel-foreach doc:name="Parallel For Each" doc:id="4ed55ce2-d468-49c2-acec-8d2181951fcf" collection="#[vars.originalPayload.sap_info]" target="createDocsResp">
-			<ee:transform doc:name="Prepare data from bill lading response to send PDF to unigis" doc:id="a079b754-1588-4e7a-bb89-ddc2946cfe37" >
-				<ee:message >
-					<ee:set-payload ><![CDATA[%dw 2.0
+			<ee:transform doc:name="Prepare data from bill lading response to send PDF to unigis" doc:id="a079b754-1588-4e7a-bb89-ddc2946cfe37">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 import * from dw::core::Periods
 ns ns2 http://ws.edifactwstraxion/
@@ -580,17 +580,28 @@ var fechForm = do{
 			</ee:transform>
 			<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="4ea241a0-cc73-4607-9d68-fa559bb1d3f6" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
 		</parallel-foreach>
-		<ee:transform doc:name="Extract array" doc:id="a805abe9-1a8e-404d-88f6-2ff200822770" >
-			<ee:message >
+		<ee:transform doc:name="Extract array" doc:id="a805abe9-1a8e-404d-88f6-2ff200822770">
+			<ee:message>
 			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="createDocsRespExtract" ><![CDATA[%dw 2.0
+			<ee:variables>
+				<ee:set-variable variableName="createDocsRespExtract"><![CDATA[%dw 2.0
 output application/json
 ---
 vars.createDocsResp map($.typedValue)]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-	</sub-flow>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="5e0d6522-e7f9-4ce4-a2d0-72f67b812654" >
+				<ee:transform doc:name="Transform Message" doc:id="0dff4ad8-1b50-42c2-9f21-4b305f997ddd" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="createDocsResp" ><![CDATA["Error enviando PDF a TMS Unigis"]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
 	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-modify-resp-doc-creation" doc:id="df9e2155-76c9-4d4a-b924-36ed5dabf694">
 		<parallel-foreach doc:name="Parallel For Each" doc:id="d866d793-9c7b-43bb-be21-b5416f318e72" collection="#[vars.originalPayload.sap_info]" target="modRespDoc">
 			<ee:transform doc:name="Transform Message" doc:id="06a1f767-38b1-454f-a9d2-71bfa1ce26d8">
