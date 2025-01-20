@@ -470,6 +470,7 @@ var receptor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "03")
 		},
 		"figura_transporte": payload.carta_porte.figura_transporte update {
 			case .transportista.permiso -> "TPAF01"
+			case .transportista.vehiculo.id -> if (isEmpty(payload.carta_porte.figura_transporte.transportista.vehiculo.id) or (payload.carta_porte.figura_transporte.transportista.vehiculo.id) == null) "C2" else payload.carta_porte.figura_transporte.transportista.vehiculo.id
             case .transportista.vehiculo.remolques -> payload.carta_porte.figura_transporte.transportista.vehiculo.remolques filter ((value) -> !isEmpty(value.placas))
         },
 		"traslado": {
