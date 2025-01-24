@@ -592,6 +592,7 @@ output application/json
 vars.createDocsResp map($.typedValue)]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="b7d555a1-8ddb-46f0-97f7-f559710aec00" message="#[vars.createDocsRespExtract]"/>
 		<error-handler >
 			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="5e0d6522-e7f9-4ce4-a2d0-72f67b812654" >
 				<ee:transform doc:name="Transform Message" doc:id="0dff4ad8-1b50-42c2-9f21-4b305f997ddd" >
@@ -672,6 +673,7 @@ output application/json
 vars.createDocsResp map($.typedValue)]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="38bdb780-3482-4ae6-bb61-43db719a1469" message="#[vars.createDocsRespExtract]"/>
 		<error-handler >
 			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="322cc233-630c-4c57-9ced-f9bd4f966fa2" >
 				<ee:transform doc:name="Transform Message" doc:id="659405ac-54c9-4beb-bbf4-d8b27f1e702b" >
