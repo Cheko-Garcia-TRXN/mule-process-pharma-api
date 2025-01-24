@@ -11,6 +11,7 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-traslado-process-carta-porte-full-api" doc:id="12da03a6-210c-4eef-b727-cff180b4919e" name="orchestrator-post-tms-shipments-bill-lading-traslado-process-carta-porte-full-api"/>
 		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-bill-lading-traslado"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-traslado" doc:id="c0a290e5-be59-42c0-a2e9-648bf7054c63" name="orchestrator-post-tms-shipments-bill-lading-traslado"/> [STUDIO] -->
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-send-document-pdf-carta-porte" doc:id="12562f56-e637-4f32-8b1e-9222fbfb7056" name="orchestrator-post-tms-shipments-bill-lading-send-document-pdf-carta-porte"/>
+		<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-send-document-xml-carta-porte" doc:id="02832ead-45e8-4e03-8a37-8710fbb26c3f" name="orchestrator-post-tms-shipments-bill-lading-send-document-xml-carta-porte"/>
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-modify-resp-doc-creation" doc:id="5023f461-aadd-43d1-ae11-b59eee32f027" name="orchestrator-post-tms-shipments-bill-lading-modify-resp-doc-creation"/>
 		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-bill-lading-send-document-pdf-and-xml-carta-porte"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-send-document-pdf-and-xml-carta-porte" doc:id="04e5d29a-4d0c-4178-82ef-90a4bf7db1e1" name="orchestrator-post-tms-shipments-bill-lading-send-document-pdf-and-xml-carta-porte" /> [STUDIO] -->
 		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-provision-sap-process-001"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-provision-sap-process-001" doc:id="0b8b7314-ad16-4606-9340-4643bc31ab0f" name="orchestrator-post-tms-shipments-provision-sap-process-001"/> [STUDIO] -->
@@ -603,18 +604,155 @@ vars.createDocsResp map($.typedValue)]]></ee:set-variable>
 			</on-error-continue>
 		</error-handler>
 	</flow>
+	<flow name="orchestrator-post-tms-shipments-bill-lading-send-document-xml-carta-porte" doc:id="a71737b2-854d-4c1b-9e90-6ba7130f0c54" >
+		<parallel-foreach doc:name="Parallel For Each" doc:id="a7d23467-b5bc-44a7-bac2-f074b368b505" collection="#[vars.originalPayload.sap_info]" target="createDocsResp">
+			<ee:transform doc:name="Prepare data from bill lading response to send XML to unigis" doc:id="a1cbebd6-77fd-4eef-9f3c-555c5128d66c">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+import * from dw::core::Periods
+ns ns2 http://ws.edifactwstraxion/
+var refFecha = do {
+	var fecha = vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado
+	var fechaPartes = fecha splitBy "T"
+	var fechaParte = fechaPartes[0] splitBy "-" joinBy ""
+	var horaParte = fechaPartes[1] splitBy ":" joinBy ""
+	---
+	fechaParte ++ horaParte ++ "145"
+}
+var fechForm = do{
+	var form = vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado + days(15)
+	---
+	form
+}
+---
+{
+	"crearDocumentos": {
+		"Documentos": {
+			"pDocumento": {
+				"tipoDocumento": "CP",
+				"referencia": "CP" ++ refFecha,
+				"fechaEmision": vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado,
+				"fechaExpiracion": fechForm as String {format: "yyyy-MM-dd'T'HH:mm:ss"},
+				"categoria": "Carta Porte",
+				"clase": "Propio",
+				"observaciones": "Carta porte inicial",
+				"referenciaEstadoDocumento": "Inicial",
+				"forzarActualizacion": "1",
+				"asociaciones": {
+					"referenciaViaje": payload.numero_pedido
+				},
+				"archivosAsociados": {
+					"pArchivoDoc": {
+						"descripcion": vars.cpResponse.body.ns2#generaComprobanteResponse.return.noCertificado,
+						"tipoArchivo": ".XML",
+						"contenido": vars.cpResponse.body.ns2#generaComprobanteResponse.return.documentoxml,
+						"clasificacionArchivo": "CP"
+					}
+				},
+				"crearDocumentoRequeridoViaje": "false",
+				"idViaje": vars.originalPayload.traxion.identificador_pedido,
+				"esDocumentoRequerido": "false"
+			}
+		}
+	}
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables />
+			</ee:transform>
+			<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="01c18310-241c-4583-977e-d678de465d55" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
+		</parallel-foreach>
+		<ee:transform doc:name="Extract array" doc:id="5a7543f8-7b63-4099-8fbb-53a546a62eb1">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="createDocsRespExtract"><![CDATA[%dw 2.0
+output application/json
+---
+vars.createDocsResp map($.typedValue)]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="322cc233-630c-4c57-9ced-f9bd4f966fa2" >
+				<ee:transform doc:name="Transform Message" doc:id="659405ac-54c9-4beb-bbf4-d8b27f1e702b" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="createDocsResp" ><![CDATA["Error enviando PDF a TMS Unigis"]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<sub-flow name="orchestrator-post-tms-unigis-send-files" doc:id="53a694e4-0e54-4742-b4e6-bae66f795a51" >
+		<ee:transform doc:name="Prepare data from bill lading response to send PDF to unigis" doc:id="e6125bf8-759b-4d51-aaf4-4b540fb85405" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+import * from dw::core::Periods
+ns ns2 http://ws.edifactwstraxion/
+var refFecha = do {
+	var fecha = vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado
+	var fechaPartes = fecha splitBy "T"
+	var fechaParte = fechaPartes[0] splitBy "-" joinBy ""
+	var horaParte = fechaPartes[1] splitBy ":" joinBy ""
+	---
+	fechaParte ++ horaParte ++ "145"
+}
+var fechForm = do{
+	var form = vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado + days(15)
+	---
+	form
+}
+---
+{
+	"crearDocumentos": {
+		"Documentos": {
+			"pDocumento": {
+				"tipoDocumento": "CP",
+				"referencia": "CP" ++ refFecha,
+				"fechaEmision": vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado,
+				"fechaExpiracion": fechForm as String {format: "yyyy-MM-dd'T'HH:mm:ss"},
+				"categoria": "Carta Porte",
+				"clase": "Propio",
+				"observaciones": "Carta porte inicial",
+				"referenciaEstadoDocumento": "Inicial",
+				"forzarActualizacion": "1",
+				"asociaciones": {
+					"referenciaViaje": vars.originalPayload.traxion.identificador_pedido
+				},
+				"archivosAsociados": {
+					"pArchivoDoc": {
+						"descripcion": vars.cpResponse.body.ns2#generaComprobanteResponse.return.noCertificado,
+						"tipoArchivo": ".PDF",
+						"contenido": vars.cpResponse.body.ns2#generaComprobanteResponse.return.documentopdf,
+						"clasificacionArchivo": "CP"
+					}
+				},
+				"crearDocumentoRequeridoViaje": "false",
+				"idViaje": vars.originalPayload.traxion.identificador_pedido,
+				"esDocumentoRequerido": "false"
+			}
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables />
+		</ee:transform>
+		<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="86a5e7c4-5898-40ea-a3e2-0c9b83d3aa71" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
+	</sub-flow>
 	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-modify-resp-doc-creation" doc:id="df9e2155-76c9-4d4a-b924-36ed5dabf694">
 		<parallel-foreach doc:name="Parallel For Each" doc:id="d866d793-9c7b-43bb-be21-b5416f318e72" collection="#[vars.originalPayload.sap_info]" target="modRespDoc">
-			<ee:transform doc:name="Transform Message" doc:id="06a1f767-38b1-454f-a9d2-71bfa1ce26d8">
-			<ee:message>
-				<ee:set-payload><![CDATA[%dw 2.0
+			<ee:transform doc:name="Transform Message" doc:id="448df161-6ec6-4a4b-bb41-c44adce45210" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	"numeroPedido": payload.numero_pedido
 }]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
+				</ee:message>
+			</ee:transform>
 		</parallel-foreach>
 		<ee:transform doc:name="Extract array" doc:id="aec00fe1-2256-49d7-bfbf-0c596d45cae2" >
 			<ee:message >
