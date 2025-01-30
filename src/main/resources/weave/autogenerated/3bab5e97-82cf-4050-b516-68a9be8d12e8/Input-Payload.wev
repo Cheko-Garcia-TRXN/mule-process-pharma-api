@@ -1,0 +1,5 @@
+%dw 2.0
+
+type auto_3bab5e97_82cf_4050_b516_68a9be8d12e8_Input_Payload = Array<{|  clave_umu: Number,   nombre_umu: String,   delega: String,   entrega: Number,   pedido_sap: Number,   pedido_insights: String,   categoria: String,   clave_ins: Number,   desc_ins: String,   programa: String,   subinventario: String,   cantidad_piezas: Number,   cantidad_cajas: Number,   "fecha_creación": String,   "hora_creación": String,   fec_est_ent: String,   fec_sal_cenadi: String,   "fecha_certificación": String,   estatus_pedido: String|}> {"mediaType": "application/json",
+"encoding": "UTF-8"}
+

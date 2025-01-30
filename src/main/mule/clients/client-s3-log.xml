@@ -23,7 +23,7 @@ http://www.mulesoft.org/schema/mule/utils-fwk-stream http://www.mulesoft.org/sch
 			</try>
 		</async>
 	</sub-flow>
-		<sub-flow name="client-utils-fwk-stream-call-service-file" doc:id="d2acb135-e901-4ee7-99a3-509076c63923" >
+	<sub-flow name="client-utils-fwk-stream-call-service-file" doc:id="d2acb135-e901-4ee7-99a3-509076c63923" >
 		<!-- [STUDIO:"Request"]<http:request method="POST" doc:name="Request" doc:id="4f649998-8eba-4ac3-84b1-481ec6f93976" config-ref="client-utils-fwk-stream-HTTP_Request_configuration" path="${client.utils.fwk.stream.http.path.file}" target="responseSearch">
 			<http:headers ><![CDATA[#[output application/java
 &#45;&#45;-
@@ -34,5 +34,8 @@ http://www.mulesoft.org/schema/mule/utils-fwk-stream http://www.mulesoft.org/sch
 		</http:request> [STUDIO] -->
 		<utils-fwk-stream:update-file doc:name="Update file post request" doc:id="549e9899-6368-4996-acc6-b2d660aaaf76" target="responseSearch" client-id="${client.utils.fwk.stream.https.client_id}" client-secret="${client.utils.fwk.stream.https.client_secret}" config-ref="Utils_FWK_Stream_Config"/>
 		<logger level="INFO" doc:name="Logger" doc:id="3a9d8374-a50d-4a06-a8a5-f5a0d0537ba8" message="#[vars.responseSearch]"/>
+	</sub-flow>
+	<sub-flow name="client-s3-log-call-fwk-get-documents" doc:id="3bab5e97-82cf-4050-b516-68a9be8d12e8" >
+		<utils-fwk-stream:retrieve-a-file-from-s3 doc:name="retrieve a file from S3" doc:id="ebc9967a-a293-47e1-a584-626fc51d3c2b" config-ref="Utils_FWK_Stream_Config" client-id="${client.utils.fwk.stream.https.client_id}" client-secret="${client.utils.fwk.stream.https.client_secret}"/>
 	</sub-flow>
 </mule>
