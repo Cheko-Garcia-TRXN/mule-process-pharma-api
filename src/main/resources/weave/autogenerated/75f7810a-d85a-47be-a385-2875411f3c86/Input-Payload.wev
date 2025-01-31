@@ -1,5 +1,0 @@
-%dw 2.0
-
-type auto_75f7810a_d85a_47be_a385_2875411f3c86_Input_Payload = Array<{|  clave_umu: Number,   nombre_umu: String,   delega: String,   entrega: Number,   pedido_sap: Number,   pedido_insights: String,   categoria: String,   clave_ins: Number,   desc_ins: String,   programa: String,   subinventario: String,   cantidad_piezas: Number,   cantidad_cajas: Number,   "fecha_creación": String,   "hora_creación": String,   fec_est_ent: String,   fec_sal_cenadi: String,   "fecha_certificación": String,   estatus_pedido: String|}> {"mediaType": "application/json",
-"encoding": "UTF-8"}
-
