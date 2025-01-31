@@ -11,13 +11,14 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
+import * from dw::core::Binaries
 ---
 {
     "traxion_response": {
         "completed_succesfully": "true",
         "response": {
             "message": "successful",
-            "data": payload
+            "data": toBase64(payload as Binary)
         }
     }
 }]]></ee:set-payload>
