@@ -7,6 +7,22 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	<sub-flow name="orchestrator-get-documents-carta-porte-main" doc:id="75f7810a-d85a-47be-a385-2875411f3c86" >
 		<flow-ref doc:name="orchestrator-get-documents-carta-porte-prepare-request" doc:id="30201b78-e558-434b-b902-9b459cad9644" name="orchestrator-get-documents-carta-porte-prepare-request"/>
 		<flow-ref doc:name="client-s3-log-call-fwk-get-documents" doc:id="32f07f61-d530-4bad-a2a1-71208add1ecb" name="client-s3-log-call-fwk-get-documents"/>
+		<ee:transform doc:name="Transform Message" doc:id="95760758-c42f-480f-8e69-79208c5558b7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "traxion_response": {
+        "completed_succesfully": "true",
+        "response": {
+            "message": "successful",
+            "data": payload
+        }
+    }
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="01cbf402-b2da-4fdb-a92e-654cdd542004" message="#[payload]"/>
 	</sub-flow>
 	<sub-flow name="orchestrator-get-documents-carta-porte-prepare-request" doc:id="c9644b24-733b-4bf7-8333-27d06085c1f0" >
