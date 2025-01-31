@@ -36,6 +36,20 @@ http://www.mulesoft.org/schema/mule/utils-fwk-stream http://www.mulesoft.org/sch
 		<logger level="INFO" doc:name="Logger" doc:id="3a9d8374-a50d-4a06-a8a5-f5a0d0537ba8" message="#[vars.responseSearch]"/>
 	</sub-flow>
 	<sub-flow name="client-s3-log-call-fwk-get-documents" doc:id="3bab5e97-82cf-4050-b516-68a9be8d12e8" >
-		<utils-fwk-stream:retrieve-a-file-from-s3 doc:name="retrieve a file from S3" doc:id="ebc9967a-a293-47e1-a584-626fc51d3c2b" config-ref="Utils_FWK_Stream_Config" client-id="${client.utils.fwk.stream.https.client_id}" client-secret="${client.utils.fwk.stream.https.client_secret}"/>
+		<!-- [STUDIO:"retrieve a file from S3"]<utils-fwk-stream:retrieve-a-file-from-s3 doc:name="retrieve a file from S3" doc:id="ebc9967a-a293-47e1-a584-626fc51d3c2b" config-ref="Utils_FWK_Stream_Config" client-id="${client.utils.fwk.stream.https.client_id}" client-secret="${client.utils.fwk.stream.https.client_secret}">
+			<utils-fwk-stream:retrieve-a-file-from-s3-request-data ><![CDATA[#[%dw 2.0
+output application/json
+&#45;&#45;-
+payload&#93;&#93;&#93;></utils-fwk-stream:retrieve-a-file-from-s3-request-data>
+		</utils-fwk-stream:retrieve-a-file-from-s3> [STUDIO] -->
+		<http:request method="GET" doc:name="Request" doc:id="54269e26-3346-4436-9132-437002045244" config-ref="client-utils-fwk-stream-HTTP_Request_configuration" path="/api/fwk/stream/file/retrieve" sendBodyMode="ALWAYS">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Content-Type" : "application/json",
+	"client_id" : p('client.utils.fwk.stream.https.client_id'),
+	"client_secret": p('client.utils.fwk.stream.https.client_secret')
+}]]]></http:headers>
+		</http:request>
 	</sub-flow>
 </mule>
