@@ -14,6 +14,26 @@ output application/java
 	"client_secret": p('client.process.cartaporte.full.api.test.https.client_secret')
 }]]]></http:headers>
 		</http:request>
-		<logger level="INFO" doc:name="Logger" doc:id="479ade24-08ab-464d-879b-8726ba814ee6" message='#[%dw 2.0&#10;output application/json&#10;---&#10;((vars.cpResponse.body.generaComprobanteResponse.return) - "documentoxml") -"documentopdf"]' category="CARTA PORTE RESPONSE"/>
+		<choice doc:name="Choice" doc:id="103123c6-33f3-49f6-8632-4fbe62a57d09" >
+			<when expression="#[payload.body.generaComprobanteResponse.return.codigo == '100']">
+				<logger level="INFO" doc:name="Logger" doc:id="479ade24-08ab-464d-879b-8726ba814ee6" message='#[%dw 2.0&#10;output application/json&#10;---&#10;((vars.cpResponse.body.generaComprobanteResponse.return) - "documentoxml") -"documentopdf"]' category="CARTA PORTE RESPONSE" />
+			</when>
+		</choice>
+	</sub-flow>
+	<sub-flow name="clients-process-post-carta-porte-income-api-test" doc:id="22916dcd-29ec-4c57-a166-25c0c5f6683b" >
+		<http:request method="POST" doc:name="Request" doc:id="72c756cf-085b-47e6-948e-43203cecabbe" config-ref="HTTP_Request_configuration_Process_Carta_Porte_Full_Api_Test" path="${client.process.cartaporte.full.api.test.https.api.carta_porte}" target="cpResponse" sendCorrelationId="ALWAYS" correlationId="#[correlationId]" outputMimeType="application/json">
+			<http:headers ><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	"client_id": p('client.process.cartaporte.full.api.test.https.client_id'),
+	"client_secret": p('client.process.cartaporte.full.api.test.https.client_secret')
+}]]]></http:headers>
+		</http:request>
+		<choice doc:name="Choice" doc:id="89ad46a5-310f-49b8-a94c-ccde33ef01aa" >
+			<when expression="#[payload.body.generaComprobanteResponse.return.codigo == '100']">
+				<logger level="INFO" doc:name="Logger" doc:id="2e4a199a-6ac8-443a-80f5-91c695e302c6" message='#[%dw 2.0&#10;output application/json&#10;---&#10;((vars.cpResponse.body.generaComprobanteResponse.return) - "documentoxml") -"documentopdf"]' category="CARTA PORTE RESPONSE" />
+			</when>
+		</choice>
 	</sub-flow>
 </mule>

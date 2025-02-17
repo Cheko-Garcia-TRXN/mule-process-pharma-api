@@ -221,16 +221,16 @@
 		</dependency>
 		<dependency>
 			<groupId>ab8117f6-d718-4307-b5f7-03262d589cd0</groupId>
-			<artifactId>process-pharma-api</artifactId>
-			<version>1.0.31</version>
-			<classifier>raml</classifier>
-			<type>zip</type>
-		</dependency>
-		<dependency>
-			<groupId>ab8117f6-d718-4307-b5f7-03262d589cd0</groupId>
 			<artifactId>mule-plugin-utils-fwk-stream-api</artifactId>
 			<version>1.0.5</version>
 			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>ab8117f6-d718-4307-b5f7-03262d589cd0</groupId>
+			<artifactId>process-pharma-api</artifactId>
+			<version>1.0.33</version>
+			<classifier>raml</classifier>
+			<type>zip</type>
 		</dependency>
 	</dependencies>
 

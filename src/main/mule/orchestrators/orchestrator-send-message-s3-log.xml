@@ -54,4 +54,27 @@ output application/json
 		</try>
 		</async>
 	</sub-flow>	
+	<sub-flow name="orchestrators-post-s3-v2" doc:id="843c0acd-535b-4299-a14a-5e43b0f138ef" >
+		<async doc:name="Async" doc:id="182f734d-3850-4b8c-8a32-4178574fbd01" >
+			<try doc:name="Try" doc:id="2995a21b-0b4b-4eea-9ebc-29871f8e45f9">
+			<scatter-gather doc:name="Scatter-Gather" doc:id="12733072-333f-4331-9ac0-0c40e01b4358" >
+					<route >
+						<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;    &quot;api&quot;: &quot;process-pharma&quot;,&#10;    &quot;message_type&quot;: &quot;utils-fwk-stream-request&quot;,&#10;    &quot;s3&quot;: p('client.aws.s3.bucket.cartaporte.documents'),&#10;    &quot;correlation_id&quot;: correlationId,&#10;    &quot;logger&quot;: true,&#10;    &quot;created_pk&quot;: now() as String {format: &quot;uuuuMM&quot;},&#10;    &quot;timestamp&quot;: now() as String {format: &quot;uuuuMMddKKmmssSS&quot;},&#10;    &quot;identifier&quot;: &quot;api=medistik/created_pk=&quot;++ now() as String {format: &quot;uuuuMM&quot;} ++ &quot;/&quot; ++ vars.originalPayload.traxion.identificador_pedido ++ &quot;.pdf&quot;,&#10;    &quot;key&quot;: &quot;api=medistik/created_pk=&quot;++ now() as String {format: &quot;uuuuMM&quot;} ++ &quot;/&quot; ++ vars.originalPayload.traxion.identificador_pedido ++  &quot;.pdf&quot;,&#10;    &quot;message&quot;: vars.cpResponse.traxion_response.response_pac.return.documentopdf default &quot;Error&quot;&#10;}]" doc:name="Set S3 PDF Request" doc:id="dd682fdb-509f-4613-ba2f-9ec2f67048f3" />
+						<logger level="INFO" doc:name="Logger" doc:id="b914f64f-d217-4d36-a670-e76fcad6e5b9" message="#[payload]"/>
+						<flow-ref doc:name="Call to client-utils-fwk-stream-call-service-file" doc:id="94134062-c700-4401-9b5d-8e97e3c79f78" name="client-utils-fwk-stream-call-service-file" />
+					</route>
+					<route >
+						<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;    &quot;api&quot;: &quot;process-pharma&quot;,&#10;    &quot;message_type&quot;: &quot;utils-fwk-stream-request&quot;,&#10;    &quot;s3&quot;: p('client.aws.s3.bucket.cartaporte.documents'),&#10;    &quot;correlation_id&quot;: correlationId,&#10;    &quot;logger&quot;: true,&#10;    &quot;created_pk&quot;: now() as String {format: &quot;uuuuMM&quot;},&#10;    &quot;timestamp&quot;: now() as String {format: &quot;uuuuMMddKKmmssSS&quot;},&#10;    &quot;identifier&quot;: &quot;api=medistik/created_pk=&quot;++ now() as String {format: &quot;uuuuMM&quot;} ++ &quot;/&quot; ++ vars.originalPayload.traxion.identificador_pedido ++ &quot;.xml&quot;,&#10;    &quot;key&quot;: &quot;api=medistik/created_pk=&quot;++ now() as String {format: &quot;uuuuMM&quot;} ++ &quot;/&quot; ++ vars.originalPayload.traxion.identificador_pedido ++ &quot;.xml&quot;,&#10;    &quot;message&quot;: vars.cpResponse.traxion_response.response_pac.return.documentoxml default &quot;Error&quot; &#10;}]" doc:name="Set S3 XML Request" doc:id="66fe8e67-0cbf-42f1-bc88-1cf543da09ed" />
+						<logger level="INFO" doc:name="Logger" doc:id="66c27be2-1432-4104-81af-478ededd1d19" message="#[payload]"/>
+						<flow-ref doc:name="Call to client-utils-fwk-stream-call-service-file" doc:id="45b6df6a-fbb3-4be1-aaba-b8e8fdfdb508" name="client-utils-fwk-stream-call-service-file" />
+					</route>
+				</scatter-gather>
+				<error-handler>
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="756e0d56-13d0-4049-9f68-6d0f2fd71ee2" type="ANY">
+					<logger level="INFO" doc:name="Error" doc:id="5367bae1-c8c9-477f-a0ef-da18bd6eaca5" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		</async>
+	</sub-flow>	
 </mule>

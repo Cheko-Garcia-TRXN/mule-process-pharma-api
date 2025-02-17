@@ -1,0 +1,726 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	<sub-flow name="orchestrator-post-tms-bill_lading_v2" doc:id="a1f274b8-8173-4381-9680-c3ad654e8f58" >
+		<logger level="INFO" doc:name="Logger" doc:id="5ac23ef9-b6eb-4092-8597-359d561d4233" message="#[payload]"/>
+		<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-v2-traslado-process-carta-porte-full-api" doc:id="12da03a6-210c-4eef-b727-cff180b4919e" name="orchestrator-post-tms-shipments-bill-lading-v2-traslado-process-carta-porte-full-api"/>
+		<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-carta-porte" doc:id="12562f56-e637-4f32-8b1e-9222fbfb7056" name="orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-carta-porte"/>
+		<!-- [STUDIO:"Call to orchestrator-post-tms-shipments-bill-lading-send-document-xml-carta-porte"]<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-send-document-xml-carta-porte" doc:id="02832ead-45e8-4e03-8a37-8710fbb26c3f" name="orchestrator-post-tms-shipments-bill-lading-send-document-xml-carta-porte"/> [STUDIO] -->
+		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-bill-lading-modify-resp-doc-creation"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-modify-resp-doc-creation" doc:id="5023f461-aadd-43d1-ae11-b59eee32f027" name="orchestrator-post-tms-shipments-bill-lading-modify-resp-doc-creation"/> [STUDIO] -->
+		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-bill-lading-send-document-pdf-and-xml-carta-porte"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-send-document-pdf-and-xml-carta-porte" doc:id="04e5d29a-4d0c-4178-82ef-90a4bf7db1e1" name="orchestrator-post-tms-shipments-bill-lading-send-document-pdf-and-xml-carta-porte" /> [STUDIO] -->
+		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-provision-sap-process-001"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-provision-sap-process-001" doc:id="0b8b7314-ad16-4606-9340-4643bc31ab0f" name="orchestrator-post-tms-shipments-provision-sap-process-001"/> [STUDIO] -->
+		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-sales-order-process-003" doc:id="6ce8cca8-905f-4ed9-ac63-68622d8e21c5" name="orchestrator-post-tms-shipments-sales-order-process-003"/>
+		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-bill-join-responses-provs-sales"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-join-responses-provs-sales" doc:id="d3b6c4fc-c252-4ad3-94cd-39f2d269da13" name="orchestrator-post-tms-shipments-bill-join-responses-provs-sales"/> [STUDIO] -->
+		<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-v2-set-response-sap-info" doc:id="4eeb1c67-779c-40ad-a3b6-847ae827ca83" name="orchestrator-post-tms-shipments-bill-lading-v2-set-response-sap-info"/>
+		<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-v2-update-response-sap-info" doc:id="3cf00b6a-8301-4b48-a012-d9f8def86952" name="orchestrator-post-tms-shipments-bill-lading-v2-update-response-sap-info"/>
+		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="e39f241f-9855-4733-998e-e881d99cac4c" message="#[payload&#93;"/> [STUDIO] -->
+	<!--  -->
+	</sub-flow>
+	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-v2-traslado-process-carta-porte-full-api" doc:id="89f87486-01cc-4ac0-b47a-d2ef9c650592" >
+		<!-- [STUDIO:"Choice"]<choice doc:name="Choice" doc:id="e8441a74-58ab-4e40-a834-17d7a932ccc3" >
+			<when expression='#[payload.carta_porte.figura_transporte.transportista.vehiculo.id == "C2" or payload.carta_porte.figura_transporte.transportista.vehiculo.id == "C3" or payload.carta_porte.figura_transporte.transportista.vehiculo.id == "OTROSG" or payload.carta_porte.figura_transporte.transportista.vehiculo.id == "GPLUTA" or payload.carta_porte.figura_transporte.transportista.vehiculo.id == "GPLUTB" or payload.carta_porte.figura_transporte.transportista.vehiculo.id == "GPLUTC" or payload.carta_porte.figura_transporte.transportista.vehiculo.id == "GPLUTD" or payload.carta_porte.figura_transporte.transportista.vehiculo.id == "GPLATA" or payload.carta_porte.figura_transporte.transportista.vehiculo.id == "GPLATB" or payload.carta_porte.figura_transporte.transportista.vehiculo.id == "GPLATC" or payload.carta_porte.figura_transporte.transportista.vehiculo.id == "GPLATD"&#93;' >
+				<logger level="INFO" doc:name="Logger" doc:id="fd62b3cb-7cfc-4e56-941e-d64bab03e15a" message="PAYLOAD FINAL #[payload&#93;"/>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Original payload cp map" doc:id="6055edc5-f096-4b67-98f4-96dee0268f73">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+fun totMerc(total) = sum(total.cantidad)
+var emisor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "01"))[0&#93;
+var receptor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "03"))[0&#93;
+&#45;&#45;-
+{
+	"traxion": {
+		"empresa": payload.traxion.empresa,
+		"fecha_hora": payload.traxion.fecha_hora,
+		"tipo_documento": payload.traxion.tipo_documento,
+		"tipo_operacion": payload.traxion.tipo_operacion,
+		"identificador_pedido": payload.traxion.identificador_pedido
+	},
+	"carta_porte": {
+		"version": payload.carta_porte.version,
+		"IdCCP": "",
+		"pais_origen_destino": payload.carta_porte.pais_origen_destino,
+		"tipo": {
+			"via_entrada_salida": "01",
+			"transporte_internacional": "No",
+			"entrada_salida": ""
+		},
+		"informacion_aduanera": {
+			"concepto": ""
+		},
+		"ubicaciones": payload.carta_porte.ubicaciones map ((item, index) ->{
+			"id_estacion": item.id_estacion,
+			"tipo_estacion": item.tipo_estacion,
+			"remitente": item.rfc,
+			"distancia_recorrida": item.distancia_recorrida,
+			"num_reg_id_trib": "",
+			"pais_residencia": "",
+			"fecha": item.fecha,
+			"domicilio": {
+				"calle": item.domicilio.calle,
+				"estado": item.domicilio.estado,
+				"pais": item.domicilio.pais,
+				"postal": item.domicilio.postal
+			}
+		} ),
+		"mercancias": {
+			"total_mercancias": totMerc(payload.carta_porte.mercancias.detalles) as String,
+			"unidad_peso": payload.carta_porte.mercancias.unidad_peso,
+			"detalles": payload.carta_porte.mercancias.detalles map ({
+				"clave_producto": $.clave_producto,
+				"descripcion": $.descripcion,
+				"cantidad": $.cantidad,
+				"clave": "XPK",
+				"id_origen": $.id_origen,
+				"id_destino": $.id_destino,
+				"peligroso": "NO",
+				"clave_peligroso": $.clave_peligroso,
+				"embalaje": $.embalaje,
+				"peso_kg": $.peso_kg,
+				"fraccion_arancelaria": "",
+				"uuid_comercio_ext": "",
+				"guias": $.guias
+			})
+		},
+		"figura_transporte": payload.carta_porte.figura_transporte update {
+			case .transportista.permiso -> "TPAF01"
+			case .transportista.vehiculo.id -> if (isEmpty(payload.carta_porte.figura_transporte.transportista.vehiculo.id) or (payload.carta_porte.figura_transporte.transportista.vehiculo.id) == null) "C2" else payload.carta_porte.figura_transporte.transportista.vehiculo.id
+            case .transportista.vehiculo.remolques -> payload.carta_porte.figura_transporte.transportista.vehiculo.remolques filter ((value) -> !isEmpty(value.placas))
+        },
+		"traslado": {
+			"serie": payload.carta_porte.serie,
+			"folio": "",
+			"lugar_expedicion": emisor.domicilio.postal,
+			"sociedad_sap": payload.sap_info[0&#93;.sociedad_sap,
+			"exportacion": payload.carta_porte.exportacion,
+			"emisor": {
+				"rfc": emisor.rfc,
+				"nombre": emisor.nombre,
+				"regimen_fiscal": emisor.regimen_fiscal,
+				"domicilio": {
+					"calle": emisor.domicilio.calle,
+					"calle2": emisor.domicilio.calle2,
+					"ciudad": emisor.domicilio.ciudad,
+					"estado": emisor.domicilio.estado,
+					"pais": emisor.domicilio.pais,
+					"postal": emisor.domicilio.postal
+				}
+			},
+			"receptor": {
+				"rfc": emisor.rfc,
+				"nombre": emisor.nombre,
+				"regimen_fiscal": emisor.regimen_fiscal,
+				"domicilio": {
+					"calle": emisor.domicilio.calle,
+					"calle2": emisor.domicilio.calle2,
+					"ciudad": emisor.domicilio.ciudad,
+					"estado": emisor.domicilio.estado,
+					"pais": emisor.domicilio.pais,
+					"postal": emisor.domicilio.postal
+				}
+			}
+		}
+	}
+}&#93;&#93;></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="977edee2-2a42-48b0-b6d2-109003473f81" message="PAYLOAD FINAL #[payload&#93;"/>
+			</otherwise>
+		</choice> [STUDIO] -->
+		<ee:transform doc:name="Original payload cp map" doc:id="63defd18-ee8e-43a0-954d-9a9466eea178">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    traxion: {
+            empresa: "ISSTE",///payload.traxion.empresa,
+            fecha_hora: payload.traxion.fecha_hora,
+            tipo_documento: "ingreso",
+            tipo_operacion: "nuevo",
+            identificador_pedido: payload.traxion.identificador_pedido ++ randomInt(100),
+            registro_istmo: "0",
+            pedido: {
+                    IM_SYSTEM: "0000000017",
+                    PROCESS: "004",
+                    SERIE: "",
+                    VBAK_VKORG: "GS21",
+                    VBAK_VTWEG: "10",
+                    VBAK_SPART: "10",
+                    VBAK_VKBUR: "G201",
+                    VBAK_VKGRP: "G37",
+                    VBAK_XBLNR: "",
+                    KUAGV_KUNNR: "MXS0065",
+                    VBKD_BSTKD: payload.traxion.identificador_pedido ++ randomInt(100),
+                    VBKD_BSTDK: "20250211",
+                    VBKD_ZTERM: "N015",
+                    VBAK_AUGRU: "C10",
+                    VBAK_WAERK: "MXN",
+                    VBAK_ABRVW: "N",
+                    VBKD_BZIRK: "Z01001",
+                    VBKD_KDKG1: "01",
+                    VBKD_SDABW: "0001",
+                    VBPA_PARVW1: "",
+                    VBPA_KUNNR1: "",
+                    VBPA_PARVW2: "",
+                    VBPA_KUNNR2: "",
+                    VBPA_PARVW3: "",
+                    VBPA_KUNNR3: "",
+                    VBKD_BSARK: "CMX",
+                    VBAK_BNAME: "",
+                    VBAK_TELF1: "",
+                    VBAK_SUBMI: "",
+                    VBKD_IHREZ_E: "",
+                    VBKD_BSTKD_E: "",
+                    VBKD_BSTDK_E: "",
+                    VBAK_KVGR1: "999",
+                    VBAK_KVGR2: "",
+                    KONV_KBETR: sum(payload.sap_info.monto) as String { format: "#.00", locale: "en_US" },
+                    TEXT_LINE_C001: "FLETE FIJO CARGA: " ++ payload.traxion.identificador_pedido as String,
+                    TEXT_LINE_C002: "",
+                    TEXT_LINE_C003: "",
+                    TEXT_LINE_C004: "",
+                    TEXT_LINE_C005: "",
+                    TEXT_LINE_C006: "",
+                    TEXT_LINE_C007: "",
+                    IM_T_SD_P_: [
+                            {
+                                VBAP_POSNR: "000010",
+                                VBAP_MATNR: "000000000003000252",
+                                VBAP_ARKTX: "Flete",
+                                VBAP_KDMAT: "",
+                                VBAP_KWMENG: "1",
+                                VBAP_VRKME: "",
+                                TEXT_LINE_P001: "FLETE",
+                                VBAP_WERKS: "1190",
+                                VBKD_IHREZ: "",
+                                VBAP_VOLUM: "",
+                                VBKD_KDKG1: "01",
+                                VBKD_SDABW: "0001",
+                                VBAP_NTGEW: "",
+                                KONP_KBETR: sum(payload.sap_info.monto) as String { format: "#.00", locale: "en_US" },
+                                COBL_PRCTR: "CF01110101",
+                                VBEP_TDDAT: "20250211",
+                                VBEP_TDUHR: "000000",
+                                VBEP_EDATU: "20250211",
+                                VBEP_EZEIT: "000000"
+                            }
+                        ],
+                    EX_RETURN: {
+                            IM_SYSTEM: "",
+                            PROCESS: "",
+                            VBRK_VBELN: "",
+                            VBAK_VBELN: "",
+                            VBKD_BSTKD: "",
+                            EXT_T_MENSAJE: [
+                                    ""
+                                ]
+                        }
+                }
+        },
+    carta_porte: {
+            version: payload.carta_porte.version,
+            pais_origen_destino: payload.carta_porte.pais_origen_destino,
+            tipo: {
+                    transporte_internacional: "No",
+                    entrada_salida: "Entrada"
+                },
+            ubicaciones: payload.carta_porte.ubicaciones map (ubicacion) -> {
+                                id_estacion: ubicacion.id_estacion,
+                                tipo_estacion: ubicacion.tipo_estacion,
+                                remitente: ubicacion.rfc,
+                                distancia_recorrida: ubicacion.distancia_recorrida,
+                                num_reg_id_trib: ubicacion.num_reg_id_trib default "",
+                                pais_residencia: ubicacion.pais_residencia default "",
+                                fecha: ubicacion.fecha,
+                                domicilio: ubicacion.domicilio
+                            },
+            mercancias: {
+                    total_mercancias: sum(payload.carta_porte.mercancias.detalles.cantidad) as String { format: "#.00", locale: "en_US" },
+                    unidad_peso: "KGM",
+                    detalles: payload.carta_porte.mercancias.detalles map (merc) -> {
+		                        clave_producto: merc.clave_producto,// "51101500"
+		                        descripcion: merc.descripcion,
+		                        cantidad: (merc.cantidad default 1) as String,
+		                        clave: if(isEmpty(merc.clave)) "H87" else merc.clave,
+		                        id_origen: merc.id_origen,//index + 1,
+		                        id_destino: merc.id_destino,//sizeOf(index) + 1,
+		                        peligroso: merc.peligroso,
+		                        clave_peligroso: merc.clave_peligroso,
+		                        embalaje: merc.embalaje,
+		                        peso_kg: merc.peso_kg as String,
+		                        fraccion_arancelaria: "",
+		                        uuid_comercio_ext: "",
+		                        guias: []///merc.guias default []
+		                    }
+                },
+            figura_transporte: {
+                transportista: {
+                    permiso: "TPAF01",
+                    permiso_numero: payload.carta_porte.figura_transporte.transportista.permiso_numero,
+                    vehiculo: {
+                        aseguradora: payload.carta_porte.figura_transporte.transportista.vehiculo.aseguradora,
+                        poliza: payload.carta_porte.figura_transporte.transportista.vehiculo.poliza,
+                        id: payload.carta_porte.figura_transporte.transportista.vehiculo.id,
+                        placa: payload.carta_porte.figura_transporte.transportista.vehiculo.placa,
+                        year: payload.carta_porte.figura_transporte.transportista.vehiculo.year,
+                        peso_bruto: payload.carta_porte.figura_transporte.transportista.vehiculo.peso_bruto,
+                        remolques: []
+                    }
+                },
+                operadores: payload.carta_porte.figura_transporte.operadores,
+                propietario: payload.carta_porte.figura_transporte.propietario,
+                arrendatario: payload.carta_porte.figura_transporte.arrendatario
+            }
+        }
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="Call to clients-process-post-carta-porte-income-api-test" doc:id="7eb1a298-2e76-4cd9-81b6-5b9999ee62cc" name="clients-process-post-carta-porte-income-api-test"/>
+		<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-v2-validate-reponse-carta-porte" doc:id="c0de7d66-4691-47bd-af48-082824214ec6" name="orchestrator-post-tms-shipments-bill-lading-v2-validate-reponse-carta-porte"/>
+	</sub-flow>
+	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-v2-validate-reponse-carta-porte" doc:id="2f347874-16db-4919-9b2e-72a932153d05" >
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.cpResponse.traxion_response.response_pac.return.codigo]" doc:name="Set response_code" doc:id="3875fed3-713a-48b4-9cab-77f4c378bb46" variableName="response_code"/>
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.cpResponse.traxion_response.response_pac.return.descripcion]" doc:name="Set error_message" doc:id="5de5d02b-d4b8-4a58-ba8a-1c8a98ae27fe" variableName="error_message"/>
+		<validation:is-false doc:name="validate code " doc:id="f2925dc5-9891-4059-a723-fe2bd484629f" expression='#[vars.response_code != "100"]' message="#[vars.error_message]">
+			<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="CARTAPORTE:BAD_REQUEST" />
+		</validation:is-false>
+	</sub-flow>
+	<flow name="orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-carta-porte" doc:id="152e19c4-4a13-4587-8cc2-d75bc8015c19" >
+		<!-- [STUDIO:"Parallel For Each"]<parallel-foreach doc:name="Parallel For Each" doc:id="4ed55ce2-d468-49c2-acec-8d2181951fcf" collection="#[vars.originalPayload.sap_info&#93;" target="createDocsResp">
+			<ee:transform doc:name="Prepare data from bill lading response to send PDF to unigis" doc:id="a079b754-1588-4e7a-bb89-ddc2946cfe37">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+import * from dw::core::Periods
+ns ns2 http://ws.edifactwstraxion/
+var refFecha = do {
+	var fecha = vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado
+	var fechaPartes = fecha splitBy "T"
+	var fechaParte = fechaPartes[0&#93; splitBy "-" joinBy ""
+	var horaParte = fechaPartes[1&#93; splitBy ":" joinBy ""
+	&#45;&#45;-
+	fechaParte ++ horaParte ++ "145"
+}
+var fechForm = do{
+	var form = vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado + days(15)
+	&#45;&#45;-
+	form
+}
+&#45;&#45;-
+{
+	"crearDocumentos": {
+		"Documentos": {
+			"pDocumento": {
+				"tipoDocumento": "CP",
+				"referencia": "CP" ++ refFecha,
+				"fechaEmision": vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado,
+				"fechaExpiracion": fechForm as String {format: "yyyy-MM-dd'T'HH:mm:ss"},
+				"categoria": "Carta Porte",
+				"clase": "Propio",
+				"observaciones": "Carta porte inicial",
+				"referenciaEstadoDocumento": "Inicial",
+				"forzarActualizacion": "1",
+				"asociaciones": {
+					"referenciaViaje": payload.numero_pedido
+				},
+				"archivosAsociados": {
+					"pArchivoDoc": {
+						"descripcion": vars.cpResponse.body.ns2#generaComprobanteResponse.return.noCertificado,
+						"tipoArchivo": ".PDF",
+						"contenido": vars.cpResponse.body.ns2#generaComprobanteResponse.return.documentopdf,
+						"clasificacionArchivo": "CP"
+					}
+				},
+				"crearDocumentoRequeridoViaje": "false",
+				"idViaje": vars.originalPayload.traxion.identificador_pedido,
+				"esDocumentoRequerido": "false"
+			}
+		}
+	}
+}&#93;&#93;></ee:set-payload>
+				</ee:message>
+				<ee:variables />
+			</ee:transform>
+			<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="4ea241a0-cc73-4607-9d68-fa559bb1d3f6" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
+		</parallel-foreach> [STUDIO] -->
+		<!-- [STUDIO:"Extract array"]<ee:transform doc:name="Extract array" doc:id="a805abe9-1a8e-404d-88f6-2ff200822770">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="createDocsRespExtract"><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+vars.createDocsResp map($.typedValue)&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform> [STUDIO] -->
+		<flow-ref doc:name="Call to orchestrators-post-s3-v2" doc:id="100d7e33-f841-4572-b584-367da1d52540" name="orchestrators-post-s3-v2"/>
+		<ee:transform doc:name="Prepare data from bill lading response to send PDF to unigis" doc:id="34db89d0-928b-40d7-9c5a-ffa3f140a139" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+import * from dw::core::Periods
+var refFecha = do {
+	var fecha = vars.cpResponse.traxion_response.response_pac.return.fechaTimbrado
+	var fechaPartes = fecha splitBy "T"
+	var fechaParte = fechaPartes[0] splitBy "-" joinBy ""
+	var horaParte = fechaPartes[1] splitBy ":" joinBy ""
+	---
+	fechaParte ++ horaParte ++ "145"
+}
+var fechForm = do{
+	var form =vars.cpResponse.traxion_response.response_pac.return.fechaTimbrado + days(15)
+	---
+	form
+}
+---
+{
+	"crearDocumentos": {
+		"Documentos": {
+			"pDocumento": {
+				"tipoDocumento": "CP",
+				"referencia": "CP" ++ refFecha,
+				"fechaEmision": vars.cpResponse.traxion_response.response_pac.return.fechaTimbrado,
+				"fechaExpiracion": fechForm as String {format: "yyyy-MM-dd'T'HH:mm:ss"},
+				"categoria": "Carta Porte",
+				"clase": "Propio",
+				"observaciones": "Carta porte inicial",
+				"referenciaEstadoDocumento": "Inicial",
+				"forzarActualizacion": "1",
+				"asociaciones": {
+					"referenciaViaje": vars.originalPayload.sap_info.numero_pedido joinBy ","
+				},
+				"archivosAsociados": {
+					"pArchivoDoc": {
+						"descripcion": vars.cpResponse.traxion_response.response_pac.return.noCertificado,
+						"tipoArchivo": ".PDF",
+						"contenido": vars.cpResponse.traxion_response.response_pac.return.documentopdf,
+						"clasificacionArchivo": "CP"
+					}
+				},
+				"crearDocumentoRequeridoViaje": "false",
+				"idViaje": vars.cpResponse.traxion_response.response.numero_pedido,
+				"esDocumentoRequerido": "false"
+			}
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables />
+		</ee:transform>
+		<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading_v2-send-carta-porte-documents" doc:id="fa090966-c972-4ea8-b1fc-f90c734cbbce" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
+		<ee:transform doc:name="Extract array1" doc:id="45529e9d-b3e1-420e-9330-e9c4684099b8" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="createDocsRespExtract" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="b7d555a1-8ddb-46f0-97f7-f559710aec00" message="#[vars.createDocsRespExtract&#93;"/> [STUDIO] -->
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="5e0d6522-e7f9-4ce4-a2d0-72f67b812654" >
+				<ee:transform doc:name="Transform Message" doc:id="0dff4ad8-1b50-42c2-9f21-4b305f997ddd" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="createDocsResp" ><![CDATA["Error enviando PDF a TMS Unigis"]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="orchestrator-post-tms-shipments-bill-lading-v2-send-document-xml-carta-porte" doc:id="a71737b2-854d-4c1b-9e90-6ba7130f0c54" >
+		<!-- [STUDIO:"Parallel For Each"]<parallel-foreach doc:name="Parallel For Each" doc:id="a7d23467-b5bc-44a7-bac2-f074b368b505" collection="#[vars.originalPayload.sap_info&#93;" target="createDocsResp">
+			<ee:transform doc:name="Prepare data from bill lading response to send XML to unigis" doc:id="a1cbebd6-77fd-4eef-9f3c-555c5128d66c">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+import * from dw::core::Periods
+ns ns2 http://ws.edifactwstraxion/
+var refFecha = do {
+	var fecha = vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado
+	var fechaPartes = fecha splitBy "T"
+	var fechaParte = fechaPartes[0&#93; splitBy "-" joinBy ""
+	var horaParte = fechaPartes[1&#93; splitBy ":" joinBy ""
+	&#45;&#45;-
+	fechaParte ++ horaParte ++ "145"
+}
+var fechForm = do{
+	var form = vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado + days(15)
+	&#45;&#45;-
+	form
+}
+&#45;&#45;-
+{
+	"crearDocumentos": {
+		"Documentos": {
+			"pDocumento": {
+				"tipoDocumento": "CP",
+				"referencia": "CP" ++ refFecha,
+				"fechaEmision": vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado,
+				"fechaExpiracion": fechForm as String {format: "yyyy-MM-dd'T'HH:mm:ss"},
+				"categoria": "Carta Porte",
+				"clase": "Propio",
+				"observaciones": "Carta porte inicial",
+				"referenciaEstadoDocumento": "Inicial",
+				"forzarActualizacion": "1",
+				"asociaciones": {
+					"referenciaViaje": payload.numero_pedido
+				},
+				"archivosAsociados": {
+					"pArchivoDoc": {
+						"descripcion": vars.cpResponse.body.ns2#generaComprobanteResponse.return.noCertificado,
+						"tipoArchivo": ".XML",
+						"contenido": vars.cpResponse.body.ns2#generaComprobanteResponse.return.documentoxml,
+						"clasificacionArchivo": "CP"
+					}
+				},
+				"crearDocumentoRequeridoViaje": "false",
+				"idViaje": vars.originalPayload.traxion.identificador_pedido,
+				"esDocumentoRequerido": "false"
+			}
+		}
+	}
+}&#93;&#93;></ee:set-payload>
+				</ee:message>
+				<ee:variables />
+			</ee:transform>
+			<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="01c18310-241c-4583-977e-d678de465d55" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
+		</parallel-foreach> [STUDIO] -->
+		<!-- [STUDIO:"Extract array"]<ee:transform doc:name="Extract array" doc:id="5a7543f8-7b63-4099-8fbb-53a546a62eb1">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="createDocsRespExtract"><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+vars.createDocsResp map($.typedValue)&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform> [STUDIO] -->
+		<ee:transform doc:name="Prepare data from bill lading response to send XML to unigis" doc:id="fcb9ac5d-1b2b-4121-9852-de2617b20d2b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+import * from dw::core::Periods
+ns ns2 http://ws.edifactwstraxion/
+var refFecha = do {
+	var fecha = vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado
+	var fechaPartes = fecha splitBy "T"
+	var fechaParte = fechaPartes[0] splitBy "-" joinBy ""
+	var horaParte = fechaPartes[1] splitBy ":" joinBy ""
+	---
+	fechaParte ++ horaParte ++ "145"
+}
+var fechForm = do{
+	var form = vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado + days(15)
+	---
+	form
+}
+---
+{
+	"crearDocumentos": {
+		"Documentos": {
+			"pDocumento": {
+				"tipoDocumento": "CP",
+				"referencia": "CP" ++ refFecha,
+				"fechaEmision": vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado,
+				"fechaExpiracion": fechForm as String {format: "yyyy-MM-dd'T'HH:mm:ss"},
+				"categoria": "Carta Porte",
+				"clase": "Propio",
+				"observaciones": "Carta porte inicial",
+				"referenciaEstadoDocumento": "Inicial",
+				"forzarActualizacion": "1",
+				"asociaciones": {
+					"referenciaViaje": vars.originalPayload.sap_info.numero_pedido joinBy ","
+				},
+				"archivosAsociados": {
+					"pArchivoDoc": {
+						"descripcion": vars.cpResponse.body.ns2#generaComprobanteResponse.return.noCertificado,
+						"tipoArchivo": ".XML",
+						"contenido": vars.cpResponse.body.ns2#generaComprobanteResponse.return.documentoxml,
+						"clasificacionArchivo": "CP"
+					}
+				},
+				"crearDocumentoRequeridoViaje": "false",
+				"idViaje": vars.originalPayload.traxion.identificador_pedido,
+				"esDocumentoRequerido": "false"
+			}
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables />
+		</ee:transform>
+		<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="cc00254a-b290-4c4b-b4ac-e65587e7e3ce" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
+		<ee:transform doc:name="Extract array" doc:id="35dbf3ad-ba99-49a6-84ae-f1a3ba806fa0" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="createDocsRespExtract" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="38bdb780-3482-4ae6-bb61-43db719a1469" message="#[vars.createDocsRespExtract&#93;"/> [STUDIO] -->
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="322cc233-630c-4c57-9ced-f9bd4f966fa2" >
+				<ee:transform doc:name="Transform Message" doc:id="659405ac-54c9-4beb-bbf4-d8b27f1e702b" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="createDocsResp" ><![CDATA["Error enviando PDF a TMS Unigis"]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<sub-flow name="orchestrator-post-tms-shipments-bill-join-v2-responses-provs-sales" doc:id="41de809b-6b01-4e4f-b0f7-678012290dee" >
+		<ee:transform doc:name="Join arrays responses" doc:id="d940a616-7d7e-41d8-a3bb-181abd9c6ebf" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="joinArrays" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.provIngrAuxArrayExtract ++ vars.saleOrdrAuxArrayExtract]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="965a7896-c1bb-41c5-bea7-f8cd9534ea1e" />
+	</sub-flow>
+	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-v2-set-response-sap-info" doc:id="53febab7-2c96-445d-ae26-7b110e46d15d" >
+		<parallel-foreach doc:name="Parallel For Each" doc:id="d7c92de4-2f39-44ed-b715-508d16432e38" collection="#[vars.saleOrdrAuxArrayExtract]" target="respSapArray">
+			<ee:transform doc:name="Transform Message" doc:id="11f7eb23-69ab-46c0-a3b3-d46e8e2ff037">
+			<ee:message>
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json skipNullOn="everywhere"
+import * from dw::Runtime
+---
+{
+	"identificador_pedido": payload.d.EX_RETURN.VBKD_BSTKD,
+	"numero_factura_provision": if ( payload.d.EX_RETURN.PROCESS == "001" ) 
+	payload.d.EX_RETURN.VBRK_VBELN
+	else null,
+	"numero_pedido_provision": if ( payload.d.EX_RETURN.PROCESS == "001" )
+	payload.d.EX_RETURN.VBAK_VBELN
+	else null,
+	"numero_factura_venta": if ( payload.d.EX_RETURN.PROCESS == "003" )
+	payload.d.EX_RETURN.VBRK_VBELN
+	else null,
+	"numero_pedido_venta": if ( payload.d.EX_RETURN.PROCESS == "003" )
+	payload.d.EX_RETURN.VBAK_VBELN
+	else null
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+			</ee:variables>
+		</ee:transform>
+		</parallel-foreach>
+		<ee:transform doc:name="Transform Message" doc:id="a40b6212-28c9-4cb1-b4bc-5463d3995468" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="respSapExtract" ><![CDATA[%dw 2.0
+output application/json skipNullOn="everywhere"
+---
+vars.respSapArray map($.typedValue)]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="6ae96bba-b410-4899-8d10-02fcf31a8e43" message="#[%dw 2.0&#10;output application/json&#10;&#45;&#45;-&#10;vars.respSapArray&#93;"/> [STUDIO] -->
+	</sub-flow>
+	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-v2-update-response-sap-info" doc:id="aefb0455-fdf8-447e-bf0b-4f68277cf0bc" >
+		<ee:transform doc:name="Set structure response" doc:id="b1a03dab-a2d7-4520-b671-11c7a245548f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"traxion_response": {
+		"completed_succesfully": true,
+		"response_sap": if(isEmpty(vars.respSapExtract filter ((item, index) -> item.identificador_pedido != null)))
+		[
+			{       
+			    "identificador_pedido": "No se genero provision ingreso",
+			    "numero_factura_provision": "",
+			    "numero_pedido_provision": "",
+			    "numero_factura_venta": "",
+			    "numero_pedido_venta": "",
+			    "correlation_id": vars.respSapExtract..correlation_id[0]
+			},
+			{
+			           
+			    "identificador_pedido": "No se genero orden de venta",
+			    "numero_factura_provision": "",
+			    "numero_pedido_provision": "",
+			    "numero_factura_venta": "",
+			    "numero_pedido_venta": "",
+			    "correlation_id": vars.respSapExtract..correlation_id[0]
+			}
+		] else vars.respSapExtract,
+		"response_pac": {
+			"return": {
+				"codigo": vars.cpResponse.traxion_response.response_pac.return.codigo,
+				"descripcion": vars.cpResponse.traxion_response.response_pac.return.descripcion,
+				///"documentopdf": trim(vars.cpResponse.traxion_response.response_pac.return.documentopdf),
+				///"documentoxml": trim(vars.cpResponse.traxion_response.response_pac.return.documentoxml),
+				"fechaTimbrado": vars.cpResponse.traxion_response.response_pac.return.fechaTimbrado,
+				"noCertificado": vars.cpResponse.traxion_response.response_pac.return.noCertificado,
+				"selloCFDI": trim(vars.cpResponse.traxion_response.response_pac.return.selloCFDI),
+				"selloSAT": trim(vars.cpResponse.traxion_response.response_pac.return.selloSAT),
+				"UUID": vars.cpResponse.traxion_response.response_pac.return.UUID
+			}
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+			</ee:variables>
+		</ee:transform>
+		<!-- [STUDIO:"Set structure response no sap"]<ee:transform doc:name="Set structure response no sap" doc:id="9f4f52af-71d8-406e-9eb0-3b9d4b117fa9">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+ns ns2 http://ws.edifactwstraxion/
+&#45;&#45;-
+{
+	"traxion_response": {
+		"completed_succesfully": true,
+		"response_pac": {
+			"return": {
+				"codigo": vars.cpResponse.body.ns2#generaComprobanteResponse.return.codigo,
+				"descripcion": vars.cpResponse.body.ns2#generaComprobanteResponse.return.descripcion,
+				///"documentopdf": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.documentopdf),
+				///"documentoxml": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.documentoxml),
+				"fechaTimbrado": vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado,
+				"noCertificado": vars.cpResponse.body.ns2#generaComprobanteResponse.return.noCertificado,
+				"selloCFDI": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.selloCFDI),
+				"selloSAT": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.selloSAT),
+				"UUID": vars.cpResponse.body.ns2#generaComprobanteResponse.return.UUID
+			}
+		}
+	}
+}&#93;&#93;></ee:set-payload>
+			</ee:message>
+			<ee:variables />
+		</ee:transform> [STUDIO] -->
+		<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message" doc:id="ee36be66-bc84-48cc-9e32-635693e19485" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+vars.structureFinalResponse update{
+	case .traxion_response.response -> vars.responseSapInfoExtract
+}&#93;&#93;></ee:set-payload>
+			</ee:message>
+		</ee:transform> [STUDIO] -->
+		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="6969e81c-fbba-4133-bf5a-669b17ebac5d" message='#[%dw 2.0&#10;output application/json&#10;ns ns2 http://ws.edifactwstraxion/&#10;&#45;&#45;-&#10;{&#10;	"traxion_response": {&#10;		"completed_succesfully": true,&#10;		"response_sap": if(isEmpty(vars.respSapExtract filter ((item, index) -&gt; item.identificador_pedido != null)))&#10;		[&#10;			{       &#10;			    "identificador_pedido": "No se genero provision ingreso",&#10;			    "numero_factura_provision": "",&#10;			    "numero_pedido_provision": "",&#10;			    "numero_factura_venta": "",&#10;			    "numero_pedido_venta": "",&#10;			    "correlation_id": vars.respSapExtract..correlation_id[0&#93;&#10;			},&#10;			{&#10;			           &#10;			    "identificador_pedido": "No se genero orden de venta",&#10;			    "numero_factura_provision": "",&#10;			    "numero_pedido_provision": "",&#10;			    "numero_factura_venta": "",&#10;			    "numero_pedido_venta": "",&#10;			    "correlation_id": vars.respSapExtract..correlation_id[0&#93;&#10;			}&#10;		&#93; else vars.respSapExtract,&#10;		"response_pac": {&#10;			"return": {&#10;				"codigo": vars.cpResponse.body.ns2#generaComprobanteResponse.return.codigo,&#10;				"descripcion": vars.cpResponse.body.ns2#generaComprobanteResponse.return.descripcion,&#10;				"documentopdf": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.documentopdf),&#10;				"documentoxml": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.documentoxml),&#10;				"fechaTimbrado": vars.cpResponse.body.ns2#generaComprobanteResponse.return.fechaTimbrado,&#10;				"noCertificado": vars.cpResponse.body.ns2#generaComprobanteResponse.return.noCertificado,&#10;				"selloCFDI": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.selloCFDI),&#10;				"selloSAT": trim(vars.cpResponse.body.ns2#generaComprobanteResponse.return.selloSAT),&#10;				"UUID": vars.cpResponse.body.ns2#generaComprobanteResponse.return.UUID&#10;			}&#10;		}&#10;	}&#10;}&#93;'/> [STUDIO] -->
+	</sub-flow>
+</mule>

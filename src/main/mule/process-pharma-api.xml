@@ -3,7 +3,7 @@
     <http:listener-config name="process-pharma-api-httpListenerConfig">
         <http:listener-connection host="${http.listener.host}" port="${http.listener.port}" protocol="HTTPS" tlsContext="TLS_Context" readTimeout="${http.listener.read.timeout}" />
     </http:listener-config>
-    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.31:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.33:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="process-pharma-api-main">
         <http:listener config-ref="process-pharma-api-httpListenerConfig" path="${http.listener.path}">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -722,19 +722,50 @@ output application/json
     </flow>
     <flow name="get:\tms\carta-porte:process-pharma-api-config">
         <ee:transform doc:name="Transform Message">
-            <ee:message>
-            </ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="identifier" ><![CDATA[%dw 2.0
+            <ee:message />
+            <ee:variables>
+                <ee:set-variable variableName="identifier"><![CDATA[%dw 2.0
 output application/json
 ---
 attributes.queryParams.identifier]]></ee:set-variable>
-				<ee:set-variable variableName="date" ><![CDATA[%dw 2.0
+                <ee:set-variable variableName="date"><![CDATA[%dw 2.0
 output application/java
 ---
 attributes.queryParams.date]]></ee:set-variable>
-			</ee:variables>
+            </ee:variables>
         </ee:transform>
-		<flow-ref doc:name="orchestrator-get-documents-carta-porte-main" doc:id="0f270645-0fbc-4406-ad3a-b1fbbe02ebec" name="orchestrator-get-documents-carta-porte-main"/>
+        <flow-ref doc:name="orchestrator-get-documents-carta-porte-main" doc:id="0f270645-0fbc-4406-ad3a-b1fbbe02ebec" name="orchestrator-get-documents-carta-porte-main" />
+    </flow>
+    <flow name="post:\v2\tms\bill_lading:application\json:process-pharma-api-config">
+        <!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+{
+  traxion_response: {
+    completed_succesfully: "true",
+    response: {
+      message: "successful",
+      data: {}
+    }
+  }
+} as Object {encoding: "UTF-8", mediaType: "application/json"}&#93;&#93;></ee:set-payload>
+            </ee:message>
+        </ee:transform> [STUDIO] -->
+        <ee:transform doc:name="Set query param and declare payload back up" doc:id="7b75760c-5c78-417c-b0a3-b1321de61b54">
+            <ee:message />
+            <ee:variables>
+                <ee:set-variable variableName="source_system"><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.source_system]]></ee:set-variable>
+                <ee:set-variable variableName="originalPayload"><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+		<flow-ref doc:name="Call to orchestrator-post-tms-bill_lading_v2" doc:id="73a37aa8-5689-4d91-9af9-2f2b380acd1d" name="orchestrator-post-tms-bill_lading_v2"/>
     </flow>
 </mule>

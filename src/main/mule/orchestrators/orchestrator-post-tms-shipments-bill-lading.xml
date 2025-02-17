@@ -886,20 +886,20 @@ output application/json
 				</ee:message>
 			</ee:transform>
 		</parallel-foreach> [STUDIO] -->
-		<!-- [STUDIO:"Extract array"]<ee:transform doc:name="Extract array" doc:id="aec00fe1-2256-49d7-bfbf-0c596d45cae2" >
+		<ee:transform doc:name="Extract array" doc:id="aec00fe1-2256-49d7-bfbf-0c596d45cae2" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="modRespDocExtracArray" ><![CDATA[%dw 2.0
 output application/json
-&#45;&#45;-
+---
 vars.modRespDoc.typedValue map((itemModResp) -> 
 	vars.createDocsRespExtract map((itemCreateDocResp) -> 
 		itemModResp ++ itemCreateDocResp
 	) reduce((item, accumulator) -> accumulator)
-)&#93;&#93;></ee:set-variable>
+)]]></ee:set-variable>
 			</ee:variables>
-		</ee:transform> [STUDIO] -->
+		</ee:transform>
 		<ee:transform doc:name="Extract array1" doc:id="5b78793a-81ad-429a-a52c-e825d6d2abcd" >
 			<ee:message />
 			<ee:variables >
@@ -1352,9 +1352,7 @@ output application/json
 					<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 import * from dw::util::Coercions
-fun formatdate(d: DateTime) = d as String {
-	format: "yyyyMMdd"
-}
+fun formatdate(d: DateTime) = d as String {format: "yyyyMMdd"}
 ---
 {
 	"operation": "pedidoventa",
@@ -1371,7 +1369,7 @@ fun formatdate(d: DateTime) = d as String {
 		"VBAK_VKGRP": "MD0",//3000718
 		"VBAK_XBLNR": "",
 		"KUAGV_KUNNR": "0" ++ payload.id_cliente,
-		"VBKD_BSTKD": payload.numero_pedido, /// ++ randomInt(10),
+		"VBKD_BSTKD": payload.numero_pedido ++ randomInt(1000), /// ++ randomInt(10),
 		"VBKD_BSTDK": formatdate(now() >> toTimeZone("America/Mexico_City")),
 		"VBKD_ZTERM": "N015",
 		"VBAK_AUGRU": "C10",
