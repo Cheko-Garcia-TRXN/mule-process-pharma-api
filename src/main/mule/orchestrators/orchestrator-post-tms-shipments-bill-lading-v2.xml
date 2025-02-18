@@ -10,9 +10,7 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 		<logger level="INFO" doc:name="Logger" doc:id="5ac23ef9-b6eb-4092-8597-359d561d4233" message="#[payload]"/>
 		<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-v2-traslado-process-carta-porte-full-api" doc:id="12da03a6-210c-4eef-b727-cff180b4919e" name="orchestrator-post-tms-shipments-bill-lading-v2-traslado-process-carta-porte-full-api"/>
 		<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-carta-porte" doc:id="12562f56-e637-4f32-8b1e-9222fbfb7056" name="orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-carta-porte"/>
-		<!-- [STUDIO:"Call to orchestrator-post-tms-shipments-bill-lading-send-document-xml-carta-porte"]<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-send-document-xml-carta-porte" doc:id="02832ead-45e8-4e03-8a37-8710fbb26c3f" name="orchestrator-post-tms-shipments-bill-lading-send-document-xml-carta-porte"/> [STUDIO] -->
-		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-bill-lading-modify-resp-doc-creation"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-modify-resp-doc-creation" doc:id="5023f461-aadd-43d1-ae11-b59eee32f027" name="orchestrator-post-tms-shipments-bill-lading-modify-resp-doc-creation"/> [STUDIO] -->
-		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-bill-lading-send-document-pdf-and-xml-carta-porte"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-send-document-pdf-and-xml-carta-porte" doc:id="04e5d29a-4d0c-4178-82ef-90a4bf7db1e1" name="orchestrator-post-tms-shipments-bill-lading-send-document-pdf-and-xml-carta-porte" /> [STUDIO] -->
+		<!-- [STUDIO:"Call to orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-and-xml-carta-porte"]<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-and-xml-carta-porte" doc:id="04e5d29a-4d0c-4178-82ef-90a4bf7db1e1" name="orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-and-xml-carta-porte" /> [STUDIO] -->
 		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-provision-sap-process-001"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-provision-sap-process-001" doc:id="0b8b7314-ad16-4606-9340-4643bc31ab0f" name="orchestrator-post-tms-shipments-provision-sap-process-001"/> [STUDIO] -->
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-sales-order-process-003" doc:id="6ce8cca8-905f-4ed9-ac63-68622d8e21c5" name="orchestrator-post-tms-shipments-sales-order-process-003"/>
 		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-bill-join-responses-provs-sales"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-join-responses-provs-sales" doc:id="d3b6c4fc-c252-4ad3-94cd-39f2d269da13" name="orchestrator-post-tms-shipments-bill-join-responses-provs-sales"/> [STUDIO] -->
@@ -595,6 +593,127 @@ vars.provIngrAuxArrayExtract ++ vars.saleOrdrAuxArrayExtract]]></ee:set-variable
 			</ee:variables>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="965a7896-c1bb-41c5-bea7-f8cd9534ea1e" />
+	</sub-flow>
+	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-and-xml-carta-porte" doc:id="ff96e479-415a-4754-b3d6-55d37631d46b" >
+		<scatter-gather doc:name="Scatter-Gather" doc:id="72700d2a-5329-42ce-a501-64ab31e66499" target="arrayScatter">
+			<route >
+				<parallel-foreach doc:name="Parallel For Each" doc:id="6c1ed604-16f4-44a3-8b74-9b1bdb1deeba" collection="#[vars.originalPayload.sap_info]" target="auxArrayXmlReqPrepare">
+					<ee:transform doc:name="Prepare data from bill lading response to send XML to unigis" doc:id="f9553345-4592-4db5-a45f-1e119a726067">
+			<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var refFecha = do {
+	var fecha = vars.cpResponse.traxion_response.response_pac.return.fechaTimbrado
+	var fechaPartes = fecha splitBy "T"
+	var fechaParte = fechaPartes[0] splitBy "-" joinBy ""
+	var horaParte = fechaPartes[1] splitBy ":" joinBy ""
+	---
+	fechaParte ++ horaParte ++ "145"
+}
+var fechForm = do{
+	var form = vars.cpResponse.traxion_response.response_pac.return.fechaTimbrado + days(15)
+	---
+	form
+}
+---
+{
+	"crearDocumentos": {
+		"Documentos": {
+			"pDocumento": {
+				"tipoDocumento": "CP",
+				"referencia": "CP" ++ refFecha,
+				"fechaEmision": vars.cpResponse.traxion_response.response_pac.return.fechaTimbrado,
+				"fechaExpiracion": fechForm as String {format: "yyyy-MM-dd'T'HH:mm:ss"},
+				"categoria": "Carta Porte",
+				"clase": "Propio",
+				"observaciones": "Carta porte inicial",
+				"referenciaEstadoDocumento": "Inicial",
+				"forzarActualizacion": "1",
+				"asociaciones": {
+					"referenciaViaje": payload.numero_pedido
+				},
+				"archivosAsociados": {
+					"pArchivoDoc": {
+						"descripcion": vars.cpResponse.traxion_response.response_pac.return.noCertificado,
+						"tipoArchivo": ".XML",
+						"contenido": vars.cpResponse.traxion_response.response_pac.return.documentoxml,
+						"clasificacionArchivo": "CP"
+					}
+				},
+				"crearDocumentoRequeridoViaje": "false",
+				"idViaje": vars.originalPayload.traxion.identificador_pedido,
+				"esDocumentoRequerido": "false"
+			}
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+			</ee:variables>
+		</ee:transform>
+					<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="bdbf4a5f-d14d-4bc5-ba61-1774bdb7a961" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
+				</parallel-foreach>
+			</route>
+			<route >
+				<parallel-foreach doc:name="Parallel For Each" doc:id="767993c6-a3b1-47af-9755-b9b563ac3bb5" target="auxArrayPdfReqPrepare" collection="#[vars.originalPayload.sap_info]">
+					<ee:transform doc:name="Prepare data from bill lading response to send PDF to unigis" doc:id="c1dd32bf-8821-4bfa-972d-7e2fd053d096">
+			<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var refFecha = do {
+	var fecha = vars.cpResponse.traxion_response.response_pac.return.fechaTimbrado
+	var fechaPartes = fecha splitBy "T"
+	var fechaParte = fechaPartes[0] splitBy "-" joinBy ""
+	var horaParte = fechaPartes[1] splitBy ":" joinBy ""
+	---
+	fechaParte ++ horaParte ++ "145"
+}
+var fechForm = do{
+	var form = vars.cpResponse.traxion_response.response_pac.return.fechaTimbrado + days(15)
+	---
+	form
+}
+---
+{
+	"crearDocumentos": {
+		"Documentos": {
+			"pDocumento": {
+				"tipoDocumento": "CP",
+				"referencia": "CP" ++ refFecha,
+				"fechaEmision": vars.cpResponse.traxion_response.response_pac.return.fechaTimbrado,
+				"fechaExpiracion": fechForm as String {format: "yyyy-MM-dd'T'HH:mm:ss"},
+				"categoria": "Carta Porte",
+				"clase": "Propio",
+				"observaciones": "Carta porte inicial",
+				"referenciaEstadoDocumento": "Inicial",
+				"forzarActualizacion": "1",
+				"asociaciones": {
+					"referenciaViaje": payload.numero_pedido
+				},
+				"archivosAsociados": {
+					"pArchivoDoc": {
+						"descripcion": vars.cpResponse.traxion_response.response_pac.return.noCertificado,
+						"tipoArchivo": ".PDF",
+						"contenido": vars.cpResponse.traxion_response.response_pac.return.documentopdf,
+						"clasificacionArchivo": "CP"
+					}
+				},
+				"crearDocumentoRequeridoViaje": "false",
+				"idViaje": vars.originalPayload.traxion.identificador_pedido,
+				"esDocumentoRequerido": "false"
+			}
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+			</ee:variables>
+		</ee:transform>
+					<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="f6ad093a-3a9b-4ca1-b385-65e58a146cca" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
+				</parallel-foreach>
+			</route>
+		</scatter-gather>
+		<logger level="INFO" doc:name="Shows result from scatter gather" doc:id="7a9ff4c6-3883-495b-8a37-25abb5681b19" message="#[//Tow ways to extract the result from scatter gather&#10;//flatten(valuesOf(vars.arrayScatter) map((item)-&gt;item.*vars.arrayScatter))&#10;(vars.arrayScatter pluck((value)-&gt;value)) map((item)-&gt;item.typedValue)]"/>
 	</sub-flow>
 	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-v2-set-response-sap-info" doc:id="53febab7-2c96-445d-ae26-7b110e46d15d" >
 		<parallel-foreach doc:name="Parallel For Each" doc:id="d7c92de4-2f39-44ed-b715-508d16432e38" collection="#[vars.saleOrdrAuxArrayExtract]" target="respSapArray">
