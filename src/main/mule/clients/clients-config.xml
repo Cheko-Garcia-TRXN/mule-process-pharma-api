@@ -31,4 +31,7 @@ http://www.mulesoft.org/schema/mule/system-load-api http://www.mulesoft.org/sche
 <system-load-api:config name="System_load_api_Config" doc:name="System-load-api Config" doc:id="5189a908-71d4-497c-bd4d-39976d8f7f7a" property_host="${client.system.loads.api.https.host}" property_port="${client.system.loads.api.https.port}" property_basePath="/api" property_protocol="HTTPS" property_responseTimeout="${client.system.loads.api.https.response.timeout}" />
 	
 <traxion-traxporta-api:config name="Traxion_traxporta_api_Config" doc:name="Traxion-traxporta-api Config" doc:id="7f7896cf-05b0-46e9-8f2c-f60b817a506b" property_host="${client.traxion.traxporta.https.host}" property_port="${client.traxion.traxporta.https.port}" property_basePath="/api" property_protocol="HTTPS" property_responseTimeout="${client.traxion.traxporta.https.response.timeout}" />	
+	<http:request-config name="client-system-sapHTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="b2ae4718-4ab6-42fd-86b3-150181149eda" responseTimeout="60000">
+		<http:request-connection host="${client.system.sap.http.host}" port="${client.system.sap.http.port}" maxConnections="${client.system.sap.http.max.connections}" connectionIdleTimeout="${client.system.sap.http.connection.idle.timeout}" responseBufferSize="${client.system.sap.http.response.buffer.size}" protocol="HTTPS"/>
+	</http:request-config>	
 </mule>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:traxion-s-logger="http://www.mulesoft.org/schema/mule/traxion-s-logger" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/traxion-s-logger http://www.mulesoft.org/schema/mule/traxion-s-logger/current/mule-traxion-s-logger.xsd">
+	<http:request-config name="system-utilities-builder_HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="70de28f7-fc83-4cd0-bea9-5b031f13478f" responseTimeout="${client.system.sap.utilities.builder.http.timeout}">
+		<http:request-connection protocol="HTTPS" host="${client.system.sap.utilities.builder.http.host}" port="${client.system.sap.utilities.builder.http.port}" maxConnections="${client.system.sap.utilities.builder.http.max.connections}" connectionIdleTimeout="${client.system.sap.utilities.builder.http.connection.idle.timeout}" responseBufferSize="${client.system.sap.utilities.builder.http.response.buffer.size}"/>
+	</http:request-config>
+	<jms:config name="JMS_Config_Logger" doc:name="JMS Config" doc:id="462926e1-5d97-410c-840d-e1198f2c16b2" >
+		<jms:active-mq-connection username="${jms.settings.user}" password="${jms.settings.passwd}" >
+			<jms:xa-connection-pool minPoolSize="${jms.setting.min.pool.size}" maxPoolSize="${jms.setting.max.pool.size}" maxIdleSeconds="${jms.setting.max.idle.seconds}" />
+			<jms:factory-configuration brokerUrl="${jms.settings.url}" initialRedeliveryDelay="${jms.setting.initial.redelivery.delay}" redeliveryDelay="${jms.setting.redelivery.delay}"/>
+		</jms:active-mq-connection>
+		<jms:producer-config timeToLive="1" timeToLiveUnit="DAYS" />
+	</jms:config>
+	<vm:config name="VM_Config" doc:name="VM Config" doc:id="25ebc000-19a9-4898-9541-a9b2bea820d5">
+		<vm:queues >
+			<vm:queue queueName="interco_messages" queueType="PERSISTENT" />
+		</vm:queues>
+	</vm:config>
+	<sub-flow name="client-sap-interco-bol-main" doc:id="21a52505-e73a-4d2e-9658-f2bb6a423b3a" >
+		<vm:publish doc:name="Publish" doc:id="75c1dbfc-3cce-4eae-a6a3-44fc01fe43d1" queueName="interco_messages" config-ref="VM_Config">
+		</vm:publish>
+	</sub-flow>
+	<flow name="client-sap-interco-bolFlow" doc:id="63287e83-a7ae-49b7-803f-4dfa2ad91179" >
+		<vm:listener queueName="interco_messages" doc:name="Listener" doc:id="78ceb92b-0642-4d06-9923-94b1e2fc0bc9" config-ref="VM_Config"/>
+		<flow-ref doc:name="orchestrator-post-income-income-interco" doc:id="c461f54e-213a-4c51-9a5d-f48b59873a4e" name="orchestrator-post-income-income-interco"/>
+	</flow>
+	<sub-flow name="orchestrator-post-income-income-interco" doc:id="6a44b86c-735e-4ef5-a1c8-232198121c35">
+	<logger level="INFO" doc:name="Logger" doc:id="91fdaa23-1c3e-4ea8-a7c3-0dca5726d36f" message="#[payload]" />
+		<flow-ref doc:name="client-sap-interco-bol-call-service-interco-bol" doc:id="df5fda85-564a-4968-855e-8410af588d7f" name="client-sap-interco-bol-call-service-interco-bol" />
+		<ee:transform doc:name="Transform Message" doc:id="66e0f330-18b3-437d-877b-a6287985b022">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="results"><![CDATA[%dw 2.0
+output application/json
+---
+[
+	
+]]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<set-variable value="#[false]" doc:name="Set Variable" doc:id="a757a4f4-97c8-4a43-8c9d-9fcab2804433" variableName="haveError" />
+		<foreach doc:name="For Each" doc:id="a6daff60-ac27-4bb0-ad09-0b8e74888f5e" collection="#[payload]">
+			<flow-ref doc:name="orchestrator-post-interco-validate-operation" doc:id="b8f1cdee-3498-4b91-b24f-e493e2c3ce48" name="orchestrator-post-interco-validate-operation" />
+			<logger level="INFO" doc:name="Logger" doc:id="62675c8e-7fb1-4acd-a53c-894b086708d0" message="#[vars.results]" />
+		</foreach>
+		<ee:transform doc:name="Transform Message" doc:id="5d536396-7a58-4dc4-ad00-883dbd889807">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status":if(payload.body.processMaintainEntityReferenceNumberResponse.ResponseHeader.CompletedSuccessfully == 'true') 'S' else 'E', 
+	"results": vars.results
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<traxion-s-logger:logger-traxion doc:name="Logger traxion" doc:id="9627323e-0dc1-4aa7-80bc-cac150dde97a" activityName="Provision-income-UpdateResults" destinationName="${jms.queue.proccess.sap.logger}" messageType="JSON" writeInLog="${traxion.settings.logs.write}" config-ref="Traxion_s_logger_Config">
+			<traxion-s-logger:input-parameters>
+				<traxion-s-logger:input-parameter key="type" value="DB" />
+			</traxion-s-logger:input-parameters>
+		</traxion-s-logger:logger-traxion>
+	</sub-flow>
+	<sub-flow name="client-sap-interco-bol-call-service-interco-bol" doc:id="84747d34-4e99-4a2a-bbb2-3e36a36d1fd0" >
+		<ee:transform doc:name="Transform Message" doc:id="e3e6e454-2f99-4a00-94a7-f174cd7eac24" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload.traxion.pedido]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="profit_center" ><![CDATA[%dw 2.0
+output application/json
+---
+p('carta.porte.isste.cebe')]]></ee:set-variable>
+				<ee:set-variable variableName="identificador" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.traxion.pedido.VBKD_BSTKD ++ "INT"]]></ee:set-variable>
+				<ee:set-variable variableName="project_name" ><![CDATA[%dw 2.0
+output application/json
+---
+"PHARMA_ISSSTE"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message" doc:id="a2794b03-f573-44e1-8917-9745d12d7593" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+import * from dw::util::Values
+output application/json
+---
+payload update "TEXT_LINE_C001" with ""]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="26a0a39d-e1ef-4d97-82a0-aff0cc151add" message="#[payload]" category="GENERANDO ORDEN DE COMPRA" />
+		<http:request method="POST" doc:name="Request" doc:id="a96c893b-e539-415f-8c92-1c79aaa1768f" config-ref="system-utilities-builder_HTTP_Request_configuration" path="${client.system.sap.utilities.builder.http.path.post.bol}">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"origen_event" : "pedido_venta",
+	"project_name" : "PHARMA_ISSSTE",
+	"cost_society" : "Medistik",
+	"sap_society" : "Tracto"
+}]]]></http:query-params>
+		</http:request>
+	</sub-flow>
+	<sub-flow name="orchestrator-post-interco-validate-operation" doc:id="4b9cef33-4742-4c78-9637-61f1cef61f15" >
+		<choice doc:name="Choice" doc:id="e17d7233-70b0-42e4-8de3-6bf44fd5bbdf">
+				<when expression="payload.operation =='purchaseOrder'">
+					<set-variable value="#[payload]" doc:name="Set Variable" doc:id="aea98c48-6d3f-4ef1-8530-38a8838673c3" variableName="thisRequest" />
+					<ee:transform doc:name="Transform Message" doc:id="88b5e1e3-9947-4f84-96e8-cb7b5f90652f">
+						<ee:message>
+							<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload.sap_request]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<logger level="INFO" doc:name="Logger" doc:id="9b671cf5-ad42-4322-9d5d-4fe42c2186d1" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"date" :(now()&gt;&gt;"America/Mexico_City") as String {format: "y-MM-dd"},&#10;	"reference3" : vars.profit_center default "",&#10;	"message_type" :"Request",&#10;	"source" :"Purchase Order",&#10;	"id" : vars.identificador default "",&#10;	"reference2": correlationId&#10;}]' />
+					<traxion-s-logger:logger-traxion messageType="JSON" doc:name="Save SAP RQ" doc:id="2bc57322-a0c4-4688-a172-1d52560c382c" config-ref="Traxion_s_logger_Config" activityName="Purchase-Order-SAP_RQ" destinationName="${jms.queue.commons.logs}" writeInLog="${traxion.settings.logs.write}">
+						<traxion-s-logger:input-parameters>
+							<traxion-s-logger:input-parameter key="date" value="#[(now()&gt;&gt;'America/Mexico_City') as String {format: &quot;y-MM-dd&quot;}]" />
+							<traxion-s-logger:input-parameter key="reference3" value='#[vars.profit_center default ""]' />
+							<traxion-s-logger:input-parameter key="message_type" value="Request" />
+							<traxion-s-logger:input-parameter key="source" value="Purchase Order" />
+							<traxion-s-logger:input-parameter key="id" value='#[vars.identificador default ""]' />
+							<traxion-s-logger:input-parameter key="reference2" value="#[correlationId]" />
+						</traxion-s-logger:input-parameters>
+					</traxion-s-logger:logger-traxion>
+					<flow-ref doc:name="clients-system-sap-ordencompra" doc:id="8444a5e9-0be0-4777-9b39-5d78dfd6d44a" name="clients-system-sap-ordencompra" />
+					<traxion-s-logger:logger-traxion messageType="JSON" doc:name="Save SAP RS" doc:id="fdc26026-38fd-4cbe-978c-7aba757f411a" config-ref="Traxion_s_logger_Config" activityName="Purchase-Order-SAP_RQ" destinationName="${jms.queue.commons.logs}" writeInLog="${traxion.settings.logs.write}">
+						<traxion-s-logger:input-parameters>
+							<traxion-s-logger:input-parameter key="date" value="#[(now()&gt;&gt;'America/Mexico_City') as String {format: &quot;y-MM-dd&quot;}]" />
+							<traxion-s-logger:input-parameter key="reference3" value='#[vars.profit_center default ""]' />
+							<traxion-s-logger:input-parameter key="message_type" value="Response" />
+							<traxion-s-logger:input-parameter key="source" value="Purchase Order" />
+							<traxion-s-logger:input-parameter key="id" value='#[vars.identificador default ""]' />
+							<traxion-s-logger:input-parameter key="reference2" value="#[correlationId]" />
+						</traxion-s-logger:input-parameters>
+					</traxion-s-logger:logger-traxion>
+					<ee:transform doc:name="Append result" doc:id="41a749ee-8b8c-41a9-8c0d-47157cd1c424">
+						<ee:message />
+						<ee:variables>
+							<ee:set-variable variableName="results"><![CDATA[%dw 2.0
+output application/json
+---
+
+(vars.results default []) ++
+[
+	{
+	"status": payload.d.EX_RETURN.EX_STATUS,
+	"order": vars.thisRequest.order default "",
+	"operation_code": vars.thisRequest.operation_code default "",
+	"correlationId": correlationId,
+	"id": vars.thisRequest.sap_request.VBKD_BSTKD,
+	"docSAP": payload.d.EX_RETURN.VBAK_VBELN default ""
+}
+]	
+
+
+]]></ee:set-variable>
+						</ee:variables>
+					</ee:transform>
+					<choice doc:name="Choice" doc:id="e79bdee6-52f3-4665-84a6-8632f92c3e62">
+						<when expression="#[not (payload.d.ex_status == 'S')]">
+							<set-variable value="#[true]" doc:name="Set Error" doc:id="7866b88e-639e-41a5-b81d-b58d5fb68045" variableName="haveError" />
+						</when>
+					</choice>
+				</when>
+				<otherwise>
+					<logger level="INFO" doc:name="Logger" doc:id="dcde543f-efb7-4caa-9356-b8db4541372b" message="NINGUNA OPERACION DE PROVISON ENCONTRADA" />
+				
+</otherwise>
+			</choice>
+	</sub-flow>		
+</mule>

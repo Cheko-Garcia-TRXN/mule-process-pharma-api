@@ -10,14 +10,9 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/slack http://www.mulesoft.org/schema/mule/slack/current/mule-slack.xsd
 http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
 http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
-	<vm:config name="VM_Config" doc:name="VM Config" doc:id="39eb5289-f17e-444d-bee1-d9eb8a93d942" >
-		<vm:queues >
-			<vm:queue queueName="siam-stock" />
-		</vm:queues>
-	</vm:config>
 	<flow name="orchestrator-update-siam-stockFlow" doc:id="6464424b-4597-454c-ade5-877bb2923a27">
 		<logger level="INFO" doc:name="Logger" doc:id="46ef52e2-5c42-4bcc-805e-d02d82dd8ebf" message="CONSULTANDO TEP" />
-		<flow-ref doc:name="Call to clients-system-tep-get-siam-stock" doc:id="3bd4f22d-339d-4d9c-9b93-0a77c0b4d77e" name="clients-system-tep-get-siam-stock" />
+		<flow-ref doc:name="clients-system-tep-get-siam-stock" doc:id="3bd4f22d-339d-4d9c-9b93-0a77c0b4d77e" name="clients-system-tep-get-siam-stock" />
 		<logger level="INFO" doc:name="Logger" doc:id="00d17d6f-b856-420e-8aea-96b33e81ac77" message="FINALIZANDO CONSULTA TEP" />
 		<batch:job jobName="orchestrator-update-siam-stockBatch_Job" doc:id="f36a103c-6240-4b81-87df-4e768721a484" maxFailedRecords="-1" blockSize="200">
 			<batch:process-records>
@@ -147,7 +142,7 @@ output application/json
 vars.reportRequest]]></ee:set-payload>
 									</ee:message>
 								</ee:transform>
-								<flow-ref doc:name="Call to orchestrator-scheduler-send-report-siam-issste" doc:id="f362fd08-3cbf-4312-a4fb-d5d837417996" name="orchestrator-scheduler-send-report-siam-issste" />
+								<flow-ref doc:name="orchestrator-scheduler-send-report-siam-issste" doc:id="f362fd08-3cbf-4312-a4fb-d5d837417996" name="orchestrator-scheduler-send-report-siam-issste" />
 						<error-handler>
 							<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="cde86c25-8dbf-4651-99aa-227f5b0e6e3e">
 								<logger level="INFO" doc:name="Logger" doc:id="3eb694f2-391f-481a-be85-231de48e80b6" message="FALLO LA GENERACION DEL REPORTE DE ACTUALIZACION" />

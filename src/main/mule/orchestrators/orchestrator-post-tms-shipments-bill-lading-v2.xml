@@ -8,14 +8,14 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
 	<sub-flow name="orchestrator-post-tms-bill_lading_v2" doc:id="a1f274b8-8173-4381-9680-c3ad654e8f58" >
 		<logger level="INFO" doc:name="Logger" doc:id="5ac23ef9-b6eb-4092-8597-359d561d4233" message="#[payload]"/>
-		<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-v2-traslado-process-carta-porte-full-api" doc:id="12da03a6-210c-4eef-b727-cff180b4919e" name="orchestrator-post-tms-shipments-bill-lading-v2-traslado-process-carta-porte-full-api"/>
-		<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-carta-porte" doc:id="12562f56-e637-4f32-8b1e-9222fbfb7056" name="orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-carta-porte"/>
+		<flow-ref doc:name="orchestrator-post-tms-shipments-bill-lading-v2-traslado-process-carta-porte-full-api" doc:id="12da03a6-210c-4eef-b727-cff180b4919e" name="orchestrator-post-tms-shipments-bill-lading-v2-traslado-process-carta-porte-full-api"/>
+		<flow-ref doc:name="orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-carta-porte" doc:id="12562f56-e637-4f32-8b1e-9222fbfb7056" name="orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-carta-porte"/>
 		<!-- [STUDIO:"Call to orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-and-xml-carta-porte"]<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-and-xml-carta-porte" doc:id="04e5d29a-4d0c-4178-82ef-90a4bf7db1e1" name="orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-and-xml-carta-porte" /> [STUDIO] -->
 		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-provision-sap-process-001"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-provision-sap-process-001" doc:id="0b8b7314-ad16-4606-9340-4643bc31ab0f" name="orchestrator-post-tms-shipments-provision-sap-process-001"/> [STUDIO] -->
-		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-sales-order-process-003" doc:id="6ce8cca8-905f-4ed9-ac63-68622d8e21c5" name="orchestrator-post-tms-shipments-sales-order-process-003"/>
+		<flow-ref doc:name="orchestrator-post-tms-shipments-sales-order-process-003" doc:id="6ce8cca8-905f-4ed9-ac63-68622d8e21c5" name="orchestrator-post-tms-shipments-sales-order-process-003"/>
 		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-bill-join-responses-provs-sales"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-join-responses-provs-sales" doc:id="d3b6c4fc-c252-4ad3-94cd-39f2d269da13" name="orchestrator-post-tms-shipments-bill-join-responses-provs-sales"/> [STUDIO] -->
-		<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-v2-set-response-sap-info" doc:id="4eeb1c67-779c-40ad-a3b6-847ae827ca83" name="orchestrator-post-tms-shipments-bill-lading-v2-set-response-sap-info"/>
-		<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-v2-update-response-sap-info" doc:id="3cf00b6a-8301-4b48-a012-d9f8def86952" name="orchestrator-post-tms-shipments-bill-lading-v2-update-response-sap-info"/>
+		<flow-ref doc:name="orchestrator-post-tms-shipments-bill-lading-v2-set-response-sap-info" doc:id="4eeb1c67-779c-40ad-a3b6-847ae827ca83" name="orchestrator-post-tms-shipments-bill-lading-v2-set-response-sap-info"/>
+		<flow-ref doc:name="orchestrator-post-tms-shipments-bill-lading-v2-update-response-sap-info" doc:id="3cf00b6a-8301-4b48-a012-d9f8def86952" name="orchestrator-post-tms-shipments-bill-lading-v2-update-response-sap-info"/>
 		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="e39f241f-9855-4733-998e-e881d99cac4c" message="#[payload&#93;"/> [STUDIO] -->
 	<!--  -->
 	</sub-flow>
@@ -281,8 +281,9 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<flow-ref doc:name="Call to clients-process-post-carta-porte-income-api-test" doc:id="7eb1a298-2e76-4cd9-81b6-5b9999ee62cc" name="clients-process-post-carta-porte-income-api-test"/>
-		<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-v2-validate-reponse-carta-porte" doc:id="c0de7d66-4691-47bd-af48-082824214ec6" name="orchestrator-post-tms-shipments-bill-lading-v2-validate-reponse-carta-porte"/>
+		<flow-ref doc:name="client-sap-interco-bol-main" doc:id="59a01ea0-54a0-446f-a411-46fe3c5536e2" name="client-sap-interco-bol-main" />
+		<flow-ref doc:name="clients-process-post-carta-porte-income-api-test" doc:id="7eb1a298-2e76-4cd9-81b6-5b9999ee62cc" name="clients-process-post-carta-porte-income-api-test"/>
+		<flow-ref doc:name="orchestrator-post-tms-shipments-bill-lading-v2-validate-reponse-carta-porte" doc:id="c0de7d66-4691-47bd-af48-082824214ec6" name="orchestrator-post-tms-shipments-bill-lading-v2-validate-reponse-carta-porte"/>
 	</sub-flow>
 	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-v2-validate-reponse-carta-porte" doc:id="2f347874-16db-4919-9b2e-72a932153d05" >
 		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.cpResponse.traxion_response.response_pac.return.codigo]" doc:name="Set response_code" doc:id="3875fed3-713a-48b4-9cab-77f4c378bb46" variableName="response_code"/>
@@ -359,7 +360,7 @@ output application/json
 vars.createDocsResp map($.typedValue)&#93;&#93;></ee:set-variable>
 			</ee:variables>
 		</ee:transform> [STUDIO] -->
-		<flow-ref doc:name="Call to orchestrators-post-s3-v2" doc:id="100d7e33-f841-4572-b584-367da1d52540" name="orchestrators-post-s3-v2"/>
+		<flow-ref doc:name="orchestrators-post-s3-v2" doc:id="100d7e33-f841-4572-b584-367da1d52540" name="orchestrators-post-s3-v2"/>
 		<ee:transform doc:name="Prepare data from bill lading response to send PDF to unigis" doc:id="34db89d0-928b-40d7-9c5a-ffa3f140a139" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -413,7 +414,7 @@ var fechForm = do{
 			</ee:message>
 			<ee:variables />
 		</ee:transform>
-		<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading_v2-send-carta-porte-documents" doc:id="fa090966-c972-4ea8-b1fc-f90c734cbbce" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
+		<flow-ref doc:name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="fa090966-c972-4ea8-b1fc-f90c734cbbce" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
 		<ee:transform doc:name="Extract array1" doc:id="45529e9d-b3e1-420e-9330-e9c4684099b8" >
 			<ee:message />
 			<ee:variables >
@@ -558,7 +559,7 @@ var fechForm = do{
 			</ee:message>
 			<ee:variables />
 		</ee:transform>
-		<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="cc00254a-b290-4c4b-b4ac-e65587e7e3ce" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
+		<flow-ref doc:name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="cc00254a-b290-4c4b-b4ac-e65587e7e3ce" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
 		<ee:transform doc:name="Extract array" doc:id="35dbf3ad-ba99-49a6-84ae-f1a3ba806fa0" >
 			<ee:message />
 			<ee:variables >
@@ -651,7 +652,7 @@ var fechForm = do{
 			<ee:variables>
 			</ee:variables>
 		</ee:transform>
-					<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="bdbf4a5f-d14d-4bc5-ba61-1774bdb7a961" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
+					<flow-ref doc:name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="bdbf4a5f-d14d-4bc5-ba61-1774bdb7a961" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
 				</parallel-foreach>
 			</route>
 			<route >
@@ -709,7 +710,7 @@ var fechForm = do{
 			<ee:variables>
 			</ee:variables>
 		</ee:transform>
-					<flow-ref doc:name="Call-clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="f6ad093a-3a9b-4ca1-b385-65e58a146cca" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
+					<flow-ref doc:name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" doc:id="f6ad093a-3a9b-4ca1-b385-65e58a146cca" name="clients-system-unigis-post-tms-bill_lading-send-carta-porte-documents" />
 				</parallel-foreach>
 			</route>
 		</scatter-gather>

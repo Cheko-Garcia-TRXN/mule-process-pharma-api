@@ -62,4 +62,5 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 			</email:properties>
 		</email:smtp-connection>
 	</email:smtp-config>
+<traxion-s-logger:config name="Traxion_s_logger_Config" doc:name="Traxion-s-logger Config" doc:id="549c6cbb-4c51-455d-ba82-a94de907ba87" apiName="process-sap" jmsConfigurationRef="JMS_Config_Logger"/>	
 </mule>

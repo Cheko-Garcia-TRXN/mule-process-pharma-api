@@ -585,7 +585,7 @@ payload]]></ee:set-variable>
         </ee:transform>
         <choice doc:name="Choice" doc:id="c3cc39bb-6c7c-4c9f-8665-3920c7a1b922">
             <when expression="#[upper(payload.traxion.tipo_operacion) == &quot;NUEVO&quot;]">
-                <flow-ref doc:name="Call-orchestrator-post-tms-bill_lading" doc:id="52b3621b-ec25-49f5-a622-e594dcfc60c9" name="orchestrator-post-tms-bill_lading" />
+                <flow-ref doc:name="orchestrator-post-tms-bill_lading" doc:id="52b3621b-ec25-49f5-a622-e594dcfc60c9" name="orchestrator-post-tms-bill_lading" />
             </when>
             <otherwise>
                 <logger level="INFO" doc:name="Logger" doc:id="d3bf04d6-1fad-4cc1-8526-e5f8dc6691c3" message="#[payload]" />
@@ -593,13 +593,13 @@ payload]]></ee:set-variable>
         </choice>
     </flow>
     <flow name="post:\tms\load\confirmation:application\json:process-pharma-api-config">
-        <flow-ref doc:name="Call-orchestrator-post-tms-load-confirmation" doc:id="bc0d65c9-ba92-41d0-ac44-64bbddc185ca" name="orchestrator-post-tms-load-confirmation" />
+        <flow-ref doc:name="orchestrator-post-tms-load-confirmation" doc:id="bc0d65c9-ba92-41d0-ac44-64bbddc185ca" name="orchestrator-post-tms-load-confirmation" />
     </flow>
     <flow name="post:\tms\products:application\json:process-pharma-api-config">
-        <flow-ref doc:name="Call-orchestrator-post-tms-products" doc:id="6948ed64-71e1-4954-8fff-9bee7b53e53b" name="orchestrator-post-tms-products" />
+        <flow-ref doc:name="orchestrator-post-tms-products" doc:id="6948ed64-71e1-4954-8fff-9bee7b53e53b" name="orchestrator-post-tms-products" />
     </flow>
     <flow name="post:\tms\settled:application\json:process-pharma-api-config">
-        <flow-ref doc:name="Call to orchestrator-post-tms-settled" doc:id="20f94a6f-eeb3-46a7-ac11-5964127108bc" name="orchestrator-post-tms-settled" />
+        <flow-ref doc:name="orchestrator-post-tms-settled" doc:id="20f94a6f-eeb3-46a7-ac11-5964127108bc" name="orchestrator-post-tms-settled" />
         <!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
@@ -618,7 +618,7 @@ output application/json
         </ee:transform> [STUDIO] -->
     </flow>
     <flow name="get:\cam\products:process-pharma-api-config">
-        <flow-ref doc:name="Call to orchestrator-get-products" doc:id="1d3f4919-a7fc-4848-af8f-fe44ccf6132e" name="orchestrator-get-products" />
+        <flow-ref doc:name="orchestrator-get-products" doc:id="1d3f4919-a7fc-4848-af8f-fe44ccf6132e" name="orchestrator-get-products" />
     </flow>
     <flow name="post:\cam\orders:process-pharma-api-config">
         <ee:transform doc:name="Transform Message" doc:id="4e39b9ed-7ad1-4483-aed0-bef179dd4a2e">
@@ -642,7 +642,7 @@ output application/json
 attributes.queryParams.status]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <flow-ref doc:name="Call to orchestrator-get-orders" doc:id="9aa4d398-84ec-47aa-8a8e-2347c4c21ee6" name="orchestrator-get-orders" />
+        <flow-ref doc:name="orchestrator-get-orders" doc:id="9aa4d398-84ec-47aa-8a8e-2347c4c21ee6" name="orchestrator-get-orders" />
     </flow>
     <flow name="post:\crm\remisions\certified\report:process-pharma-api-config">
         <ee:transform doc:name="set params" doc:id="67392fa8-ca05-4fba-a7ce-34ec1b021ea6">
@@ -766,6 +766,6 @@ output application/json
 payload]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
-		<flow-ref doc:name="Call to orchestrator-post-tms-bill_lading_v2" doc:id="73a37aa8-5689-4d91-9af9-2f2b380acd1d" name="orchestrator-post-tms-bill_lading_v2"/>
+		<flow-ref doc:name="orchestrator-post-tms-bill_lading_v2" doc:id="73a37aa8-5689-4d91-9af9-2f2b380acd1d" name="orchestrator-post-tms-bill_lading_v2"/>
     </flow>
 </mule>
