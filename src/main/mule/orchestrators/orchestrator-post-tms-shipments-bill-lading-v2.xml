@@ -288,6 +288,7 @@ output application/json
 	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-v2-validate-reponse-carta-porte" doc:id="2f347874-16db-4919-9b2e-72a932153d05" >
 		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.cpResponse.traxion_response.response_pac.return.codigo]" doc:name="Set response_code" doc:id="3875fed3-713a-48b4-9cab-77f4c378bb46" variableName="response_code"/>
 		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.cpResponse.traxion_response.response_pac.return.descripcion]" doc:name="Set error_message" doc:id="5de5d02b-d4b8-4a58-ba8a-1c8a98ae27fe" variableName="error_message"/>
+		<logger level="INFO" doc:name="Logger" doc:id="247b04b0-3414-4a71-8890-d1d0ed22f8d3" message="#[vars.cpResponse]" category="CARTA PORTE RESPONSE"/>
 		<validation:is-false doc:name="validate code " doc:id="f2925dc5-9891-4059-a723-fe2bd484629f" expression='#[vars.response_code != "100"]' message="#[vars.error_message]">
 			<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="CARTAPORTE:BAD_REQUEST" />
 		</validation:is-false>
