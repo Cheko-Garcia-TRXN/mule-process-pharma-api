@@ -36,7 +36,7 @@ payload map ((item) -> {
     fecha_inventario: now() as String{format:
 "MM/dd/yyyy"
 },
-    clave: item.Product_Code_ID__c,
+    clave: (item.Product_Code_ID__c  replace "NA" with (""))replace "NH" with (""),
     partida_presup: item.Partida_Presupuestal__c,
     descripcion: formatLength(item.Name),
     tipo_clave: "DPN",
