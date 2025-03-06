@@ -360,7 +360,7 @@ var receptor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "03")
 					"id": payload.carta_porte.figura_transporte.transportista.vehiculo.id,
 					"placa": payload.carta_porte.figura_transporte.transportista.vehiculo.placa,
 					"year": payload.carta_porte.figura_transporte.transportista.vehiculo.year,
-					"peso_bruto": payload.carta_porte.figura_transporte.transportista.vehiculo.peso_bruto,
+					"peso_bruto": if(payload.carta_porte.figura_transporte.transportista.vehiculo.peso_bruto < 1) "1" else payload.carta_porte.figura_transporte.transportista.vehiculo.peso_bruto,
 					"remolques": []
 				}
 			},
@@ -474,6 +474,7 @@ var receptor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "03")
 			case .transportista.permiso -> "TPAF01"
 			case .transportista.vehiculo.id -> if (isEmpty(payload.carta_porte.figura_transporte.transportista.vehiculo.id) or (payload.carta_porte.figura_transporte.transportista.vehiculo.id) == null) "C2" else payload.carta_porte.figura_transporte.transportista.vehiculo.id
             case .transportista.vehiculo.remolques -> payload.carta_porte.figura_transporte.transportista.vehiculo.remolques filter ((value) -> !isEmpty(value.placas))
+            case .transportista.vehiculo.peso_bruto -> if(payload.carta_porte.figura_transporte.transportista.vehiculo.peso_bruto < 1) "1" else payload.carta_porte.figura_transporte.transportista.vehiculo.peso_bruto
         },
 		"traslado": {
 			"serie": payload.carta_porte.serie,
