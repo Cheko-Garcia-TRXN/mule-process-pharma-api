@@ -577,7 +577,7 @@ output application/json
 output application/json
 ---
 attributes.queryParams.source_system]]></ee:set-variable>
-                <ee:set-variable variableName="originalPayload"><![CDATA[%dw 2.0
+				<ee:set-variable variableName="originalPayload" ><![CDATA[%dw 2.0
 output application/json
 ---
 payload]]></ee:set-variable>
