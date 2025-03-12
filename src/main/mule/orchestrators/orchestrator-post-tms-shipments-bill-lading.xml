@@ -8,7 +8,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
 	<sub-flow name="orchestrator-post-tms-bill_lading" doc:id="a1f274b8-8173-4381-9680-c3ad654e8f58" >
 		<logger level="INFO" doc:name="Logger" doc:id="5ac23ef9-b6eb-4092-8597-359d561d4233" message="#[payload]"/>
-		<flow-ref doc:name="validation-cartaporte-validations" doc:id="983a0cb6-5735-4dc8-a2a3-cdf8d212c2f7" name="validation-cartaporte-validations"/>
+		<flow-ref doc:name="validation-cartaporte-validations" doc:id="983a0cb6-5735-4dc8-a2a3-cdf8d212c2f7" name="validation-cartaporte-validations" target="validationResponse"/>
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-traslado-process-carta-porte-full-api" doc:id="12da03a6-210c-4eef-b727-cff180b4919e" name="orchestrator-post-tms-shipments-bill-lading-traslado-process-carta-porte-full-api"/>
 		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-bill-lading-traslado"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-traslado" doc:id="c0a290e5-be59-42c0-a2e9-648bf7054c63" name="orchestrator-post-tms-shipments-bill-lading-traslado"/> [STUDIO] -->
 		<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-lading-send-document-pdf-carta-porte" doc:id="12562f56-e637-4f32-8b1e-9222fbfb7056" name="orchestrator-post-tms-shipments-bill-lading-send-document-pdf-carta-porte"/>

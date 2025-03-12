@@ -8,20 +8,20 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 <sub-flow name="validation-cartaporte-validations" doc:id="a1b20091-1eb4-4bf4-8cce-c0302c122f4f" >
 		<scatter-gather doc:name="Scatter-Gather" doc:id="a48e2d06-7864-410c-8fab-137afa081a69" >
 			<route >
-				<validation:is-not-empty-collection doc:name="Is not empty collection merchandise" doc:id="876720c7-74d2-4723-99fa-3835e590c8a5" values="#[payload.carta_porte.mercancias.detalles]" message="el atributo detalle de mercancias no puede ser vacio" >
+				<validation:is-not-empty-collection doc:name="Is not empty collection merchandise" doc:id="876720c7-74d2-4723-99fa-3835e590c8a5" values="#[payload.carta_porte.mercancias.detalles]" message="El atributo detalle de mercancias no puede ser vacio" >
 					<error-mapping sourceType="VALIDATION:EMPTY_COLLECTION" targetType="CARTAPORTE:BAD_REQUEST" />
 				</validation:is-not-empty-collection>
 				<flow-ref doc:name="validations-cartaporte-merchandise" doc:id="2d6ad022-cb31-4a1c-a350-6f7147c026e0" name="validations-cartaporte-merchandise"/>
 			</route>
 			<route >
 				
-				<validation:is-not-empty-collection doc:name="Is not empty collection locations" doc:id="5d375543-c6fc-47ca-b5f4-88c0e740a255" values="#[payload.carta_porte.ubicaciones]" message="el atributo ubicaciones no puede ser vacio">
+				<validation:is-not-empty-collection doc:name="Is not empty collection locations" doc:id="5d375543-c6fc-47ca-b5f4-88c0e740a255" values="#[payload.carta_porte.ubicaciones]" message="El atributo ubicaciones no puede ser vacio">
 					<error-mapping sourceType="VALIDATION:EMPTY_COLLECTION" targetType="CARTAPORTE:BAD_REQUEST" />
 				</validation:is-not-empty-collection>
 				<flow-ref doc:name="validations-cartaporte-locations" doc:id="46894e2f-478c-4eaf-9bbc-ee28d97f0015" name="validations-cartaporte-locations"/>
 			</route>
 			<route >
-				<validation:is-not-blank-string doc:name="Is blank string validate identifier" doc:id="0e5ed5a2-c13f-4e8e-84be-bd37224947fa" value="#[payload.traxion.identificador_pedido]" message="identificador de pedido no puede ser vacio">
+				<validation:is-not-blank-string doc:name="Is blank string validate identifier" doc:id="0e5ed5a2-c13f-4e8e-84be-bd37224947fa" value="#[payload.traxion.identificador_pedido]" message="Identificador de pedido no puede ser vacio">
 					<error-mapping sourceType="VALIDATION:BLANK_STRING" targetType="CARTAPORTE:BAD_REQUEST" />
 				</validation:is-not-blank-string>
 			</route>
@@ -32,26 +32,26 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 	<sub-flow name="validations-cartaporte-merchandise" doc:id="55880897-e1ee-4b8b-82b7-e19041494392" >
 		<scatter-gather doc:name="Scatter-Gather" doc:id="a85c126f-ebcc-47e2-b0fb-e35c96e02030" >
 			<route >
-				<validation:is-true doc:name="validation of product code attribute not sent" doc:id="4b18969a-b460-49e5-b33d-898063514ae2" expression="#[sizeOf(payload.carta_porte.mercancias..clave_producto) == sizeOf(payload.carta_porte.mercancias.detalles)]" message="alguno de los productos no cuenta con clave">
+				<validation:is-true doc:name="validation of product code attribute not sent" doc:id="4b18969a-b460-49e5-b33d-898063514ae2" expression="#[sizeOf(payload.carta_porte.mercancias..clave_producto) == sizeOf(payload.carta_porte.mercancias.detalles)]" message="Alguno de los productos no cuenta con clave">
 					<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="CARTAPORTE:BAD_REQUEST" />
 				</validation:is-true>
-				<validation:is-false doc:name="merchandise empty product id validation" doc:id="4590c517-ff87-4b6f-b25f-a0f21acb62dd" expression='#[(payload.carta_porte.mercancias..clave_producto contains("")) ]' >
+				<validation:is-false doc:name="merchandise empty product id validation" doc:id="4590c517-ff87-4b6f-b25f-a0f21acb62dd" expression='#[(payload.carta_porte.mercancias..clave_producto contains("")) ]' message="Alguno de los productos no cuenta con una clave de producto correcta">
 					<error-mapping targetType="CARTAPORTE:BAD_REQUEST" />
 				</validation:is-false>
 			</route>
 			<route >
-				<validation:is-true doc:name="validation of origin identifier attribute not sent" doc:id="bec805f2-4968-4cc1-acbb-edf2c3855277" expression="#[sizeOf(payload.carta_porte.mercancias..id_origen) == sizeOf(payload.carta_porte.mercancias.detalles)]" message="alguno de los attributos de mercancias detalles no cuenta con el id origen">
+				<validation:is-true doc:name="validation of origin identifier attribute not sent" doc:id="bec805f2-4968-4cc1-acbb-edf2c3855277" expression="#[sizeOf(payload.carta_porte.mercancias..id_origen) == sizeOf(payload.carta_porte.mercancias.detalles)]" message="Alguno de los attributos de mercancias detalles no cuenta con el id origen">
 					<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="CARTAPORTE:BAD_REQUEST" />
 				</validation:is-true>
-				<validation:is-false doc:name="merchandise empty origin id validation" doc:id="9f44fed9-def7-48d8-813c-ddea73872c49" expression='#[(payload.carta_porte.mercancias..id_origen contains("")) ]' >
+				<validation:is-false doc:name="merchandise empty origin id validation" doc:id="9f44fed9-def7-48d8-813c-ddea73872c49" expression='#[(payload.carta_porte.mercancias..id_origen contains("")) ]' message="Alguno de los attributos de mercancias detalles no cuenta con el id origen valido">
 					<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="CARTAPORTE:BAD_REQUEST" />
 				</validation:is-false>
 			</route>
 			<route >
-				<validation:is-true doc:name="validation of destination identifier attribute not sent" doc:id="6b677d87-8b5b-41aa-b5ca-3b243a15e7f5" expression="#[sizeOf(payload.carta_porte.mercancias..id_destino) == sizeOf(payload.carta_porte.mercancias.detalles)]" message="alguno de los attributos de mercancias detalles no cuenta con el id destino">
+				<validation:is-true doc:name="validation of destination identifier attribute not sent" doc:id="6b677d87-8b5b-41aa-b5ca-3b243a15e7f5" expression="#[sizeOf(payload.carta_porte.mercancias..id_destino) == sizeOf(payload.carta_porte.mercancias.detalles)]" message="Alguno de los attributos de mercancias detalles no cuenta con el id destino">
 					<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="CARTAPORTE:BAD_REQUEST" />
 				</validation:is-true>
-				<validation:is-false doc:name="merchandise empty destination id validation" doc:id="599affd5-12ff-475c-b67d-746c7df8cfae" expression='#[(payload.carta_porte.mercancias..id_destino contains("")) ]' >
+				<validation:is-false doc:name="merchandise empty destination id validation" doc:id="599affd5-12ff-475c-b67d-746c7df8cfae" expression='#[(payload.carta_porte.mercancias..id_destino contains("")) ]' message="Alguno de los attributos de mercancias detalles no cuenta con el id destino valido">
 					<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="CARTAPORTE:BAD_REQUEST" />
 				</validation:is-false>
 			</route>
@@ -68,26 +68,26 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 	<sub-flow name="validations-cartaporte-locations" doc:id="5378e060-78be-452f-9251-41b15b2afd74" >
 		<scatter-gather doc:name="Scatter-Gather" doc:id="89b5bd72-3ff0-47c6-93c0-a45802411480" >
 			<route >
-				<validation:is-true doc:name="validation of station identifier attribute not sent" doc:id="c8172fc7-ceec-4bb8-9600-692c64706c4d" expression="#[sizeOf(payload.carta_porte.ubicaciones..id_estacion) == sizeOf(payload.carta_porte.ubicaciones)]" message="alguno de los elementos de ubicaciones no contiene el id estacion">
+				<validation:is-true doc:name="validation of station identifier attribute not sent" doc:id="c8172fc7-ceec-4bb8-9600-692c64706c4d" expression="#[sizeOf(payload.carta_porte.ubicaciones..id_estacion) == sizeOf(payload.carta_porte.ubicaciones)]" message="Alguno de los elementos de ubicaciones no contiene el id estacion">
 					<error-mapping targetType="CARTAPORTE:BAD_REQUEST" />
 				</validation:is-true>
-				<validation:is-false doc:name="location empty validate id station" doc:id="2218a2dd-a2d0-4484-819a-c8e384bba3b3" expression='#[payload.carta_porte.ubicaciones..id_estacion contains("") ]' >
+				<validation:is-false doc:name="location empty validate id station" doc:id="2218a2dd-a2d0-4484-819a-c8e384bba3b3" expression='#[payload.carta_porte.ubicaciones..id_estacion contains("") ]' message="Alguno de los elementos de ubicaciones no contiene el id estacion valido">
 					<error-mapping targetType="CARTAPORTE:BAD_REQUEST" />
 				</validation:is-false>
 			</route>
 			<route >
-				<validation:is-true doc:name="validation of state attribute not sent" doc:id="289604c8-b2a5-457b-a758-b3a9eafacf4e" expression="#[sizeOf(payload.carta_porte.ubicaciones..estado) == sizeOf(payload.carta_porte.ubicaciones)]" message="alguno de los elementos de ubicaciones no contiene el estado">
+				<validation:is-true doc:name="validation of state attribute not sent" doc:id="289604c8-b2a5-457b-a758-b3a9eafacf4e" expression="#[sizeOf(payload.carta_porte.ubicaciones..estado) == sizeOf(payload.carta_porte.ubicaciones)]" message="Alguno de los elementos de ubicaciones no contiene el estado">
 					<error-mapping targetType="CARTAPORTE:BAD_REQUEST" />
 				</validation:is-true>
-				<validation:is-true doc:name="location empty  state validate longitude" doc:id="c0960b36-d7d8-4f83-8d58-cf40be2f85e8" expression="#[isEmpty((payload.carta_porte.ubicaciones..estado filter (sizeOf($) &gt; 3)) ++ (payload.carta_porte.ubicaciones..estado filter (sizeOf($) &lt; 3)))]" >
+				<validation:is-true doc:name="location empty  state validate longitude" doc:id="c0960b36-d7d8-4f83-8d58-cf40be2f85e8" expression="#[isEmpty((payload.carta_porte.ubicaciones..estado filter (sizeOf($) &gt; 3)) ++ (payload.carta_porte.ubicaciones..estado filter (sizeOf($) &lt; 3)))]" message="Alguno de los elementos de ubicaciones no contiene el estado valido">
 					<error-mapping targetType="CARTAPORTE:BAD_REQUEST" />
 				</validation:is-true>
 			</route>
 			<route >
-				<validation:is-true doc:name="validation of pais attribute not sent" doc:id="006605c2-8dae-40ff-8c0a-3d18a93e3866" expression="#[sizeOf(payload.carta_porte.ubicaciones..pais) == sizeOf(payload.carta_porte.ubicaciones)]" message="alguno de los elementos de ubicaciones no contiene el pais">
+				<validation:is-true doc:name="validation of pais attribute not sent" doc:id="006605c2-8dae-40ff-8c0a-3d18a93e3866" expression="#[sizeOf(payload.carta_porte.ubicaciones..pais) == sizeOf(payload.carta_porte.ubicaciones)]" message="Alguno de los elementos de ubicaciones no contiene el pais">
 					<error-mapping targetType="CARTAPORTE:BAD_REQUEST" />
 				</validation:is-true>
-				<validation:is-true doc:name="location validate pais longitude" doc:id="28192f46-808c-4c47-8aed-85b383cda641" expression="#[isEmpty((payload.carta_porte.ubicaciones..pais filter (sizeOf($) &gt; 3)) ++ (payload.carta_porte.ubicaciones..pais filter (sizeOf($) &lt; 3)))]" >
+				<validation:is-true doc:name="location validate pais longitude" doc:id="28192f46-808c-4c47-8aed-85b383cda641" expression="#[isEmpty((payload.carta_porte.ubicaciones..pais filter (sizeOf($) &gt; 3)) ++ (payload.carta_porte.ubicaciones..pais filter (sizeOf($) &lt; 3)))]" message="Alguno de los elementos de ubicaciones no contiene un pais valido">
 					<error-mapping targetType="CARTAPORTE:BAD_REQUEST" />
 				</validation:is-true>
 			</route>

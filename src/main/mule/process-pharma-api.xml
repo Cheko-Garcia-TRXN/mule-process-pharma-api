@@ -518,6 +518,28 @@ output application/json
                     </error-handler>
                 </try>
             </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="3e00919b-f27e-4a24-aa92-07e60cce4a83" type="MULE:COMPOSITE_ROUTING">
+                <ee:transform doc:name="Transform Message" doc:id="4329b9b2-de25-423b-a076-0b76f502bad7">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[output application/json
+---
+{
+	"traxion_response": {
+	
+		completed_succesfully: "false",
+		error: {
+			error_type: "CARTAPORTE " ++ error.errorType.asString,
+			user_error_description: error.exception.detailedMessage,
+			/////"system_error_description": error.errorMessage.payload.traxion_response.error
+		}
+	}
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[500]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
             <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f7be221e-c58b-4804-9040-ab0924c948fd" type="ANY">
                 <ee:transform doc:name="Transform Message" doc:id="47c74224-daf4-4e95-899f-a4cdd66ae06c">
                     <ee:message>
