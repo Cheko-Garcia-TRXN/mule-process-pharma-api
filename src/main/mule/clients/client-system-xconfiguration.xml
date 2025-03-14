@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:system-generic-xconfiguration-api="http://www.mulesoft.org/schema/mule/system-generic-xconfiguration-api" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/system-generic-xconfiguration-api http://www.mulesoft.org/schema/mule/system-generic-xconfiguration-api/current/mule-system-generic-xconfiguration-api.xsd">
+	<system-generic-xconfiguration-api:config name="System_generic_xconfiguration_api_Config" doc:name="System-generic-xconfiguration-api Config" doc:id="f726f752-c5a0-4fe8-ad1b-7900dee47dd3" property_host="${client.system.xconfiguration.http.host}" property_port="${client.system.xconfiguration.http.port}" property_basePath="/api" property_protocol="${client.system.xconfiguration.http.protocol}" property_responseTimeout="${client.system.xconfiguration.http.timeout}" >
+		<expiration-policy maxIdleTime="${client.system.xconfiguration.http.connection.idle.timeout}" />
+	</system-generic-xconfiguration-api:config>
+	<sub-flow name="client-system-xconfiguration-search-call-service-serch" doc:id="99be5ba7-ba59-4e64-b921-fa48e0f36321" >
+		<system-generic-xconfiguration-api:get-search-configuration doc:name="Get search configuration" doc:id="6df0450a-3299-4108-a05b-e5cd4ce18239" config-ref="System_generic_xconfiguration_api_Config" x-configuration-type="#[vars.configuration_type]" input1='#[vars.input1 default ""]' input2='#[vars.input2 default ""]' input3='#[vars.input3 default ""]' input4='#[vars.input4 default ""]' input5='#[vars.input5 default ""]' input6='#[vars.input6 default ""]' input7='#[vars.input7 default ""]' input8='#[vars.input8 default ""]' input9='#[vars.input9 default ""]' input10='#[vars.input10 default ""]' input1method="#[vars.input1Method default null]" input2method="#[vars.input2Method default null]" input3method='#[vars.input3Method default "valNullDrvn"]' input4method='#[vars.input4Method default "valNullDrvn"]' input5method='#[vars.input5Method default "valNullDrvn"]' input6method='#[vars.input6Method default "valNullDrvn"]' input7method='#[vars.input7Method default "valNullDrvn"]' input8method='#[vars.input8Method default "valNullDrvn"]' input9method='#[vars.input9Method default "valNullDrvn"]' input10method='#[vars.input10Method default "valNullDrvn"]' client-id="#[p('client.system.xconfiguration.https.client_id')]" client-secret="#[p('client.system.xconfiguration.https.client_secret')]"/>
+	</sub-flow>
+</mule>
