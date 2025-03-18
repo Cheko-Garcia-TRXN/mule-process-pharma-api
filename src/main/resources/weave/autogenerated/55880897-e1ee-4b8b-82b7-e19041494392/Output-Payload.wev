@@ -1,0 +1,21 @@
+%dw 2.0
+
+type auto_55880897_e1ee_4b8b_82b7_e19041494392_Output_Payload = {|
+  "0": org_mule_runtime_api_message_Message {"typeId": "org.mule.runtime.api.message.Message"}, 
+  "1": org_mule_runtime_api_message_Message_1 {"typeId": "org.mule.runtime.api.message.Message"}, 
+  "2": org_mule_runtime_api_message_Message_3 {"typeId": "org.mule.runtime.api.message.Message"}, 
+  "3": org_mule_runtime_api_message_Message_5 {"typeId": "org.mule.runtime.api.message.Message"}
+|}
+type org_mule_runtime_api_message_Message_1 = {| payload: Any |} {"typeId": "org.mule.runtime.api.message.Message"}
+
+
+type org_mule_runtime_api_message_Message_3 = {| payload: Any |} {"typeId": "org.mule.runtime.api.message.Message"}
+
+
+type org_mule_runtime_api_message_Message_5 = {| payload: Any |} {"typeId": "org.mule.runtime.api.message.Message"}
+
+
+type org_mule_runtime_api_message_Message = {| payload: Any |} {"typeId": "org.mule.runtime.api.message.Message"}
+
+
+

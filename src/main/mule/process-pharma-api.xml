@@ -3,7 +3,7 @@
     <http:listener-config name="process-pharma-api-httpListenerConfig">
         <http:listener-connection host="${http.listener.host}" port="${http.listener.port}" protocol="HTTPS" tlsContext="TLS_Context" readTimeout="${http.listener.read.timeout}" />
     </http:listener-config>
-    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.33:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="process-pharma-api-config" api="resource::ab8117f6-d718-4307-b5f7-03262d589cd0:process-pharma-api:1.0.35:raml:zip:process-pharma-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="process-pharma-api-main">
         <http:listener config-ref="process-pharma-api-httpListenerConfig" path="${http.listener.path}">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -518,6 +518,28 @@ output application/json
                     </error-handler>
                 </try>
             </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="3e00919b-f27e-4a24-aa92-07e60cce4a83" type="MULE:COMPOSITE_ROUTING">
+                <ee:transform doc:name="Transform Message" doc:id="4329b9b2-de25-423b-a076-0b76f502bad7">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[output application/json
+---
+{
+	"traxion_response": {
+	
+		completed_succesfully: "false",
+		error: {
+			error_type: "CARTAPORTE " ++ error.errorType.asString,
+			user_error_description: error.exception.detailedMessage,
+			/////"system_error_description": error.errorMessage.payload.traxion_response.error
+		}
+	}
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[500]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
             <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f7be221e-c58b-4804-9040-ab0924c948fd" type="ANY">
                 <ee:transform doc:name="Transform Message" doc:id="47c74224-daf4-4e95-899f-a4cdd66ae06c">
                     <ee:message>
@@ -766,6 +788,6 @@ output application/json
 payload]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
-		<flow-ref doc:name="orchestrator-post-tms-bill_lading_v2" doc:id="73a37aa8-5689-4d91-9af9-2f2b380acd1d" name="orchestrator-post-tms-bill_lading_v2"/>
+        <flow-ref doc:name="orchestrator-post-tms-bill_lading_v2" doc:id="73a37aa8-5689-4d91-9af9-2f2b380acd1d" name="orchestrator-post-tms-bill_lading_v2" />
     </flow>
 </mule>
