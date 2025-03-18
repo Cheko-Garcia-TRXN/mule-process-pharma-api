@@ -1417,7 +1417,7 @@ fun formatdate(d: DateTime) = d as String {format: "yyyyMMdd"}
 			"VBKD_SDABW": "0001",
 			"VBAP_NTGEW": "",
 			"KONP_KBETR": payload.monto,
-			"COBL_PRCTR": payload.centro_beneficio,
+			"COBL_PRCTR": "CF01110101",//payload.centro_beneficio,
 			"VBEP_TDDAT": formatdate(now() >> toTimeZone("America/Mexico_City")),
 			"VBEP_TDUHR": "000000",
 			"VBEP_EDATU": formatdate(now() >> toTimeZone("America/Mexico_City")),
