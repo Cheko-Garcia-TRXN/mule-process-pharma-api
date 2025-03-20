@@ -519,6 +519,32 @@ var receptor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "03")
 			</otherwise>
 		</choice>
 		<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-validate-merchandise" doc:id="b1290385-e2ed-4118-898d-806d36611b19" name="orchestrator-post-tms-shipments-bill-lading-validate-merchandise" />
+		<ee:transform doc:name="Set Payload" doc:id="5b9e4205-611b-4789-9ca6-bd85f8c770bb" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+fun totMerc(total) = sum(total.cantidad)
+var emisor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "01"))[0]
+var receptor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "03"))[0]
+---
+{
+	"traxion": payload.traxion,
+	"carta_porte": {
+		"version": payload.carta_porte.version,
+		"IdCCP": "",
+		"pais_origen_destino": payload.carta_porte.pais_origen_destino,
+		"tipo": payload.tipo,
+		"informacion_aduanera": payload.informacion_aduanera,
+		"ubicaciones": payload.carta_porte.ubicaciones,
+		"mercancias": vars.merchandiseArray,
+		"figura_transporte": payload.carta_porte.figura_transporte,
+		"traslado": payload.carta_porte.traslado
+	}
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+			</ee:variables>
+		</ee:transform>
 		<flow-ref doc:name="Call-clients-process-post-carta-porte-full-api-test" doc:id="7eb1a298-2e76-4cd9-81b6-5b9999ee62cc" name="clients-process-post-carta-porte-full-api-test"/>
 		<flow-ref doc:name="orchestrator-post-tms-shipments-bill-lading-validate-reponse-carta-porte" doc:id="c0de7d66-4691-47bd-af48-082824214ec6" name="orchestrator-post-tms-shipments-bill-lading-validate-reponse-carta-porte"/>
 	</sub-flow>
@@ -595,31 +621,7 @@ output application/json
 payload.carta_porte.mercancias update "detalles" with vars.merchandiseArray]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<ee:transform doc:name="Set Payload" doc:id="c62b97e0-9955-469c-9ebf-308cebc718d7" >
-			<ee:message />
-			<ee:variables >
-				<ee:set-variable variableName="merchandiseArray" ><![CDATA[%dw 2.0
-output application/json
-fun totMerc(total) = sum(total.cantidad)
-var emisor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "01"))[0]
-var receptor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "03"))[0]
----
-{
-	"traxion": payload.traxion,
-	"carta_porte": {
-		"version": payload.carta_porte.version,
-		"IdCCP": "",
-		"pais_origen_destino": payload.carta_porte.pais_origen_destino,
-		"tipo": payload.tipo,
-		"informacion_aduanera": payload.informacion_aduanera,
-		"ubicaciones": payload.carta_porte.ubicaciones,
-		"mercancias": vars.merchandiseArray,
-		"figura_transporte": payload.figura_transporte,
-		"traslado": payload.traslado
-	}
-}]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
+		
 	</sub-flow>
 	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-validate-reponse-carta-porte" doc:id="2f347874-16db-4919-9b2e-72a932153d05" >
 		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.cpResponse.body.generaComprobanteResponse.return.codigo]" doc:name="Set response_code" doc:id="3875fed3-713a-48b4-9cab-77f4c378bb46" variableName="response_code"/>

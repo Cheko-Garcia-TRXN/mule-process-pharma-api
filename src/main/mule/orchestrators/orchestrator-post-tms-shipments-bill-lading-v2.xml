@@ -282,6 +282,31 @@ output application/json
 			</ee:message>
 		</ee:transform>
 		<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-validate-merchandise" doc:id="afe33630-1fe8-46c0-827a-4c31ed06f4d2" name="orchestrator-post-tms-shipments-bill-lading-validate-merchandise"/>
+		<ee:transform doc:name="Set Payload" doc:id="51af15c7-1415-4c47-afe9-51aafc41f299" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+fun totMerc(total) = sum(total.cantidad)
+var emisor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "01"))[0]
+var receptor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "03"))[0]
+---
+{
+	"traxion": payload.traxion,
+	"carta_porte": {
+		"version": payload.carta_porte.version,
+		"IdCCP": "",
+		"pais_origen_destino": payload.carta_porte.pais_origen_destino,
+		"tipo": payload.tipo,
+		"informacion_aduanera": payload.informacion_aduanera,
+		"ubicaciones": payload.carta_porte.ubicaciones,
+		"mercancias": vars.merchandiseArray,
+		"figura_transporte": payload.carta_porte.figura_transporte
+	}
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+			</ee:variables>
+		</ee:transform>
 		<flow-ref doc:name="client-sap-interco-bol-main" doc:id="59a01ea0-54a0-446f-a411-46fe3c5536e2" name="client-sap-interco-bol-main" />
 		<flow-ref doc:name="clients-process-post-carta-porte-income-api-test" doc:id="7eb1a298-2e76-4cd9-81b6-5b9999ee62cc" name="clients-process-post-carta-porte-income-api-test"/>
 		<flow-ref doc:name="orchestrator-post-tms-shipments-bill-lading-v2-validate-reponse-carta-porte" doc:id="c0de7d66-4691-47bd-af48-082824214ec6" name="orchestrator-post-tms-shipments-bill-lading-v2-validate-reponse-carta-porte"/>

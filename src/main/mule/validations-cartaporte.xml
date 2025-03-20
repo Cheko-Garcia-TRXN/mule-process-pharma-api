@@ -26,21 +26,21 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 				</validation:is-not-blank-string>
 			</route>
 			<route >
-				<validation:is-true doc:name="vehicle type validation " doc:id="3f4d49cc-d300-431b-afbe-675992ff45a8" expression='#[(upper(payload.carta_porte.figura_transporte.transportista.vehiculo.id) == "NO DETERMINADO") or (isEmpty(payload.carta_porte.figura_transporte.transportista.vehiculo.id))]' message="La información del Vehículo está incompleta favor de validar el Tipo de Vehículo(id)" >
+				<validation:is-false doc:name="vehicle type validation " doc:id="3f4d49cc-d300-431b-afbe-675992ff45a8" expression='#[(upper(payload.carta_porte.figura_transporte.transportista.vehiculo.id) == "NO DETERMINADO") or (isEmpty(payload.carta_porte.figura_transporte.transportista.vehiculo.id))]' message="La información del Vehículo está incompleta favor de validar el Tipo de Vehículo(id)" >
 					<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="CARTAPORTE:BAD_REQUEST" />
-				</validation:is-true>
-				<validation:is-true doc:name="vehicle insurance validation " doc:id="d8296049-e7a9-444f-8563-76e064496135" expression='#[(upper(payload.carta_porte.figura_transporte.transportista.vehiculo.aseguradora) == "NO DETERMINADO") or (isEmpty(payload.carta_porte.figura_transporte.transportista.vehiculo.aseguradora))]' message="La información del Vehículo está incompleta favor de validar la Aseguradora del Vehículo" >
+				</validation:is-false>
+				<validation:is-false doc:name="vehicle insurance validation " doc:id="d8296049-e7a9-444f-8563-76e064496135" expression='#[(upper(payload.carta_porte.figura_transporte.transportista.vehiculo.aseguradora) == "NO DETERMINADO") or (isEmpty(payload.carta_porte.figura_transporte.transportista.vehiculo.aseguradora))]' message="La información del Vehículo está incompleta favor de validar la Aseguradora del Vehículo" >
 					<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="CARTAPORTE:BAD_REQUEST" />
-				</validation:is-true>
-				<validation:is-true doc:name="vehicle policy validation " doc:id="687dd53e-88da-4d9d-8a43-5264f3c3bb35" expression='#[(upper(payload.carta_porte.figura_transporte.transportista.vehiculo.poliza) == "NO DETERMINADO") or (isEmpty(payload.carta_porte.figura_transporte.transportista.vehiculo.poliza))]' message="La información del Vehículo está incompleta favor de validar la Poliza del Vehículo" >
+				</validation:is-false>
+				<validation:is-false doc:name="vehicle policy validation " doc:id="687dd53e-88da-4d9d-8a43-5264f3c3bb35" expression='#[(upper(payload.carta_porte.figura_transporte.transportista.vehiculo.poliza) == "NO DETERMINADO") or (isEmpty(payload.carta_porte.figura_transporte.transportista.vehiculo.poliza))]' message="La información del Vehículo está incompleta favor de validar la Poliza del Vehículo" >
 					<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="CARTAPORTE:BAD_REQUEST" />
-				</validation:is-true>
-				<validation:is-true doc:name="vehicle license plate validation " doc:id="8085147d-7040-4007-877f-a4aa86844c6a" expression='#[(upper(payload.carta_porte.figura_transporte.transportista.vehiculo.placa) == "NO DETERMINADO") or (isEmpty(payload.carta_porte.figura_transporte.transportista.vehiculo.placa))]' message="La información del Vehículo está incompleta favor de validar la Placa del Vehículo" >
+				</validation:is-false>
+				<validation:is-false doc:name="vehicle license plate validation " doc:id="8085147d-7040-4007-877f-a4aa86844c6a" expression='#[(upper(payload.carta_porte.figura_transporte.transportista.vehiculo.placa) == "NO DETERMINADO") or (isEmpty(payload.carta_porte.figura_transporte.transportista.vehiculo.placa))]' message="La información del Vehículo está incompleta favor de validar la Placa del Vehículo" >
 					<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="CARTAPORTE:BAD_REQUEST" />
-				</validation:is-true>
-				<validation:is-true doc:name="vehicle model validation " doc:id="7b32f363-12f2-4273-a047-63b2ef66cea9" expression='#[(upper(payload.carta_porte.figura_transporte.transportista.vehiculo.year) == "NO DETERMINADO") or (isEmpty(payload.carta_porte.figura_transporte.transportista.vehiculo.year))]' message="La información del Vehículo está incompleta favor de validar el Modelo del Vehículo (year)" >
+				</validation:is-false>
+				<validation:is-false doc:name="vehicle model validation " doc:id="7b32f363-12f2-4273-a047-63b2ef66cea9" expression='#[(upper(payload.carta_porte.figura_transporte.transportista.vehiculo.year) == "NO DETERMINADO") or (isEmpty(payload.carta_porte.figura_transporte.transportista.vehiculo.year))]' message="La información del Vehículo está incompleta favor de validar el Modelo del Vehículo (year)" >
 					<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="CARTAPORTE:BAD_REQUEST" />
-				</validation:is-true>
+				</validation:is-false>
 			</route>
 		
 </scatter-gather>
