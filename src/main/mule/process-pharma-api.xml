@@ -705,7 +705,7 @@ payload]]></ee:set-variable>
         <flow-ref doc:name="orchestrator-post-create-order-unigis-main" doc:id="cc819b51-b156-4a25-be7b-2e7db4aff22a" name="orchestrator-post-create-order-unigis-main" />
     </flow>
     <flow name="post:\slack\message:application\json:process-pharma-api-config">
-        <logger level="INFO" doc:name="Logger" doc:id="012104c4-478f-499f-9561-d92d654e4c77" message="#[payload]" />
+        <logger level="INFO" doc:name="Logger" doc:id="012104c4-478f-499f-9561-d92d654e4c77" message="#[payload]" category="MESSAGES SLACK"/>
         <ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
