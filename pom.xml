@@ -41,6 +41,7 @@
 						<businessGroupId>${businessGroupId}</businessGroupId>
 						<deploymentTimeout>${deploymentTimeOut}</deploymentTimeout>
 						<muleVersion>${mule.version}</muleVersion>
+						<releaseChannel>EDGE</releaseChannel>
 						<connectedAppClientId>${client.id}</connectedAppClientId>
 						<connectedAppClientSecret>${client.secret}</connectedAppClientSecret>
 						<connectedAppGrantType>client_credentials</connectedAppGrantType>
