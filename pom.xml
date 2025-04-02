@@ -12,8 +12,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<app.runtime>4.8-e-java8</app.runtime>
-		<mule.maven.plugin.version>4.2.0</mule.maven.plugin.version>
+		<app.runtime>4.6-java8</app.runtime>
+		<mule.maven.plugin.version>4.3.0</mule.maven.plugin.version>
 		<munit.version>3.0.0</munit.version>
 	</properties>
 
@@ -41,7 +41,7 @@
 						<businessGroupId>${businessGroupId}</businessGroupId>
 						<deploymentTimeout>${deploymentTimeOut}</deploymentTimeout>
 						<muleVersion>${mule.version}</muleVersion>
-						<releaseChannel>EDGE</releaseChannel>
+						<!-- <releaseChannel>EDGE</releaseChannel> -->
 						<connectedAppClientId>${client.id}</connectedAppClientId>
 						<connectedAppClientSecret>${client.secret}</connectedAppClientSecret>
 						<connectedAppGrantType>client_credentials</connectedAppGrantType>
