@@ -159,7 +159,7 @@ output application/json
 ---
 {
 	"channel": Mule::p('slack.connection.channel.siam'),
-	"text": "`Attention!` <!channel> There was an error in a mule app-> :warning: "
+	"text": "`Attention!` <!channel> There was an error in a mule app process-pharma-> :warning: "
 	++ "\n ---------------------------------------------------"
 	++ "\n `ERROR SIAM STOCK`"
 	++ "\n ---------------------------------------------------"

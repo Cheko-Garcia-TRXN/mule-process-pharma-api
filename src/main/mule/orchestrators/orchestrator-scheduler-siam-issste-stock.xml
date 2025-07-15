@@ -73,21 +73,6 @@ vars.payloadBK]]></ee:set-payload>
 					<ee:message>
 					</ee:message>
 					<ee:variables>
-						<ee:set-variable variableName="sendToSlack"><![CDATA[%dw 2.0
-output application/json
----
-write(
-	{
-		totalRecords: payload.totalRecords as String,
-		elapsedTimeInMillis: payload.elapsedTimeInMillis as String,
-		failedRecords: payload.failedRecords as String,
-		loadedRecords: payload.loadedRecords as String,
-		successfulRecords: payload.successfulRecords as String,
-		processedRecords: payload.processedRecords as String,
-		batchJobInstanceId: payload.batchJobInstanceId as String,
-		jobName: if(vars.query_type == "DIF") "Update Siam Stock" else "Create Siam Stock"
-	}
-)]]></ee:set-variable>
 						<ee:set-variable variableName="reportRequest"><![CDATA[%dw 2.0
 output application/json
 ---
@@ -105,16 +90,80 @@ output application/json
 output application/java
 ---
 payload]]></ee:set-variable>
+				<ee:set-variable variableName="sendToSlack" ><![CDATA[%dw 2.0
+output application/json
+---
+write(
+	{
+		totalRecords: payload.totalRecords as String,
+		elapsedTimeInMillis: payload.elapsedTimeInMillis as String,
+		failedRecords: payload.failedRecords as String,
+		loadedRecords: payload.loadedRecords as String,
+		successfulRecords: payload.successfulRecords as String,
+		processedRecords: payload.processedRecords as String,
+		batchJobInstanceId: payload.batchJobInstanceId as String,
+		jobName: if(vars.query_type == "DIF") "Update Siam Stock" else "Create Siam Stock"
+	}
+)]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-		<try doc:name="Try" doc:id="14c59e92-abca-48d2-9d34-7c2dd7884496" >
+		<flow-ref doc:name="orchestrator-scheduler-siam-issste-stock-validate-rows" doc:id="c677b83c-1bad-4422-830a-c4c6e016136f" name="orchestrator-scheduler-siam-issste-stock-validate-rows"/>
+	</sub-flow>
+	<sub-flow name="orchestrator-scheduler-siam-issste-stock-validate-rows" doc:id="bc2285ed-0981-4ced-97d2-be1fad7d0a0f" >
+		<choice doc:name="Choice" doc:id="68824606-e3ee-4fc6-a9cc-c508a3227f02" >
+			<when expression="#[vars.sendToSlack.loadedRecords &lt;= 0]">
+				<ee:transform doc:name="Prepare message for slack" doc:id="2b7c1baf-c578-4fba-95d0-1c29371ea0aa" >
+					<ee:message />
+					<ee:variables >
+						<ee:set-variable variableName="sendToSlack" ><![CDATA[%dw 2.0
+output application/json
+---
+write(
+	{
+	"traxion_response": {
+		"completed_succesfully": "error": {
+			"error_type": "SIAM_ERROR:PROCESSED_RECORDS",
+			"user_error_description": "no se Obtuvieron registros para actualizar",
+			"system_error_description": "Favor de revisar fecha y hora de inserción de datos"
+		}
+	}
+}
+)]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="e2224100-ec70-4995-842c-93f1667ab11a" message="#[vars.sendToSlack]"/>
+				<try doc:name="Try" doc:id="ac17953f-15e2-4b3d-8093-3422cd944b57">
+					<slack:create-chatpost-message doc:name="Send Message to slack" doc:id="085bd75e-f2f0-40ea-a7a4-c03bf756ef38" config-ref="Slack_Connector_Config">
+						<slack:chatpost-message-content><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"channel": Mule::p('slack.connection.channel.siam'),
+	"text": "`Attention!` <!channel> There was an error in a mule app process-pharma-> :warning: "
+	++ "\n ---------------------------------------------------"
+	++ "\n `ERROR SIAM STOCK`"
+	++ "\n ---------------------------------------------------"
+	++ "\n Fecha y hora ->" ++ (now()>> "-06:00") as String
+	++ "\n" ++ (vars.sendToSlack)
+}]]]></slack:chatpost-message-content>
+					</slack:create-chatpost-message>
+					<error-handler>
+						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c2b3cbe7-40e8-4b5b-aa49-3a40b2cb68a9">
+							<logger level="INFO" doc:name="Logger" doc:id="97fa3820-f582-4f9d-a5aa-9307d5ff09b5" message="THIS SLACK ERROR DOES NOT AFFECT THE NORMAL PROCESS. ONLY THE MESSAGES DOES NOT ARRIVE TO SLACK. EVEN SO YOU HAVE TO REVIEW IT. #[error]" category="SLACK CONNECTIVITY." />
+						</on-error-continue>
+					</error-handler>
+				</try>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="dcae9867-8480-4295-86cb-4fb5c9fa0e00" message="SE ACTUALIZARON REGISTROS CORRECTAMENTE"/>
+				<try doc:name="Try" doc:id="14c59e92-abca-48d2-9d34-7c2dd7884496">
 			<slack:create-chatpost-message doc:name="Send Message to slack" doc:id="7ca31101-523b-4bdf-88f8-33d4dd99fe75" config-ref="Slack_Connector_Config">
 					<slack:chatpost-message-content><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
 	"channel": Mule::p('slack.connection.channel.siam'),
-	"text": "`Attention!` <!channel> There is a successful message in a mule app-> :ok: "
+	"text": "`Attention!` <!channel> There is a successful message in a mule app process-pharma-> :ok: "
 	++ "\n ---------------------------------------------------"
 	++ "\n `SUCCESSFUL SIAM STOCK RESPONSE`"
 	++ "\n ---------------------------------------------------"
@@ -122,12 +171,14 @@ output application/json
 	++ "\n" ++ (vars.sendToSlack)
 }]]]></slack:chatpost-message-content>
 				</slack:create-chatpost-message>
-			<error-handler >
-				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="a7f022b5-24f4-48d4-a710-67960d31e58a" >
-					<logger level="ERROR" doc:name="Logger" doc:id="a1f983ef-1987-4a78-9a08-49998be01882" message="THIS SLACK ERROR DOES NOT AFFECT THE NORMAL PROCESS. ONLY THE MESSAGES DOES NOT ARRIVE TO SLACK. EVEN SO YOU HAVE TO REVIEW IT. #[error]" category="SLACK CONNECTIVITY."/>
+			<error-handler>
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="a7f022b5-24f4-48d4-a710-67960d31e58a">
+					<logger level="ERROR" doc:name="Logger" doc:id="a1f983ef-1987-4a78-9a08-49998be01882" message="THIS SLACK ERROR DOES NOT AFFECT THE NORMAL PROCESS. ONLY THE MESSAGES DOES NOT ARRIVE TO SLACK. EVEN SO YOU HAVE TO REVIEW IT. #[error]" category="SLACK CONNECTIVITY." />
 				</on-error-continue>
 			</error-handler>
 		</try>
+			</otherwise>
+		</choice>
 	</sub-flow>
 	<sub-flow name="orchestrator-siam-stock-issste-send-report" doc:id="ea0e082d-0905-44d9-b200-f346bfaf1d90" >
 		<async doc:name="Async" doc:id="e5538402-d55e-4d8b-b012-e8d4105c90b9">
