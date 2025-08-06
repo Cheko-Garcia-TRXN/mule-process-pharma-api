@@ -42,7 +42,8 @@ payload map(item)->{
     clave_presupuestal: item.clave_presupuestal,
     sku: item.sku,
     Existencias_totales: item.existencias_totales,
-    external_id: item.sku ++ "-ISSSTE-" ++ item.clave_presupuestal
+    external_id: item.sku ++ "-ISSSTE-" ++ item.clave_presupuestal,
+    costo_promedio: item.costo_promedio
 } ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
