@@ -13,14 +13,10 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 		<flow-ref doc:name="Call to orchestrator-post-carta-porte-get-vehicle-info" doc:id="30a749a9-f6e8-4a26-b24c-e063047c5430" target="transportInfo" name="orchestrator-post-carta-porte-get-vehicle-info" />
 		<flow-ref doc:name="Call to orchestrator-post-carta-porte-get-tariff" doc:id="76482925-06a8-4a16-9daf-c4cc19e8fd6c" name="orchestrator-post-carta-porte-get-tariff" target="tariff"/>
 		<flow-ref doc:name="orchestrator-post-tms-shipments-bill-lading-v2-traslado-process-carta-porte-full-api" doc:id="12da03a6-210c-4eef-b727-cff180b4919e" name="orchestrator-post-tms-shipments-bill-lading-v2-traslado-process-carta-porte-full-api"/>
+		<flow-ref doc:name="orchestrators-post-s3-v2" doc:id="100d7e33-f841-4572-b584-367da1d52540" name="orchestrators-post-s3-v2" />
 		<flow-ref doc:name="orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-carta-porte" doc:id="12562f56-e637-4f32-8b1e-9222fbfb7056" name="orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-carta-porte"/>
-		<!-- [STUDIO:"Call to orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-and-xml-carta-porte"]<flow-ref doc:name="Call to orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-and-xml-carta-porte" doc:id="04e5d29a-4d0c-4178-82ef-90a4bf7db1e1" name="orchestrator-post-tms-shipments-bill-lading-v2-send-document-pdf-and-xml-carta-porte" /> [STUDIO] -->
-		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-provision-sap-process-001"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-provision-sap-process-001" doc:id="0b8b7314-ad16-4606-9340-4643bc31ab0f" name="orchestrator-post-tms-shipments-provision-sap-process-001"/> [STUDIO] -->
-		<!-- [STUDIO:"orchestrator-post-tms-shipments-sales-order-process-003"]<flow-ref doc:name="orchestrator-post-tms-shipments-sales-order-process-003" doc:id="6ce8cca8-905f-4ed9-ac63-68622d8e21c5" name="orchestrator-post-tms-shipments-sales-order-process-003"/> [STUDIO] -->
-		<!-- [STUDIO:"Call-orchestrator-post-tms-shipments-bill-join-responses-provs-sales"]<flow-ref doc:name="Call-orchestrator-post-tms-shipments-bill-join-responses-provs-sales" doc:id="d3b6c4fc-c252-4ad3-94cd-39f2d269da13" name="orchestrator-post-tms-shipments-bill-join-responses-provs-sales"/> [STUDIO] -->
-		<flow-ref doc:name="orchestrator-post-tms-shipments-bill-lading-v2-set-response-sap-info" doc:id="4eeb1c67-779c-40ad-a3b6-847ae827ca83" name="orchestrator-post-tms-shipments-bill-lading-v2-set-response-sap-info"/>
-		<flow-ref doc:name="orchestrator-post-tms-shipments-bill-lading-v2-update-response-sap-info" doc:id="3cf00b6a-8301-4b48-a012-d9f8def86952" name="orchestrator-post-tms-shipments-bill-lading-v2-update-response-sap-info"/>
-		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="e39f241f-9855-4733-998e-e881d99cac4c" message="#[payload&#93;"/> [STUDIO] -->
+		<set-payload value="#[vars.cpResponse]" doc:name="Set Response" doc:id="a26384ec-0418-4e2a-96b6-dc5cf4760e82" />
+		<logger level="ERROR" doc:name="Logger" doc:id="e39f241f-9855-4733-998e-e881d99cac4c" message="PAYLOAD FINAL: #[payload]"/>
 	<!--  -->
 	</sub-flow>
 	<sub-flow name="orchestrator-post-tms-shipments-bill-lading-v2-traslado-process-carta-porte-full-api" doc:id="89f87486-01cc-4ac0-b47a-d2ef9c650592" >
@@ -140,6 +136,10 @@ var receptor = (payload.carta_porte.ubicaciones filter ($.tipo_estacion == "03")
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
+fun isC2(trailer_type) = if((trailer_type == "C2_1") 
+or (trailer_type == "C2_2")
+or (trailer_type == "C2_3")
+) "C2" else trailer_type
 ---
 {
     traxion: {
@@ -156,10 +156,10 @@ output application/json
                     VBAK_VKORG: "GS21",
                     VBAK_VTWEG: "10",
                     VBAK_SPART: "10",
-                    VBAK_VKBUR: "G207",
+                    VBAK_VKBUR: "G201",
                     VBAK_VKGRP: "G37",
                     VBAK_XBLNR: "",
-                    KUAGV_KUNNR: "MXS0042",
+                    KUAGV_KUNNR: "MXS0065",
                     VBKD_BSTKD: payload.traxion.identificador_pedido ++ randomInt(100),
                     VBKD_BSTDK: "20250211",
                     VBKD_ZTERM: "N015",
@@ -232,7 +232,7 @@ output application/json
             pais_origen_destino: payload.carta_porte.pais_origen_destino,
             tipo: {
                     transporte_internacional: "No",
-                    entrada_salida: "Entrada"
+                    entrada_salida: ""
                 },
             ubicaciones: payload.carta_porte.ubicaciones map (ubicacion) -> {
                                 id_estacion: ubicacion.id_estacion,
@@ -270,8 +270,8 @@ output application/json
                     vehiculo: {
                         aseguradora: vars.transportInfo.insurance_company,
                         poliza: vars.transportInfo.policy,
-                        id: payload.carta_porte.figura_transporte.transportista.vehiculo.id,
-                        placa: vars.transportInfo.plate,
+                        id: isC2(vars.transportInfo.trailer_type),
+                        placa: payload.carta_porte.figura_transporte.transportista.vehiculo.placa,
                         year: vars.transportInfo.model,
                         peso_bruto: vars.transportInfo.vehicle_weight,
                         remolques: []
@@ -391,7 +391,6 @@ output application/json
 vars.createDocsResp map($.typedValue)&#93;&#93;></ee:set-variable>
 			</ee:variables>
 		</ee:transform> [STUDIO] -->
-		<flow-ref doc:name="orchestrators-post-s3-v2" doc:id="100d7e33-f841-4572-b584-367da1d52540" name="orchestrators-post-s3-v2"/>
 		<ee:transform doc:name="Prepare data from bill lading response to send PDF to unigis" doc:id="34db89d0-928b-40d7-9c5a-ffa3f140a139" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
